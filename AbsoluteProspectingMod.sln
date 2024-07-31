@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbsoluteProspecting", "AbsoluteProspecting\AbsoluteProspecting\AbsoluteProspecting.csproj", "{ABDC256A-BBAE-4E06-AE68-C55970F36880}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeBuild", "AbsoluteProspecting\CakeBuild\CakeBuild.csproj", "{8E48F777-F2FF-47C6-B8D4-BA5FF3B80270}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABDC256A-BBAE-4E06-AE68-C55970F36880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABDC256A-BBAE-4E06-AE68-C55970F36880}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABDC256A-BBAE-4E06-AE68-C55970F36880}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABDC256A-BBAE-4E06-AE68-C55970F36880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E48F777-F2FF-47C6-B8D4-BA5FF3B80270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E48F777-F2FF-47C6-B8D4-BA5FF3B80270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E48F777-F2FF-47C6-B8D4-BA5FF3B80270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E48F777-F2FF-47C6-B8D4-BA5FF3B80270}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B2390074-6403-480A-8070-8188ABEDD6E5}
+	EndGlobalSection
+EndGlobal

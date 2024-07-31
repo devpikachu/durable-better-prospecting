@@ -1,0 +1,16 @@
+{
+  "type": "code",
+  "modid": "AbsoluteProspecting",
+  "name": "AbsoluteProspecting",
+  "authors": [
+    "Shacklebottom"
+  ],
+  "contributors": [
+    "Gnomp"
+  ],
+  "description": "Absolute Prospecting. Prospect, Absolutely",
+  "version": "1.420.69",
+  "dependencies": {
+    "game": "1.19.8"
+  }
+}
