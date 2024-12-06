@@ -28,15 +28,16 @@ namespace AbsoluteProspecting
                 SkillItem[] modes;
                 if (api.World.Config.GetString("propickNodeSearchRadius").ToInt() > 0)
                 {
-                    modes = new SkillItem[7];
+                    modes = new SkillItem[8];
                     modes[0] = new SkillItem() { Code = new AssetLocation("density"), Name = Lang.Get("Density Search Mode (Long range, chance based search)") };
                     modes[1] = new SkillItem() { Code = new AssetLocation("line"), Name = Lang.Get("Line Sample Mode (Searches in a straight line)") };
                     modes[2] = new SkillItem() { Code = new AssetLocation("area1"), Name = Lang.Get("Area Sample Mode (Searches in a small area)") };
                     modes[3] = new SkillItem() { Code = new AssetLocation("area2"), Name = Lang.Get("Area Sample Mode (Searches in a medium area)") };
                     modes[4] = new SkillItem() { Code = new AssetLocation("area3"), Name = Lang.Get("Area Sample Mode (Searches in a large area)") };
                     modes[5] = new SkillItem() { Code = new AssetLocation("stone"), Name = Lang.Get("Stone Sample Mode (Searches a very large area for stone)") };
-                    modes[6] = new SkillItem() { Code = new AssetLocation("node"), Name = Lang.Get("Node Search Mode (Short range, exact search)") };
-
+                    modes[6] = new SkillItem() { Code = new AssetLocation("distance"), Name = Lang.Get("Distance Mode (Long range, distance search)") };
+                    modes[7] = new SkillItem() { Code = new AssetLocation("node"), Name = Lang.Get("Node Search Mode (Short range, exact search)") };
+                    
                 }
                 else
                 {
@@ -47,6 +48,7 @@ namespace AbsoluteProspecting
                     modes[3] = new SkillItem() { Code = new AssetLocation("area2"), Name = Lang.Get("Area Sample Mode (Searches in a medium area)") };
                     modes[4] = new SkillItem() { Code = new AssetLocation("area3"), Name = Lang.Get("Area Sample Mode (Searches in a large area)") };
                     modes[5] = new SkillItem() { Code = new AssetLocation("stone"), Name = Lang.Get("Stone Sample Mode (Searches a very large area for stone)") };
+                    modes[6] = new SkillItem() { Code = new AssetLocation("distance"), Name = Lang.Get("Directional Mode (Long range, distance search)") };
                 }
 
                 if (capi != null)
@@ -69,10 +71,13 @@ namespace AbsoluteProspecting
                     modes[5].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_stone.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[5].TexturePremultipliedAlpha = false;
 
-                    if (modes.Length > 6)
+                    modes[6].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_line.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[6].TexturePremultipliedAlpha = false;
+
+                    if (modes.Length > 7)
                     {
-                        modes[6].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("textures/icons/rocks.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
-                        modes[6].TexturePremultipliedAlpha = false;
+                        modes[7].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("textures/icons/rocks.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                        modes[7].TexturePremultipliedAlpha = false;
                     }
                 }
 
@@ -107,8 +112,10 @@ namespace AbsoluteProspecting
             if (toolMode == 4) remain = (remain + remainingResistance) / 2f;
             //very large area search
             if (toolMode == 5) remain = (remain + remainingResistance) / 2f;
+            //distance search
+            if (toolMode == 6) remain = (remain + remainingResistance) / 2f;
             //vanilla node search
-            if (toolMode == 6) remain = (remain + remainingResistance) / 2.2f;
+            if (toolMode == 7) remain = (remain + remainingResistance) / 2.2f;
 
             return remain;
         }
@@ -119,10 +126,15 @@ namespace AbsoluteProspecting
             int radius = api.World.Config.GetString("propickNodeSearchRadius").ToInt();
             int damage = 1;
 
-            if (toolMode == 6 && radius > 0)
+            if (toolMode == 7 && radius > 0)
             {
                 ProbeBlockNodeMode(world, byEntity, itemslot, blockSel, radius);
                 damage = 2;
+            }
+            else if (toolMode == 6)
+            {
+                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea, (int)EnumProspectingArea.Ycoords);
+                damage = 7;
             }
             else if (toolMode == 5)
             {
@@ -254,6 +266,52 @@ namespace AbsoluteProspecting
             }
         }
 
+        protected virtual void ProbeDistanceSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength, int ylength)
+        {
+            IPlayer? byPlayer = null;
+            if (byEntity is EntityPlayer) byPlayer = world.PlayerByUid(((EntityPlayer)byEntity).PlayerUID);
+
+            Block block = world.BlockAccessor.GetBlock(blockSel.Position);
+            block.OnBlockBroken(world, blockSel.Position, byPlayer, 0);
+
+            if (!isPropickable(block)) return;
+
+            IServerPlayer? serverPlayer = byPlayer as IServerPlayer;
+            if (serverPlayer == null) return;
+
+            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"Area sample taken for a length of {xzlength}:"), EnumChatType.Notification);
+
+            Dictionary<string, float> firstOreDistance = new Dictionary<string, (int x, int y, int z)>();
+
+            BlockPos blockPos = blockSel.Position.Copy();
+            api.World.BlockAccessor.WalkBlocks(blockPos.AddCopy(xzlength, ylength, xzlength), blockPos.AddCopy(-xzlength, -ylength, -xzlength), delegate (Block nblock, int x, int y, int z)
+            {
+                if (nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
+                {
+                    string key = "ore-" + nblock.Variant["type"];
+                    if (!firstOreDistance.ContainsKey(key))
+                    {
+                        float distance = blockSel.Position.DistanceTo(BlockPos(x, y, z))
+                        firstOreDistance[key] = distance
+                    }
+                }
+            });
+
+            List<KeyValuePair<string, float>> list = firstOreDistance.ToList();
+            if (list.Count == 0)
+            {
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "No ore node nearby"), EnumChatType.Notification);
+                return;
+            }
+
+            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
+            foreach (KeyValuePair<string, (int x, int y, int z)> item in list)
+            {
+                string l = Lang.GetL(serverPlayer.LanguageCode, item.Key);
+                string l2 = Lang.GetL(serverPlayer.LanguageCode, resultTextByQuantity(item.Value), Lang.Get(item.Key));
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, l2, l), EnumChatType.Notification);
+            }
+        }
 
         protected virtual void ProbeLineSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel)
         {
