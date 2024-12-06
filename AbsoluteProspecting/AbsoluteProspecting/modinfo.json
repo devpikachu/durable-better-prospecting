@@ -12,6 +12,6 @@
   "description": "Absolute Prospecting. Prospect, Absolutely",
   "version": "1.421.0",
   "dependencies": {
-    "game": "1.19.8"
+    "game": "1.20.0-rc.1"
   }
 }
