@@ -291,8 +291,8 @@ namespace AbsoluteProspecting
                     string key = "ore-" + nblock.Variant["type"];
                     if (!firstOreDistance.ContainsKey(key))
                     {
-                        float distance = blockSel.Position.DistanceTo(BlockPos(x, y, z))
-                        firstOreDistance[key] = distance
+                        float distance = blockSel.Position.DistanceTo(BlockPos(x, y, z));
+                        firstOreDistance[key] = distance;
                     }
                 }
             });
