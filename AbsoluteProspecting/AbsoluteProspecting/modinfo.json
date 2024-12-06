@@ -1,7 +1,7 @@
 {
   "type": "code",
-  "modid": "AbsoluteProspectingExtended",
-  "name": "AbsoluteProspectingExtended",
+  "modid": "BetterProspecting",
+  "name": "BetterProspecting",
   "authors": [
     "Shacklebottom",
     "NathanNgo"
@@ -9,8 +9,8 @@
   "contributors": [
     "Gnomp"
   ],
-  "description": "Absolute Prospecting. Prospect, Absolutely",
-  "version": "1.421.0",
+  "description": "A less tedious form of prospecting.",
+  "version": "1.0.0",
   "dependencies": {
     "game": "1.20.0-rc.1"
   }

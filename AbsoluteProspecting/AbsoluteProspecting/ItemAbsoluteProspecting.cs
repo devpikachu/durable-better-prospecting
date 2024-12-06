@@ -26,59 +26,16 @@ namespace AbsoluteProspecting
             toolModes = ObjectCacheUtil.GetOrCreate(api, "proPickToolModes", () =>
             {
                 SkillItem[] modes;
-                if (api.World.Config.GetString("propickNodeSearchRadius").ToInt() > 0)
-                {
-                    modes = new SkillItem[8];
-                    modes[0] = new SkillItem() { Code = new AssetLocation("density"), Name = Lang.Get("Density Search Mode (Long range, chance based search)") };
-                    modes[1] = new SkillItem() { Code = new AssetLocation("line"), Name = Lang.Get("Line Sample Mode (Searches in a straight line)") };
-                    modes[2] = new SkillItem() { Code = new AssetLocation("area1"), Name = Lang.Get("Area Sample Mode (Searches in a small area)") };
-                    modes[3] = new SkillItem() { Code = new AssetLocation("area2"), Name = Lang.Get("Area Sample Mode (Searches in a medium area)") };
-                    modes[4] = new SkillItem() { Code = new AssetLocation("area3"), Name = Lang.Get("Area Sample Mode (Searches in a large area)") };
-                    modes[5] = new SkillItem() { Code = new AssetLocation("stone"), Name = Lang.Get("Stone Sample Mode (Searches a very large area for stone)") };
-                    modes[6] = new SkillItem() { Code = new AssetLocation("distance"), Name = Lang.Get("Distance Mode (Long range, distance search)") };
-                    modes[7] = new SkillItem() { Code = new AssetLocation("node"), Name = Lang.Get("Node Search Mode (Short range, exact search)") };
-                    
-                }
-                else
-                {
-                    modes = new SkillItem[5];
-                    modes[0] = new SkillItem() { Code = new AssetLocation("density"), Name = Lang.Get("Density Search Mode (Long range, chance based search)") };
-                    modes[1] = new SkillItem() { Code = new AssetLocation("line"), Name = Lang.Get("Line Sample Mode (Searches in a straight line)") };
-                    modes[2] = new SkillItem() { Code = new AssetLocation("area1"), Name = Lang.Get("Area Sample Mode (Searches in a small area)") };
-                    modes[3] = new SkillItem() { Code = new AssetLocation("area2"), Name = Lang.Get("Area Sample Mode (Searches in a medium area)") };
-                    modes[4] = new SkillItem() { Code = new AssetLocation("area3"), Name = Lang.Get("Area Sample Mode (Searches in a large area)") };
-                    modes[5] = new SkillItem() { Code = new AssetLocation("stone"), Name = Lang.Get("Stone Sample Mode (Searches a very large area for stone)") };
-                    modes[6] = new SkillItem() { Code = new AssetLocation("distance"), Name = Lang.Get("Directional Mode (Long range, distance search)") };
-                }
+                modes = new SkillItem[2];
+                modes[0] = new SkillItem() { Code = new AssetLocation("distance"), Name = Lang.Get("Distance Mode (Long range, distance search)") };
+                modes[1] = new SkillItem() { Code = new AssetLocation("stone"), Name = Lang.Get("Stone Mode (Long range, distance search for stone)") };
 
                 if (capi != null)
                 {
-                    modes[0].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("textures/icons/heatmap.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[0].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_line.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[0].TexturePremultipliedAlpha = false;
-
-                    modes[1].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_line.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[1].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_stone.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[1].TexturePremultipliedAlpha = false;
-
-                    modes[2].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_small.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
-                    modes[2].TexturePremultipliedAlpha = false;
-
-                    modes[3].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_med.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
-                    modes[3].TexturePremultipliedAlpha = false;
-
-                    modes[4].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_large.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
-                    modes[4].TexturePremultipliedAlpha = false;
-
-                    modes[5].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_stone.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
-                    modes[5].TexturePremultipliedAlpha = false;
-
-                    modes[6].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_line.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
-                    modes[6].TexturePremultipliedAlpha = false;
-
-                    if (modes.Length > 7)
-                    {
-                        modes[7].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("textures/icons/rocks.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
-                        modes[7].TexturePremultipliedAlpha = false;
-                    }
                 }
 
                 return modes;
@@ -102,71 +59,21 @@ namespace AbsoluteProspecting
             float remain = base.OnBlockBreaking(player, blockSel, itemslot, remainingResistance, dt, counter);
             int toolMode = GetToolMode(itemslot, player, blockSel);
 
-            //line search
-            if (toolMode == 1) remain = (remain + remainingResistance) / 2.2f;
-            //small area search
-            if (toolMode == 2) remain = (remain + remainingResistance) / 2f;
-            //medium area search
-            if (toolMode == 3) remain = (remain + remainingResistance) / 2f;
-            //large area search
-            if (toolMode == 4) remain = (remain + remainingResistance) / 2f;
-            //very large area search
-            if (toolMode == 5) remain = (remain + remainingResistance) / 2f;
-            //distance search
-            if (toolMode == 6) remain = (remain + remainingResistance) / 2f;
-            //vanilla node search
-            if (toolMode == 7) remain = (remain + remainingResistance) / 2.2f;
-
+            remain = (remain + remainingResistance) / 2.2f;
             return remain;
         }
 
         public override bool OnBlockBrokenWith(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, float dropQuantityMultiplier = 1)
         {
             int toolMode = GetToolMode(itemslot, (byEntity as EntityPlayer).Player, blockSel);
-            int radius = api.World.Config.GetString("propickNodeSearchRadius").ToInt();
-            int damage = 1;
+            int damage = 7;
 
-            if (toolMode == 7 && radius > 0)
-            {
-                ProbeBlockNodeMode(world, byEntity, itemslot, blockSel, radius);
-                damage = 2;
-            }
-            else if (toolMode == 6)
-            {
-                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea, (int)EnumProspectingArea.Ycoords);
-                damage = 7;
-            }
-            else if (toolMode == 5)
-            {
-                ProbeStoneSampleMode(world, byEntity, itemslot, blockSel);
-                damage = 6;
-            }
-            else if (toolMode == 4)
-            {
-                //large
-                ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.LargeArea, (int)EnumProspectingArea.Ycoords);
-                damage = 5;
-            }
-            else if (toolMode == 3)
-            {
-                //medium
-                ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.MediumArea, (int)EnumProspectingArea.Ycoords);
-                damage = 4;
-            } 
-            else if (toolMode == 2)
-            {
-                //small
-                ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.SmallArea, (int)EnumProspectingArea.Ycoords);
-                damage = 3;
-            }
-            else if (toolMode == 1)
-            {
-                ProbeLineSampleMode(world, byEntity, itemslot, blockSel);
-                damage = 2;
+            if (toolMode == 0) {
+                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea, (int)EnumProspectingArea.Ycoords, toolMode);
             }
             else
             {
-                ProbeBlockDensityMode(world, byEntity, itemslot, blockSel);
+                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea / 2, (int)EnumProspectingArea.Ycoords, toolMode);
             }
 
             if (DamagedBy != null && DamagedBy.Contains(EnumItemDamageSource.BlockBreaking))
@@ -177,52 +84,7 @@ namespace AbsoluteProspecting
             return true;
         }
 
-        protected virtual void ProbeStoneSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemSlot, BlockSelection blockSel)
-        {
-            var radius = (int)EnumProspectingArea.SaltArea;
-            IPlayer? byPlayer = null;
-            if (byEntity is EntityPlayer) byPlayer = world.PlayerByUid(((EntityPlayer)byEntity).PlayerUID);
-
-            Block block = world.BlockAccessor.GetBlock(blockSel.Position);
-            block.OnBlockBroken(world, blockSel.Position, byPlayer, 0);
-
-            if (!isPropickable(block)) return;
-
-            IServerPlayer? serverPlayer = byPlayer as IServerPlayer;
-            if (serverPlayer == null) return;
-
-            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"Stone sample taken for a length of 128:"), EnumChatType.Notification);
-            
-            Dictionary<string, int> quantityFound = new Dictionary<string, int>();
-
-            BlockPos blockPos = blockSel.Position.Copy();
-            api.World.BlockAccessor.WalkBlocks(blockPos.AddCopy(radius, 200, radius), blockPos.AddCopy(-radius, -200, -radius), delegate (Block nblock, int x, int y, int z)
-            {
-                if (nblock.Variant.ContainsKey("rock"))
-                {
-                    string key = nblock.Variant["rock"];
-                    int value = 0;
-                    quantityFound.TryGetValue(key, out value);
-                    quantityFound[key] = value + 1;
-                }
-            });
-            List<KeyValuePair<string, int>> list = quantityFound.OrderByDescending((KeyValuePair<string, int> val) => val.Value).ToList();
-            if (list.Count == 0)
-            {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "No stone found nearby"), EnumChatType.Notification);
-                return;
-            }
-
-            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following stone types"), EnumChatType.Notification);
-            foreach (KeyValuePair<string, int> item in list)
-            {
-                string l = Lang.GetL(serverPlayer.LanguageCode, item.Key);
-                string l2 = Lang.GetL(serverPlayer.LanguageCode, resultTextByQuantity(item.Value), Lang.Get(item.Key));
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, l2, l), EnumChatType.Notification);
-            }
-        }
-
-        protected virtual void ProbeAreaSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength, int ylength)
+        protected virtual void ProbeDistanceSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength, int ylength, int mode)
         {
             IPlayer? byPlayer = null;
             if (byEntity is EntityPlayer) byPlayer = world.PlayerByUid(((EntityPlayer)byEntity).PlayerUID);
@@ -237,67 +99,33 @@ namespace AbsoluteProspecting
 
             serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"Area sample taken for a length of {xzlength}:"), EnumChatType.Notification);
 
-            Dictionary<string, int> quantityFound = new Dictionary<string, int>();
+            Dictionary<string, int> firstOreDistance = new Dictionary<string, int>();
 
             BlockPos blockPos = blockSel.Position.Copy();
             api.World.BlockAccessor.WalkBlocks(blockPos.AddCopy(xzlength, ylength, xzlength), blockPos.AddCopy(-xzlength, -ylength, -xzlength), delegate (Block nblock, int x, int y, int z)
             {
-                if (nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
+                if (mode == 0 && nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
                 {
-                    string key = "ore-" + nblock.Variant["type"];
-                    int value = 0;
-                    quantityFound.TryGetValue(key, out value);
-                    quantityFound[key] = value + 1;
-                }
-            });
-            List<KeyValuePair<string, int>> list = quantityFound.OrderByDescending((KeyValuePair<string, int> val) => val.Value).ToList();
-            if (list.Count == 0)
-            {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "No ore node nearby"), EnumChatType.Notification);
-                return;
-            }
-
-            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
-            foreach (KeyValuePair<string, int> item in list)
-            {
-                string l = Lang.GetL(serverPlayer.LanguageCode, item.Key);
-                string l2 = Lang.GetL(serverPlayer.LanguageCode, resultTextByQuantity(item.Value), Lang.Get(item.Key));
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, l2, l), EnumChatType.Notification);
-            }
-        }
-
-        protected virtual void ProbeDistanceSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength, int ylength)
-        {
-            IPlayer? byPlayer = null;
-            if (byEntity is EntityPlayer) byPlayer = world.PlayerByUid(((EntityPlayer)byEntity).PlayerUID);
-
-            Block block = world.BlockAccessor.GetBlock(blockSel.Position);
-            block.OnBlockBroken(world, blockSel.Position, byPlayer, 0);
-
-            if (!isPropickable(block)) return;
-
-            IServerPlayer? serverPlayer = byPlayer as IServerPlayer;
-            if (serverPlayer == null) return;
-
-            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"Area sample taken for a length of {xzlength}:"), EnumChatType.Notification);
-
-            Dictionary<string, float> firstOreDistance = new Dictionary<string, (int x, int y, int z)>();
-
-            BlockPos blockPos = blockSel.Position.Copy();
-            api.World.BlockAccessor.WalkBlocks(blockPos.AddCopy(xzlength, ylength, xzlength), blockPos.AddCopy(-xzlength, -ylength, -xzlength), delegate (Block nblock, int x, int y, int z)
-            {
-                if (nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
-                {
-                    string key = "ore-" + nblock.Variant["type"];
-                    if (!firstOreDistance.ContainsKey(key))
+                    string key = nblock.Variant["type"].ToUpper();
+                    int distance = (int)blockSel.Position.DistanceTo(new BlockPos(x, y, z));
+                    if (!firstOreDistance.ContainsKey(key) || distance < firstOreDistance[key])
                     {
-                        float distance = blockSel.Position.DistanceTo(BlockPos(x, y, z));
                         firstOreDistance[key] = distance;
                     }
                 }
+                if (mode == 1 && nblock.Variant.ContainsKey("rock"))
+                {
+                    string key = nblock.Variant["rock"].ToUpper();
+                    int distance = (int)blockSel.Position.DistanceTo(new BlockPos(x, y, z));
+                    if (!firstOreDistance.ContainsKey(key) || distance < firstOreDistance[key])
+                    {
+                        firstOreDistance[key] = distance;
+                    }
+                }
+
             });
 
-            List<KeyValuePair<string, float>> list = firstOreDistance.ToList();
+            List<KeyValuePair<string,int>> list = firstOreDistance.ToList();
             if (list.Count == 0)
             {
                 serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "No ore node nearby"), EnumChatType.Notification);
@@ -305,86 +133,9 @@ namespace AbsoluteProspecting
             }
 
             serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
-            foreach (KeyValuePair<string, (int x, int y, int z)> item in list)
+            foreach (KeyValuePair<string, int> item in list)
             {
-                string l = Lang.GetL(serverPlayer.LanguageCode, item.Key);
-                string l2 = Lang.GetL(serverPlayer.LanguageCode, resultTextByQuantity(item.Value), Lang.Get(item.Key));
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, l2, l), EnumChatType.Notification);
-            }
-        }
-
-        protected virtual void ProbeLineSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel)
-        {
-            IPlayer? byPlayer = null;
-            if (byEntity is EntityPlayer) byPlayer = world.PlayerByUid(((EntityPlayer)byEntity).PlayerUID);
-
-            Block block = world.BlockAccessor.GetBlock(blockSel.Position);
-            block.OnBlockBroken(world, blockSel.Position, byPlayer, 0);
-
-            if (!isPropickable(block)) return;
-
-            IServerPlayer? serverPlayer = byPlayer as IServerPlayer;
-            if (serverPlayer == null) return;
-
-            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Line sample taken for length of 32:"), EnumChatType.Notification);
-
-            BlockFacing face = blockSel.Face;
-
-            Dictionary<string, int> quantityFound = new Dictionary<string, int>();
-
-            BlockPos searchPos = blockSel.Position.Copy();
-            for (int i = 0; i < 32; i++)
-            {
-                Block nblock = api.World.BlockAccessor.GetBlock(searchPos);
-
-                if (nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
-                {
-                    string key = "ore-" + nblock.Variant["type"];
-                    int q = 0;
-                    quantityFound.TryGetValue(key, out q);
-                    quantityFound[key] = q + 1;
-                }
-
-                switch (face.Code)
-                {
-                    case "north":
-                        searchPos.Z++;
-                        break;
-                    case "south":
-                        searchPos.Z--;
-                        break;
-                    case "east":
-                        searchPos.X--;
-                        break;
-                    case "west":
-                        searchPos.X++;
-                        break;
-                    case "up":
-                        searchPos.Y--;
-                        break;
-                    case "down":
-                        searchPos.Y++;
-                        break;
-                }
-            }
-
-            var resultsOrderedDesc = quantityFound.OrderByDescending(val => val.Value).ToList();
-
-            if (resultsOrderedDesc.Count == 0)
-            {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "No ore node found"), EnumChatType.Notification);
-            }
-            else
-            {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
-                foreach (var val in resultsOrderedDesc)
-                {
-                    string orename = Lang.GetL(serverPlayer.LanguageCode, val.Key);
-
-                    string resultText = Lang.GetL(serverPlayer.LanguageCode, resultTextByQuantity(val.Value), Lang.Get(val.Key));
-
-                    serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, resultText, orename), EnumChatType.Notification);
-                }
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {item.Value}"), EnumChatType.Notification);
             }
         }
 
