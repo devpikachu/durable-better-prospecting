@@ -12,9 +12,9 @@ using Vintagestory.GameContent;
 using Vintagestory.Server;
 using Vintagestory.API.Datastructures;
 
-namespace AbsoluteProspecting
+namespace BetterProspecting
 {
-    public class ItemAbsoluteProspecting : ItemProspectingPick
+    public class ItemBetterProspecting : ItemProspectingPick
     {
         SkillItem[]? toolModes;
 
@@ -32,9 +32,9 @@ namespace AbsoluteProspecting
 
                 if (capi != null)
                 {
-                    modes[0].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_line.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[0].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_line.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[0].TexturePremultipliedAlpha = false;
-                    modes[1].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("absoluteprospecting", "textures/icons/abpro_stone.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[1].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_stone.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[1].TexturePremultipliedAlpha = false;
                 }
 

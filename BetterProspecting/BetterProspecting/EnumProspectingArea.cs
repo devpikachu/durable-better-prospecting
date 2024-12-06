@@ -1,5 +1,5 @@
 ﻿
-namespace AbsoluteProspecting
+namespace BetterProspecting
 {
     internal enum EnumProspectingArea
     {
