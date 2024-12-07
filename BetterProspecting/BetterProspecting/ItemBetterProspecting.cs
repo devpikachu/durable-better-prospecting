@@ -75,7 +75,7 @@ namespace BetterProspecting
         public override bool OnBlockBrokenWith(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, float dropQuantityMultiplier = 1)
         {
             int toolMode = GetToolMode(itemslot, (byEntity as EntityPlayer).Player, blockSel);
-            int damage = 7;
+            int damage = 4;
 
             if (toolMode == 0) {
                 ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea, (int)EnumProspectingArea.Ycoords, toolMode);
