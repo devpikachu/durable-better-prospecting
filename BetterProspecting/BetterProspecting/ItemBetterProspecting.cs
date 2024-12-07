@@ -26,9 +26,12 @@ namespace BetterProspecting
             toolModes = ObjectCacheUtil.GetOrCreate(api, "proPickToolModes", () =>
             {
                 SkillItem[] modes;
-                modes = new SkillItem[2];
+                modes = new SkillItem[5];
                 modes[0] = new SkillItem() { Code = new AssetLocation("distance"), Name = Lang.Get("Distance Mode (Long range, distance search)") };
                 modes[1] = new SkillItem() { Code = new AssetLocation("stone"), Name = Lang.Get("Stone Mode (Long range, distance search for stone)") };
+                modes[2] = new SkillItem() { Code = new AssetLocation("area1"), Name = Lang.Get("Area Sample Mode (Searches in a small area)") };
+                modes[3] = new SkillItem() { Code = new AssetLocation("area2"), Name = Lang.Get("Area Sample Mode (Searches in a medium area)") };
+                modes[4] = new SkillItem() { Code = new AssetLocation("area3"), Name = Lang.Get("Area Sample Mode (Searches in a large area)") };
 
                 if (capi != null)
                 {
@@ -36,6 +39,12 @@ namespace BetterProspecting
                     modes[0].TexturePremultipliedAlpha = false;
                     modes[1].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_stone.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[1].TexturePremultipliedAlpha = false;
+                    modes[2].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_small.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[2].TexturePremultipliedAlpha = false;
+                    modes[3].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_med.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[3].TexturePremultipliedAlpha = false;
+                    modes[4].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_large.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[4].TexturePremultipliedAlpha = false;
                 }
 
                 return modes;
@@ -71,9 +80,21 @@ namespace BetterProspecting
             if (toolMode == 0) {
                 ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea, (int)EnumProspectingArea.Ycoords, toolMode);
             }
-            else
+            else if (toolMode == 1)
             {
                 ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea / 2, (int)EnumProspectingArea.Ycoords, toolMode);
+            }
+            else if (toolMode == 2)
+            {
+                 ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.SmallArea, (int)EnumProspectingArea.Ycoords);
+            }
+            else if (toolMode == 3)
+            {
+                 ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.MediumArea, (int)EnumProspectingArea.Ycoords);
+            }
+            else if (toolMode == 4)
+            {
+                 ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.LargeArea, (int)EnumProspectingArea.Ycoords);
             }
 
             if (DamagedBy != null && DamagedBy.Contains(EnumItemDamageSource.BlockBreaking))
@@ -82,6 +103,50 @@ namespace BetterProspecting
             }
 
             return true;
+        }
+
+        protected virtual void ProbeAreaSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength, int ylength)
+        {
+            IPlayer? byPlayer = null;
+            if (byEntity is EntityPlayer) byPlayer = world.PlayerByUid(((EntityPlayer)byEntity).PlayerUID);
+
+            Block block = world.BlockAccessor.GetBlock(blockSel.Position);
+            block.OnBlockBroken(world, blockSel.Position, byPlayer, 0);
+
+            if (!isPropickable(block)) return;
+
+            IServerPlayer? serverPlayer = byPlayer as IServerPlayer;
+            if (serverPlayer == null) return;
+
+            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"Area sample taken for a length of {xzlength}:"), EnumChatType.Notification);
+
+            Dictionary<string, int> quantityFound = new Dictionary<string, int>();
+
+            BlockPos blockPos = blockSel.Position.Copy();
+            api.World.BlockAccessor.WalkBlocks(blockPos.AddCopy(xzlength, ylength, xzlength), blockPos.AddCopy(-xzlength, -ylength, -xzlength), delegate (Block nblock, int x, int y, int z)
+            {
+                if (nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
+                {
+                    string key = "ore-" + nblock.Variant["type"];
+                    int value = 0;
+                    quantityFound.TryGetValue(key, out value);
+                    quantityFound[key] = value + 1;
+                }
+            });
+            List<KeyValuePair<string, int>> list = quantityFound.OrderByDescending((KeyValuePair<string, int> val) => val.Value).ToList();
+            if (list.Count == 0)
+            {
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "No ore node nearby"), EnumChatType.Notification);
+                return;
+            }
+
+            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
+            foreach (KeyValuePair<string, int> item in list)
+            {
+                string l = Lang.GetL(serverPlayer.LanguageCode, item.Key);
+                string l2 = Lang.GetL(serverPlayer.LanguageCode, resultTextByQuantity(item.Value), Lang.Get(item.Key));
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, l2, l), EnumChatType.Notification);
+            }
         }
 
         protected virtual void ProbeDistanceSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength, int ylength, int mode)
@@ -135,7 +200,7 @@ namespace BetterProspecting
             serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
             foreach (KeyValuePair<string, int> item in list)
             {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {item.Value} blocks away"), EnumChatType.Notification);
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {item.Value} block(s) away"), EnumChatType.Notification);
             }
         }
 
