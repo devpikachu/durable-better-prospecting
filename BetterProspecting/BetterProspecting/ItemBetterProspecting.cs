@@ -26,25 +26,28 @@ namespace BetterProspecting
             toolModes = ObjectCacheUtil.GetOrCreate(api, "proPickToolModes", () =>
             {
                 SkillItem[] modes;
-                modes = new SkillItem[5];
-                modes[0] = new SkillItem() { Code = new AssetLocation("distance"), Name = Lang.Get("Distance Mode (Long range, distance search)") };
-                modes[1] = new SkillItem() { Code = new AssetLocation("stone"), Name = Lang.Get("Stone Mode (Long range, distance search for stone)") };
-                modes[2] = new SkillItem() { Code = new AssetLocation("area1"), Name = Lang.Get("Area Sample Mode (Searches in a small area)") };
-                modes[3] = new SkillItem() { Code = new AssetLocation("area2"), Name = Lang.Get("Area Sample Mode (Searches in a medium area)") };
-                modes[4] = new SkillItem() { Code = new AssetLocation("area3"), Name = Lang.Get("Area Sample Mode (Searches in a large area)") };
+                modes = new SkillItem[6];
+                modes[0] = new SkillItem() { Code = new AssetLocation("distance_short"), Name = Lang.Get("Short Distance Mode (Short range, distance search)") };
+                modes[1] = new SkillItem() { Code = new AssetLocation("distance"), Name = Lang.Get("Distance Mode (Long range, distance search)") };
+                modes[2] = new SkillItem() { Code = new AssetLocation("stone"), Name = Lang.Get("Stone Mode (Long range, distance search for stone)") };
+                modes[3] = new SkillItem() { Code = new AssetLocation("area1"), Name = Lang.Get("Area Sample Mode (Searches in a small area)") };
+                modes[4] = new SkillItem() { Code = new AssetLocation("area2"), Name = Lang.Get("Area Sample Mode (Searches in a medium area)") };
+                modes[5] = new SkillItem() { Code = new AssetLocation("area3"), Name = Lang.Get("Area Sample Mode (Searches in a large area)") };
 
                 if (capi != null)
                 {
-                    modes[0].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_line.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[0].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/short.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[0].TexturePremultipliedAlpha = false;
-                    modes[1].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_stone.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[1].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_line.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[1].TexturePremultipliedAlpha = false;
-                    modes[2].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_small.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[2].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_stone.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[2].TexturePremultipliedAlpha = false;
-                    modes[3].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_med.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[3].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_small.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[3].TexturePremultipliedAlpha = false;
-                    modes[4].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_large.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[4].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_med.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
                     modes[4].TexturePremultipliedAlpha = false;
+                    modes[5].WithIcon(capi, capi.Gui.LoadSvgWithPadding(new AssetLocation("betterprospecting", "textures/icons/abpro_large.svg"), 48, 48, 5, ColorUtil.WhiteArgb));
+                    modes[5].TexturePremultipliedAlpha = false;
                 }
 
                 return modes;
@@ -78,21 +81,26 @@ namespace BetterProspecting
             int damage = 4;
 
             if (toolMode == 0) {
-                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea, (int)EnumProspectingArea.Ycoords, toolMode);
+                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.ShortDirectionalArea, (int)EnumProspectingArea.Ycoords, 0);
+		damage = 3;
             }
-            else if (toolMode == 1)
-            {
-                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea / 2, (int)EnumProspectingArea.Ycoords, toolMode);
+	    else if (toolMode == 1)
+	    {
+                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea, (int)EnumProspectingArea.Ycoords, 0);
             }
             else if (toolMode == 2)
             {
-                 ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.SmallArea, (int)EnumProspectingArea.Ycoords);
+                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.StoneDirectionalArea, (int)EnumProspectingArea.Ycoords, 1);
             }
             else if (toolMode == 3)
             {
-                 ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.MediumArea, (int)EnumProspectingArea.Ycoords);
+                 ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.SmallArea, (int)EnumProspectingArea.Ycoords);
             }
             else if (toolMode == 4)
+            {
+                 ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.MediumArea, (int)EnumProspectingArea.Ycoords);
+            }
+            else if (toolMode == 5)
             {
                  ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.LargeArea, (int)EnumProspectingArea.Ycoords);
             }
