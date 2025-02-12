@@ -81,7 +81,7 @@ namespace BetterProspecting
         public override bool OnBlockBrokenWith(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, float dropQuantityMultiplier = 1)
         {
             int toolMode = GetToolMode(itemslot, (byEntity as EntityPlayer).Player, blockSel);
-            int damage = 4;
+            var damage = 4;
             var intialToolsPresent = 1;
 
             if (toolMode == intialToolsPresent + 0)
@@ -111,9 +111,11 @@ namespace BetterProspecting
             }
             else
             {
+                damage = 1;
                 ProbeBlockDensityMode(world, byEntity, itemslot, blockSel);
             }
 
+            /// only do extra damage if not using the game's built in <see cref="ItemProspectingPick.ProbeBlockDensityMode"/>
             if (DamagedBy != null && DamagedBy.Contains(EnumItemDamageSource.BlockBreaking))
             {
                 DamageItem(world, byEntity, itemslot, damage);
