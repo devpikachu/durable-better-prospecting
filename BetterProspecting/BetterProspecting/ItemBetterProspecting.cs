@@ -109,6 +109,10 @@ namespace BetterProspecting
             {
                 ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.LargeArea, (int)EnumProspectingArea.Ycoords);
             }
+            else
+            {
+                ProbeBlockDensityMode(world, byEntity, itemslot, blockSel);
+            }
 
             if (DamagedBy != null && DamagedBy.Contains(EnumItemDamageSource.BlockBreaking))
             {
