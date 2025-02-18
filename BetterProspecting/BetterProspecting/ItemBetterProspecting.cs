@@ -149,7 +149,7 @@ namespace BetterProspecting
                 if (nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
                 {
                     string key = "ore-" + nblock.Variant["type"];
-                    int value = 0;                    
+                    int value = 0;
                     quantityFound.TryGetValue(key, out value);
                     quantityFound[key] = value + 1;
                 }
@@ -215,7 +215,7 @@ namespace BetterProspecting
             serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
             foreach (KeyValuePair<string, BlockPos> item in list)
             {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {item.Value.DistanceTo(blockSel.Position)} block(s) away"), EnumChatType.Notification);
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {Math.Round(item.Value.DistanceTo(blockSel.Position), 1)} block(s) away"), EnumChatType.Notification);
             }
         }
 
