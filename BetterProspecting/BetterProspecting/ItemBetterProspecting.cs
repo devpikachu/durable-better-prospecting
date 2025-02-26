@@ -9,8 +9,8 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using Vintagestory.Server;
-using Vintagestory.API.Datastructures;
+
+using ThisMod = BetterProspecting.BetterProspectingModSystem;
 
 namespace BetterProspecting
 {
@@ -86,28 +86,28 @@ namespace BetterProspecting
 
             if (toolMode == intialToolsPresent + 0)
             {
-                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.ShortDirectionalArea, (int)EnumProspectingArea.Ycoords, 0);
+                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, ThisMod.Config.DistanceModeSmallRadius, ProspectingTargetType.Ore);
                 damage = 3;
             }
             else if (toolMode == intialToolsPresent + 1)
             {
-                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.DirectionalArea, (int)EnumProspectingArea.Ycoords, 0);
+                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, ThisMod.Config.DistanceModeLargeRadius, ProspectingTargetType.Ore);
             }
             else if (toolMode == intialToolsPresent + 2)
             {
-                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.StoneDirectionalArea, (int)EnumProspectingArea.Ycoords, 1);
+                ProbeDistanceSampleMode(world, byEntity, itemslot, blockSel, ThisMod.Config.DistanceModeStoneRadius, ProspectingTargetType.Rock);
             }
             else if (toolMode == intialToolsPresent + 3)
             {
-                ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.SmallArea, (int)EnumProspectingArea.Ycoords);
+                ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, ThisMod.Config.AreaModeSmallRadius);
             }
             else if (toolMode == intialToolsPresent + 4)
             {
-                ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.MediumArea, (int)EnumProspectingArea.Ycoords);
+                ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, ThisMod.Config.AreaModeMediumRadius);
             }
             else if (toolMode == intialToolsPresent + 5)
             {
-                ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, (int)EnumProspectingArea.LargeArea, (int)EnumProspectingArea.Ycoords);
+                ProbeAreaSampleMode(world, byEntity, itemslot, blockSel, ThisMod.Config.AreaModeLargeRadius);
             }
             else
             {
@@ -124,8 +124,10 @@ namespace BetterProspecting
             return true;
         }
 
-        protected virtual void ProbeAreaSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength, int ylength)
+        protected virtual void ProbeAreaSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength)
         {
+            int ylength = ThisMod.Config.ChunkMode ? ThisMod.Config.ChunkModeHeight : xzlength;
+
             IPlayer? byPlayer = null;
             if (byEntity is EntityPlayer) byPlayer = world.PlayerByUid(((EntityPlayer)byEntity).PlayerUID);
 
@@ -141,8 +143,10 @@ namespace BetterProspecting
 
             Dictionary<string, int> quantityFound = new Dictionary<string, int>();
 
-            BlockPos blockPos = blockSel.Position.Copy();
-            api.World.BlockAccessor.WalkBlocks(blockPos.AddCopy(xzlength, ylength, xzlength), blockPos.AddCopy(-xzlength, -ylength, -xzlength), delegate (Block nblock, int x, int y, int z)
+            api
+                .World
+                .GetCachingBlockAccessor(false, false)
+                .WalkBlocks(blockSel.Position.AddCopy(xzlength, ylength, xzlength), blockSel.Position.AddCopy(-xzlength, -ylength, -xzlength), delegate (Block nblock, int x, int y, int z)
             {
                 if (nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
                 {
@@ -168,8 +172,11 @@ namespace BetterProspecting
             }
         }
 
-        protected virtual void ProbeDistanceSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength, int ylength, int mode)
+        protected virtual void ProbeDistanceSampleMode(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, BlockSelection blockSel, int xzlength, ProspectingTargetType mode)
         {
+            int ylength = ThisMod.Config.ChunkMode ? ThisMod.Config.ChunkModeHeight : xzlength;
+
+
             IPlayer? byPlayer = null;
             if (byEntity is EntityPlayer) byPlayer = world.PlayerByUid(((EntityPlayer)byEntity).PlayerUID);
 
@@ -183,33 +190,27 @@ namespace BetterProspecting
 
             serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"Area sample taken for a length of {xzlength}:"), EnumChatType.Notification);
 
-            Dictionary<string, int> firstOreDistance = new Dictionary<string, int>();
+            Dictionary<string, BlockPos> closestByType = new Dictionary<string, BlockPos>();
 
             BlockPos blockPos = blockSel.Position.Copy();
-            api.World.BlockAccessor.WalkBlocks(blockPos.AddCopy(xzlength, ylength, xzlength), blockPos.AddCopy(-xzlength, -ylength, -xzlength), delegate (Block nblock, int x, int y, int z)
+            
+            api
+                .World
+                .GetCachingBlockAccessor(false, false)
+                .WalkBlocks(blockPos.AddCopy(xzlength, ylength, xzlength), blockPos.AddCopy(-xzlength, -ylength, -xzlength), delegate (Block nblock, int x, int y, int z)
             {
-                if (mode == 0 && nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
+                if (mode == ProspectingTargetType.Ore && nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
                 {
-                    string key = nblock.Variant["type"].ToUpper();
-                    int distance = (int)blockSel.Position.DistanceTo(new BlockPos(x, y, z));
-                    if (!firstOreDistance.ContainsKey(key) || distance < firstOreDistance[key])
-                    {
-                        firstOreDistance[key] = distance;
-                    }
+                    closestByType.TryAdd(nblock.Variant["type"].ToUpper(), new BlockPos(x, y, z));
                 }
-                if (mode == 1 && nblock.Variant.ContainsKey("rock"))
+                else if (mode == ProspectingTargetType.Rock && nblock.Variant.ContainsKey("rock"))
                 {
-                    string key = nblock.Variant["rock"].ToUpper();
-                    int distance = (int)blockSel.Position.DistanceTo(new BlockPos(x, y, z));
-                    if (!firstOreDistance.ContainsKey(key) || distance < firstOreDistance[key])
-                    {
-                        firstOreDistance[key] = distance;
-                    }
+                    closestByType.TryAdd(nblock.Variant["rock"].ToUpper(), new BlockPos(x, y, z));
                 }
 
-            });
+            }, true);
 
-            List<KeyValuePair<string, int>> list = firstOreDistance.ToList();
+            List<KeyValuePair<string, BlockPos>> list = closestByType.ToList();
             if (list.Count == 0)
             {
                 serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "No ore node nearby"), EnumChatType.Notification);
@@ -217,15 +218,21 @@ namespace BetterProspecting
             }
 
             serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
-            foreach (KeyValuePair<string, int> item in list)
+            foreach (KeyValuePair<string, BlockPos> item in list)
             {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {item.Value} block(s) away"), EnumChatType.Notification);
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {Math.Round(item.Value.DistanceTo(blockSel.Position))} block(s) away"), EnumChatType.Notification);
             }
         }
 
         private bool isPropickable(Block block)
         {
             return block?.Attributes?["propickable"].AsBool(false) == true;
+        }
+
+        
+        protected enum ProspectingTargetType {
+            Rock,
+            Ore,
         }
     }
 }
