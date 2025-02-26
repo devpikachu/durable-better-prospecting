@@ -220,7 +220,7 @@ namespace BetterProspecting
             serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
             foreach (KeyValuePair<string, BlockPos> item in list)
             {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {Math.Round(item.Value.DistanceTo(blockSel.Position), 1)} block(s) away"), EnumChatType.Notification);
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {Math.Round(item.Value.DistanceTo(blockSel.Position))} block(s) away"), EnumChatType.Notification);
             }
         }
 
