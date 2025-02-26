@@ -5,13 +5,14 @@
   "authors": [
     "NathanNgo",
     "Shacklebottom",
-    "iturtleman"
+    "iturtleman",
+    "Voragain"
   ],
   "contributors": [
     "Gnomp"
   ],
   "description": "A less tedious form of prospecting.",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "dependencies": {
     "game": "*"
   }
