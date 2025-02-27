@@ -201,11 +201,11 @@ namespace BetterProspecting
             {
                 if (mode == ProspectingTargetType.Ore && nblock.BlockMaterial == EnumBlockMaterial.Ore && nblock.Variant.ContainsKey("type"))
                 {
-                    closestByType.TryAdd(nblock.Variant["type"].ToUpper(), new BlockPos(x, y, z));
+                    closestByType.TryAdd("ore-" + nblock.Variant["type"], new BlockPos(x, y, z));
                 }
                 else if (mode == ProspectingTargetType.Rock && nblock.Variant.ContainsKey("rock"))
                 {
-                    closestByType.TryAdd(nblock.Variant["rock"].ToUpper(), new BlockPos(x, y, z));
+                    closestByType.TryAdd("rock-" + nblock.Variant["rock"], new BlockPos(x, y, z));
                 }
 
             }, true);
@@ -213,14 +213,17 @@ namespace BetterProspecting
             List<KeyValuePair<string, BlockPos>> list = closestByType.ToList();
             if (list.Count == 0)
             {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "No ore node nearby"), EnumChatType.Notification);
+                string message = (mode == ProspectingTargetType.Ore) ? "No ore node nearby" : "No rocks neaby";
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, message), EnumChatType.Notification);
                 return;
             }
 
-            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, "Found the following ore nodes"), EnumChatType.Notification);
+            string message2 = (mode == ProspectingTargetType.Ore) ? "Found the following ore nodes" : "Found the following rock types";
+            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, message2), EnumChatType.Notification);
             foreach (KeyValuePair<string, BlockPos> item in list)
             {
-                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{item.Key}: {Math.Round(item.Value.DistanceTo(blockSel.Position))} block(s) away"), EnumChatType.Notification);
+                string l = Lang.GetL(serverPlayer.LanguageCode, item.Key);
+                serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, $"{l}: {Math.Round(item.Value.DistanceTo(blockSel.Position))} block(s) away"), EnumChatType.Notification);
             }
         }
 
