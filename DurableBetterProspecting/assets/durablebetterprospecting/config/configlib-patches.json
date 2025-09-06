@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "file": "DurableBetterProspecting.json",
+  "settings": [
+    {
+      "type": "separator",
+      "title": "configDensityModeSeparator"
+    },
+    {
+      "type": "integer",
+      "code": "DensityModeDurabilityCost",
+      "ingui": "configDensityModeDurabilityCostLabel",
+      "comment": "configDensityModeDurabilityCostComment",
+      "default": 1
+    },
+    {
+      "type": "separator",
+      "title": "configDistanceModeSeparator"
+    },
+    {
+      "type": "integer",
+      "code": "DistanceModeSmallDurabilityCost",
+      "ingui": "configDistanceModeSmallDurabilityCostLabel",
+      "comment": "configDistanceModeSmallDurabilityCostComment",
+      "default": 1
+    },
+    {
+      "type": "integer",
+      "code": "DistanceModeSmallSize",
+      "ingui": "configDistanceModeSmallSizeLabel",
+      "comment": "configDistanceModeSmallSizeComment",
+      "default": 32
+    },
+    {
+      "type": "integer",
+      "code": "DistanceModeLargeDurabilityCost",
+      "ingui": "configDistanceModeLargeDurabilityCostLabel",
+      "comment": "configDistanceModeLargeDurabilityCostComment",
+      "default": 2
+    },
+    {
+      "type": "integer",
+      "code": "DistanceModeLargeSize",
+      "ingui": "configDistanceModeLargeSizeLabel",
+      "comment": "configDistanceModeLargeSizeComment",
+      "default": 256
+    },
+    {
+      "type": "separator",
+      "title": "configRockModeSeparator"
+    },
+    {
+      "type": "integer",
+      "code": "RockModeDurabilityCost",
+      "ingui": "configRockModeDurabilityCostLabel",
+      "comment": "configRockModeDurabilityCostComment",
+      "default": 1
+    },
+    {
+      "type": "integer",
+      "code": "RockModeSize",
+      "ingui": "configRockModeSizeLabel",
+      "comment": "configRockModeSizeComment",
+      "default": 128
+    },
+    {
+      "type": "separator",
+      "title": "configAreaModeSeparator"
+    },
+    {
+      "type": "integer",
+      "code": "AreaModeSmallDurabilityCost",
+      "ingui": "configAreaModeSmallDurabilityCostLabel",
+      "comment": "configAreaModeSmallDurabilityCostComment",
+      "default": 1
+    },
+    {
+      "type": "integer",
+      "code": "AreaModeSmallSize",
+      "ingui": "configAreaModeSmallSizeLabel",
+      "comment": "configAreaModeSmallSizeComment",
+      "default": 16
+    },
+    {
+      "type": "integer",
+      "code": "AreaModeMediumDurabilityCost",
+      "ingui": "configAreaModeMediumDurabilityCostLabel",
+      "comment": "configAreaModeMediumDurabilityCostComment",
+      "default": 2
+    },
+    {
+      "type": "integer",
+      "code": "AreaModeMediumSize",
+      "ingui": "configAreaModeMediumSizeLabel",
+      "comment": "configAreaModeMediumSizeComment",
+      "default": 32
+    },
+    {
+      "type": "integer",
+      "code": "AreaModeLargeDurabilityCost",
+      "ingui": "configAreaModeLargeDurabilityCostLabel",
+      "comment": "configAreaModeLargeDurabilityCostComment",
+      "default": 3
+    },
+    {
+      "type": "integer",
+      "code": "AreaModeLargeSize",
+      "ingui": "configAreaModeLargeSizeLabel",
+      "comment": "configAreaModeLargeSizeComment",
+      "default": 64
+    }
+  ]
+}

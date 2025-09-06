@@ -8,7 +8,6 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using Super = DurableBetterProspecting.DurableBetterProspectingModSystem;
 
 namespace DurableBetterProspecting.Items;
 
@@ -142,41 +141,39 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         {
             case DensityModeIndex:
                 ProbeBlockDensityMode(world, byEntity, itemSlot, blockSelection);
-                damage = Super.Config.DensityModeDurabilityCost;
+                damage = ModConfig.Loaded.DensityModeDurabilityCost;
                 break;
 
             case DistanceSmallModeIndex:
-                ProbeDistanceMode(world, player, blockSelection, Super.Config.DistanceModeSmallSize,
+                ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.DistanceModeSmallSize,
                     ProspectingTargetType.Ore);
-                damage = Super.Config.DistanceModeDurabilityCost;
+                damage = ModConfig.Loaded.DistanceModeSmallDurabilityCost;
                 break;
 
             case DistanceLargeModeIndex:
-                ProbeDistanceMode(world, player, blockSelection, Super.Config.DistanceModeLargeSize,
+                ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.DistanceModeLargeSize,
                     ProspectingTargetType.Ore);
-                damage = (int)(Super.Config.DistanceModeDurabilityCost *
-                               Super.Config.DistanceModeDurabilityCostMultiplier);
+                damage = ModConfig.Loaded.DistanceModeLargeDurabilityCost;
                 break;
 
             case RockModeIndex:
-                ProbeDistanceMode(world, player, blockSelection, Super.Config.RockModeSize, ProspectingTargetType.Rock);
-                damage = Super.Config.RockModeDurabilityCost;
+                ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.RockModeSize, ProspectingTargetType.Rock);
+                damage = ModConfig.Loaded.RockModeDurabilityCost;
                 break;
 
             case AreaSmallModeIndex:
-                ProbeAreaMode(world, player, blockSelection, Super.Config.AreaModeSmallSize);
-                damage = Super.Config.AreaModeDurabilityCost;
+                ProbeAreaMode(world, player, blockSelection, ModConfig.Loaded.AreaModeSmallSize);
+                damage = ModConfig.Loaded.AreaModeSmallDurabilityCost;
                 break;
 
             case AreaMediumModeIndex:
-                ProbeAreaMode(world, player, blockSelection, Super.Config.AreaModeMediumSize);
-                damage = (int)(Super.Config.AreaModeDurabilityCost * Super.Config.AreaModeDurabilityCostMultiplier);
+                ProbeAreaMode(world, player, blockSelection, ModConfig.Loaded.AreaModeMediumSize);
+                damage = ModConfig.Loaded.AreaModeMediumDurabilityCost;
                 break;
 
             case AreaLargeModeIndex:
-                ProbeAreaMode(world, player, blockSelection, Super.Config.AreaModeLargeSize);
-                damage =
-                    (int)(Super.Config.AreaModeDurabilityCost * (Super.Config.AreaModeDurabilityCostMultiplier * 2));
+                ProbeAreaMode(world, player, blockSelection, ModConfig.Loaded.AreaModeLargeSize);
+                damage = ModConfig.Loaded.AreaModeLargeDurabilityCost;
                 break;
         }
 
