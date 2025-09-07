@@ -64,17 +64,17 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                 new()
                 {
                     Code = new AssetLocation("area_small"),
-                    Name = Lang.Get("Area Search Mode (Short range, node based search for ore types)")
+                    Name = Lang.Get("Area Search Mode (Short range, exact search for ore types)")
                 },
                 new()
                 {
                     Code = new AssetLocation("area_medium"),
-                    Name = Lang.Get("Area Search Mode (Medium range, node based search for ore types)")
+                    Name = Lang.Get("Area Search Mode (Medium range, exact search for ore types)")
                 },
                 new()
                 {
                     Code = new AssetLocation("area_large"),
-                    Name = Lang.Get("Area Search Mode (Long range, node based search for ore types)")
+                    Name = Lang.Get("Area Search Mode (Long range, exact search for ore types)")
                 }
             ];
 

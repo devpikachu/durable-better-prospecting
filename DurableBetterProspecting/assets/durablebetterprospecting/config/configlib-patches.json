@@ -4,123 +4,123 @@
   "settings": [
     {
       "type": "separator",
-      "title": "config-densitymode-separator"
+      "title": "Density Mode"
     },
     {
       "type": "integer",
       "code": "DensityModeDurabilityCost",
-      "ingui": "config-densitymode-durabilitycost-label",
-      "comment": "config-densitymode-durabilitycost-comment",
+      "ingui": "Durability Cost",
+      "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
       "default": 1
     },
     {
       "type": "separator",
-      "title": "config-rockmode-separator"
+      "title": "Rock Mode"
     },
     {
       "type": "integer",
       "code": "RockModeDurabilityCost",
-      "ingui": "config-rockmode-durabilitycost-label",
-      "comment": "config-rockmode-durabilitycost-label",
+      "ingui": "Durability Cost",
+      "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
       "default": 1
     },
     {
       "type": "integer",
       "code": "RockModeSize",
-      "ingui": "config-rockmode-size-label",
-      "comment": "config-rockmode-size-comment",
+      "ingui": "Area Size",
+      "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
       "default": 128
     },
     {
       "type": "separator",
-      "title": "config-distancemode-separator"
+      "title": "Distance Mode"
     },
     {
       "type": "integer",
       "code": "DistanceModeSmallDurabilityCost",
-      "ingui": "config-distancemode-small-durabilitycost-label",
-      "comment": "config-distancemode-small-durabilitycost-comment",
+      "ingui": "Small Range Durability Cost",
+      "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
       "default": 1
     },
     {
       "type": "integer",
       "code": "DistanceModeSmallSize",
-      "ingui": "config-distancemode-small-size-label",
-      "comment": "config-distancemode-small-size-comment",
+      "ingui": "Small Range Area Size",
+      "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
       "default": 32
     },
     {
       "type": "integer",
       "code": "DistanceModeMediumDurabilityCost",
-      "ingui": "config-distancemode-medium-durabilitycost-label",
-      "comment": "config-distancemode-medium-durabilitycost-comment",
+      "ingui": "Medium Range Durability Cost",
+      "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
       "default": 2
     },
     {
       "type": "integer",
       "code": "DistanceModeMediumSize",
-      "ingui": "config-distancemode-medium-size-label",
-      "comment": "config-distancemode-medium-size-comment",
+      "ingui": "Medium Range Area Size",
+      "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
       "default": 64
     },
     {
       "type": "integer",
       "code": "DistanceModeLargeDurabilityCost",
-      "ingui": "config-distancemode-large-durabilitycost-label",
-      "comment": "config-distancemode-large-durabilitycost-comment",
+      "ingui": "Large Range Durability Cost",
+      "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
       "default": 2
     },
     {
       "type": "integer",
       "code": "DistanceModeLargeSize",
-      "ingui": "config-distancemode-large-size-label",
-      "comment": "config-distancemode-large-size-comment",
+      "ingui": "Large Range Area Size",
+      "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
       "default": 256
     },
     {
       "type": "separator",
-      "title": "config-areamode-separator"
+      "title": "Area Mode"
     },
     {
       "type": "integer",
       "code": "AreaModeSmallDurabilityCost",
-      "ingui": "config-areamode-small-durabilitycost-label",
-      "comment": "config-areamode-small-durabilitycost-comment",
+      "ingui": "Small Range Durability Cost",
+      "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
       "default": 1
     },
     {
       "type": "integer",
       "code": "AreaModeSmallSize",
-      "ingui": "config-areamode-small-size-label",
-      "comment": "config-areamode-small-size-comment",
+      "ingui": "Small Range Area Size",
+      "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
       "default": 16
     },
     {
       "type": "integer",
       "code": "AreaModeMediumDurabilityCost",
-      "ingui": "config-areamode-medium-durabilitycost-label",
-      "comment": "config-areamode-medium-durabilitycost-comment",
+      "ingui": "Medium Range Durability Cost",
+      "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
       "default": 2
     },
     {
       "type": "integer",
       "code": "AreaModeMediumSize",
-      "ingui": "config-areamode-medium-size-label",
-      "comment": "config-areamode-medium-size-comment",
+      "ingui": "Medium Range Area Size",
+      "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
       "default": 32
     },
     {
       "type": "integer",
       "code": "AreaModeLargeDurabilityCost",
-      "ingui": "config-areamode-large-durabilitycost-label",
-      "comment": "config-areamode-large-durabilitycost-comment",
+      "ingui": "Large Range Durability Cost",
+      "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
       "default": 3
     },
     {
       "type": "integer",
       "code": "AreaModeLargeSize",
-      "ingui": "config-areamode-large-size-label",
-      "comment": "config-areamode-large-size-comment",
+      "ingui": "Large Range Area Size",
+      "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
       "default": 64
     }
   ]
