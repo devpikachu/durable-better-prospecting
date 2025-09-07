@@ -15,6 +15,24 @@
     },
     {
       "type": "separator",
+      "title": "configRockModeSeparator"
+    },
+    {
+      "type": "integer",
+      "code": "RockModeDurabilityCost",
+      "ingui": "configRockModeDurabilityCostLabel",
+      "comment": "configRockModeDurabilityCostComment",
+      "default": 1
+    },
+    {
+      "type": "integer",
+      "code": "RockModeSize",
+      "ingui": "configRockModeSizeLabel",
+      "comment": "configRockModeSizeComment",
+      "default": 128
+    },
+    {
+      "type": "separator",
       "title": "configDistanceModeSeparator"
     },
     {
@@ -33,6 +51,20 @@
     },
     {
       "type": "integer",
+      "code": "DistanceModeMediumDurabilityCost",
+      "ingui": "configDistanceModeMediumDurabilityCostLabel",
+      "comment": "configDistanceModeMediumDurabilityCostComment",
+      "default": 2
+    },
+    {
+      "type": "integer",
+      "code": "DistanceModeMediumSize",
+      "ingui": "configDistanceModeMediumSizeLabel",
+      "comment": "configDistanceModeMediumSizeComment",
+      "default": 64
+    },
+    {
+      "type": "integer",
       "code": "DistanceModeLargeDurabilityCost",
       "ingui": "configDistanceModeLargeDurabilityCostLabel",
       "comment": "configDistanceModeLargeDurabilityCostComment",
@@ -44,24 +76,6 @@
       "ingui": "configDistanceModeLargeSizeLabel",
       "comment": "configDistanceModeLargeSizeComment",
       "default": 256
-    },
-    {
-      "type": "separator",
-      "title": "configRockModeSeparator"
-    },
-    {
-      "type": "integer",
-      "code": "RockModeDurabilityCost",
-      "ingui": "configRockModeDurabilityCostLabel",
-      "comment": "configRockModeDurabilityCostComment",
-      "default": 1
-    },
-    {
-      "type": "integer",
-      "code": "RockModeSize",
-      "ingui": "configRockModeSizeLabel",
-      "comment": "configRockModeSizeComment",
-      "default": 128
     },
     {
       "type": "separator",

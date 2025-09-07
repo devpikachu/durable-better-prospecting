@@ -15,6 +15,8 @@ public class ModConfig
 
     public int DistanceModeSmallDurabilityCost { get; init; } = 1;
     public int DistanceModeSmallSize { get; init; } = 32;
+    public int DistanceModeMediumDurabilityCost { get; init; } = 2;
+    public int DistanceModeMediumSize { get; init; } = 64;
     public int DistanceModeLargeDurabilityCost { get; init; } = 2;
     public int DistanceModeLargeSize { get; init; } = 256;
 

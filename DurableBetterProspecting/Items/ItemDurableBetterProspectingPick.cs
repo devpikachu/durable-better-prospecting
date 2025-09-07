@@ -20,12 +20,13 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
     }
 
     private const int DensityModeIndex = 0;
-    private const int DistanceSmallModeIndex = 1;
-    private const int DistanceLargeModeIndex = 2;
-    private const int RockModeIndex = 3;
-    private const int AreaSmallModeIndex = 4;
-    private const int AreaMediumModeIndex = 5;
-    private const int AreaLargeModeIndex = 6;
+    private const int RockModeIndex = 1;
+    private const int DistanceSmallModeIndex = 2;
+    private const int DistanceMediumModeIndex = 3;
+    private const int DistanceLargeModeIndex = 4;
+    private const int AreaSmallModeIndex = 5;
+    private const int AreaMediumModeIndex = 6;
+    private const int AreaLargeModeIndex = 7;
 
     private SkillItem[] _toolModes = [];
 
@@ -42,33 +43,38 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                 },
                 new()
                 {
+                    Code = new AssetLocation("rock"),
+                    Name = Lang.Get("Rock Search Mode (Long range, distance search for rock types)")
+                },
+                new()
+                {
                     Code = new AssetLocation("distance_small"),
-                    Name = Lang.Get("Distance Search Mode (Short range, distance search)")
+                    Name = Lang.Get("Distance Search Mode (Short range, distance search for ore types)")
+                },
+                new()
+                {
+                    Code = new AssetLocation("distance_medium"),
+                    Name = Lang.Get("Distance Search Mode (Medium range, distance search for ore types)")
                 },
                 new()
                 {
                     Code = new AssetLocation("distance_large"),
-                    Name = Lang.Get("Distance Search Mode (Long range, distance search)")
-                },
-                new()
-                {
-                    Code = new AssetLocation("rock"),
-                    Name = Lang.Get("Rock Search Mode (Long range, distance search for rock)")
+                    Name = Lang.Get("Distance Search Mode (Long range, distance search for ore types)")
                 },
                 new()
                 {
                     Code = new AssetLocation("area_small"),
-                    Name = Lang.Get("Area Search Mode (Short range, node based search)")
+                    Name = Lang.Get("Area Search Mode (Short range, node based search for ore types)")
                 },
                 new()
                 {
                     Code = new AssetLocation("area_medium"),
-                    Name = Lang.Get("Area Search Mode (Medium range, node based search)")
+                    Name = Lang.Get("Area Search Mode (Medium range, node based search for ore types)")
                 },
                 new()
                 {
                     Code = new AssetLocation("area_large"),
-                    Name = Lang.Get("Area Search Mode (Long range, node based search)")
+                    Name = Lang.Get("Area Search Mode (Long range, node based search for ore types)")
                 }
             ];
 
@@ -77,26 +83,29 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                 return modes;
             }
 
-            modes[0].WithIcon(capi, LoadIcon(capi, "heatmap", "game"));
-            modes[0].TexturePremultipliedAlpha = false;
+            modes[DensityModeIndex].WithIcon(capi, LoadIcon(capi, "heatmap", "game"));
+            modes[DensityModeIndex].TexturePremultipliedAlpha = false;
 
-            modes[1].WithIcon(capi, LoadIcon(capi, "distance_small"));
-            modes[1].TexturePremultipliedAlpha = false;
+            modes[RockModeIndex].WithIcon(capi, LoadIcon(capi, "rock"));
+            modes[RockModeIndex].TexturePremultipliedAlpha = false;
 
-            modes[2].WithIcon(capi, LoadIcon(capi, "distance_large"));
-            modes[2].TexturePremultipliedAlpha = false;
+            modes[DistanceSmallModeIndex].WithIcon(capi, LoadIcon(capi, "distance_small"));
+            modes[DistanceSmallModeIndex].TexturePremultipliedAlpha = false;
 
-            modes[3].WithIcon(capi, LoadIcon(capi, "rock"));
-            modes[3].TexturePremultipliedAlpha = false;
+            modes[DistanceMediumModeIndex].WithIcon(capi, LoadIcon(capi, "distance_medium"));
+            modes[DistanceMediumModeIndex].TexturePremultipliedAlpha = false;
 
-            modes[4].WithIcon(capi, LoadIcon(capi, "area_small"));
-            modes[4].TexturePremultipliedAlpha = false;
+            modes[DistanceLargeModeIndex].WithIcon(capi, LoadIcon(capi, "distance_large"));
+            modes[DistanceLargeModeIndex].TexturePremultipliedAlpha = false;
 
-            modes[5].WithIcon(capi, LoadIcon(capi, "area_medium"));
-            modes[5].TexturePremultipliedAlpha = false;
+            modes[AreaSmallModeIndex].WithIcon(capi, LoadIcon(capi, "area_small"));
+            modes[AreaSmallModeIndex].TexturePremultipliedAlpha = false;
 
-            modes[6].WithIcon(capi, LoadIcon(capi, "area_large"));
-            modes[6].TexturePremultipliedAlpha = false;
+            modes[AreaMediumModeIndex].WithIcon(capi, LoadIcon(capi, "area_medium"));
+            modes[AreaMediumModeIndex].TexturePremultipliedAlpha = false;
+
+            modes[AreaLargeModeIndex].WithIcon(capi, LoadIcon(capi, "area_large"));
+            modes[AreaLargeModeIndex].TexturePremultipliedAlpha = false;
 
             return modes;
         });
@@ -144,21 +153,28 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                 damage = ModConfig.Loaded.DensityModeDurabilityCost;
                 break;
 
+            case RockModeIndex:
+                ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.RockModeSize,
+                    ProspectingTargetType.Rock);
+                damage = ModConfig.Loaded.RockModeDurabilityCost;
+                break;
+
             case DistanceSmallModeIndex:
                 ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.DistanceModeSmallSize,
                     ProspectingTargetType.Ore);
                 damage = ModConfig.Loaded.DistanceModeSmallDurabilityCost;
                 break;
 
+            case DistanceMediumModeIndex:
+                ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.DistanceModeMediumSize,
+                    ProspectingTargetType.Ore);
+                damage = ModConfig.Loaded.DistanceModeMediumDurabilityCost;
+                break;
+
             case DistanceLargeModeIndex:
                 ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.DistanceModeLargeSize,
                     ProspectingTargetType.Ore);
                 damage = ModConfig.Loaded.DistanceModeLargeDurabilityCost;
-                break;
-
-            case RockModeIndex:
-                ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.RockModeSize, ProspectingTargetType.Rock);
-                damage = ModConfig.Loaded.RockModeDurabilityCost;
                 break;
 
             case AreaSmallModeIndex:
