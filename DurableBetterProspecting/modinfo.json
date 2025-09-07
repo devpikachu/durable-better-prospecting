@@ -2,20 +2,13 @@
   "type": "code",
   "name": "Durable Better Prospecting",
   "modid": "durablebetterprospecting",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A less tedious form of prospecting.",
   "website": "https://github.com/devpikachu/DurableBetterProspecting",
   "authors": [
     "DetPikachu"
   ],
-  "contributors": [
-    "NathanNgo",
-    "Shacklebottom",
-    "iturtleman",
-    "Voragain",
-    "PurplePi",
-    "Gnomp"
-  ],
+  "contributors": [],
   "dependencies": {
     "game": "*"
   }
