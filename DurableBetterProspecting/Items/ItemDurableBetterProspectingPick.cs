@@ -26,6 +26,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
     private List<Mode> _modes = [];
     private SkillItem[] _skillItems = [];
 
+    // ReSharper disable once ParameterHidesMember
     public override void OnLoaded(ICoreAPI api)
     {
         var config = ModConfig.Loaded;
@@ -204,11 +205,10 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         var maxPosition = position.AddCopy(radius, radius, radius);
 
         var distances = new Dictionary<string, int>();
+        // ReSharper disable once VariableHidesOuterVariable
         api.World.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, x, y, z) =>
         {
             string key;
-            int distance;
-
             switch (mode)
             {
                 case ProspectingTargetType.Rock:
@@ -218,12 +218,6 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                     }
 
                     key = $"rock-{rockType}";
-                    distance = (int)position.DistanceTo(new BlockPos(x, y, z));
-                    if (!distances.ContainsKey(key) || distances[key] > distance)
-                    {
-                        distances[key] = distance;
-                    }
-
                     break;
 
                 case ProspectingTargetType.Ore:
@@ -233,17 +227,16 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                     }
 
                     key = $"ore-{oreType}";
-                    distance = (int)position.DistanceTo(new BlockPos(x, y, z));
-
-                    if (!distances.ContainsKey(key) || distances[key] > distance)
-                    {
-                        distances[key] = distance;
-                    }
-
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+            }
+
+            var distance = (int)position.DistanceTo(new BlockPos(x, y, z));
+            if (!distances.ContainsKey(key) || distances[key] > distance)
+            {
+                distances[key] = distance;
             }
         });
 
@@ -293,7 +286,8 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         var maxPosition = position.AddCopy(radius, radius, radius);
 
         var quantities = new Dictionary<string, int>();
-        api.World.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, x, y, z) =>
+        // ReSharper disable once VariableHidesOuterVariable
+        api.World.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, _, _, _) =>
         {
             if (block.BlockMaterial != EnumBlockMaterial.Ore || !block.Variant.TryGetValue("type", out var oreType))
             {
@@ -343,11 +337,11 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
 
     private class Mode
     {
-        public string Code { get; init; }
-        public string Name { get; init; }
-        public string IconDomain { get; init; }
-        public string IconName { get; init; }
-        public bool Enabled { get; init; }
+        public string Code { get; }
+        public string Name { get; }
+        public string IconDomain { get; }
+        public string IconName { get; }
+        public bool Enabled { get; }
 
         public Mode(string code, string name, string iconName, bool enabled)
         {
