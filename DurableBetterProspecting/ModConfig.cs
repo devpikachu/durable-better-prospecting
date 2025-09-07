@@ -1,3 +1,6 @@
+// ReSharper disable MemberCanBePrivate.Global
+
+using System;
 using ConfigLib;
 using Vintagestory.API.Common;
 
@@ -9,38 +12,173 @@ public class ModConfig
     private const string ConfigLibModId = "configlib";
     private static ConfigLibModSystem? _configSystem;
 
-    public static ModConfig Loaded { get; private set; } = new();
+    public static ModConfig Loaded { get; } = new();
 
-    public bool DensityModeEnabled { get; init; } = true;
-    public int DensityModeDurabilityCost { get; init; } = 1;
+    #region Density Mode
 
-    public bool RockModeEnabled { get; init; } = true;
-    public int RockModeDurabilityCost { get; init; } = 1;
-    public int RockModeSize { get; init; } = 128;
+    private int _densityModeDurabilityCost = 1;
 
-    public bool DistanceModeEnabled { get; init; } = true;
-    public int DistanceModeSmallDurabilityCost { get; init; } = 1;
-    public int DistanceModeSmallSize { get; init; } = 32;
-    public int DistanceModeMediumDurabilityCost { get; init; } = 2;
-    public int DistanceModeMediumSize { get; init; } = 64;
-    public int DistanceModeLargeDurabilityCost { get; init; } = 2;
-    public int DistanceModeLargeSize { get; init; } = 256;
+    public bool DensityModeEnabled { get; set; } = true;
 
-    public bool AreaModeEnabled { get; init; } = true;
-    public int AreaModeSmallDurabilityCost { get; init; } = 1;
-    public int AreaModeSmallSize { get; init; } = 16;
-    public int AreaModeMediumDurabilityCost { get; init; } = 2;
-    public int AreaModeMediumSize { get; init; } = 32;
-    public int AreaModeLargeDurabilityCost { get; init; } = 3;
-    public int AreaModeLargeSize { get; init; } = 64;
+    public int DensityModeDurabilityCost
+    {
+        get => _densityModeDurabilityCost;
+        set => _densityModeDurabilityCost = Math.Max(1, value);
+    }
 
-    public static void LoadOrSaveDefault(ICoreAPI api)
+    #endregion Density Mode
+
+    #region Rock Mode
+
+    private int _rockModeDurabilityCost = 1;
+    private int _rockModeSize = 32;
+
+    public bool RockModeEnabled { get; set; } = true;
+
+    public int RockModeDurabilityCost
+    {
+        get => _rockModeDurabilityCost;
+        set => _rockModeDurabilityCost = Math.Max(1, value);
+    }
+
+    public int RockModeSize
+    {
+        get => _rockModeSize;
+        set => _rockModeSize = Math.Max(2, value);
+    }
+
+    #endregion Rock Mode
+
+    #region Distance Mode
+
+    private int _distanceModeSmallDurabilityCost = 1;
+    private int _distanceModeSmallSize = 16;
+    private int _distanceModeMediumDurabilityCost = 2;
+    private int _distanceModeMediumSize = 32;
+    private int _distanceModeLargeDurabilityCost = 4;
+    private int _distanceModeLargeSize = 64;
+
+    public bool DistanceModeEnabled { get; set; } = true;
+
+    public int DistanceModeSmallDurabilityCost
+    {
+        get => _distanceModeSmallDurabilityCost;
+        set => _distanceModeSmallDurabilityCost = Math.Max(1, value);
+    }
+
+    public int DistanceModeSmallSize
+    {
+        get => _distanceModeSmallSize;
+        set => _distanceModeSmallSize = Math.Max(2, value);
+    }
+
+    public int DistanceModeMediumDurabilityCost
+    {
+        get => _distanceModeMediumDurabilityCost;
+        set => _distanceModeMediumDurabilityCost = Math.Max(1, value);
+    }
+
+    public int DistanceModeMediumSize
+    {
+        get => _distanceModeMediumSize;
+        set => _distanceModeMediumSize = Math.Max(2, value);
+    }
+
+    public int DistanceModeLargeDurabilityCost
+    {
+        get => _distanceModeLargeDurabilityCost;
+        set => _distanceModeLargeDurabilityCost = Math.Max(1, value);
+    }
+
+    public int DistanceModeLargeSize
+    {
+        get => _distanceModeLargeSize;
+        set => _distanceModeLargeSize = Math.Max(2, value);
+    }
+
+    #endregion Distance Mode
+
+    #region Area Mode
+
+    private int _areaModeSmallDurabilityCost = 1;
+    private int _areaModeSmallSize = 16;
+    private int _areaModeMediumDurabilityCost = 2;
+    private int _areaModeMediumSize = 32;
+    private int _areaModeLargeDurabilityCost = 4;
+    private int _areaModeLargeSize = 64;
+
+    public bool AreaModeEnabled { get; set; } = true;
+
+    public int AreaModeSmallDurabilityCost
+    {
+        get => _areaModeSmallDurabilityCost;
+        set => _areaModeSmallDurabilityCost = Math.Max(1, value);
+    }
+
+    public int AreaModeSmallSize
+    {
+        get => _areaModeSmallSize;
+        set => _areaModeSmallSize = Math.Max(2, value);
+    }
+
+    public int AreaModeMediumDurabilityCost
+    {
+        get => _areaModeMediumDurabilityCost;
+        set => _areaModeMediumDurabilityCost = Math.Max(1, value);
+    }
+
+    public int AreaModeMediumSize
+    {
+        get => _areaModeMediumSize;
+        set => _areaModeMediumSize = Math.Max(2, value);
+    }
+
+    public int AreaModeLargeDurabilityCost
+    {
+        get => _areaModeLargeDurabilityCost;
+        set => _areaModeLargeDurabilityCost = Math.Max(1, value);
+    }
+
+    public int AreaModeLargeSize
+    {
+        get => _areaModeLargeSize;
+        set => _areaModeLargeSize = Math.Max(2, value);
+    }
+
+    #endregion Area Mode
+
+    public static void LoadAndSave(ICoreAPI api)
     {
         var config = api.LoadModConfig<ModConfig>(FileName);
+
         if (config != null)
         {
-            Loaded = config;
-            return;
+            // Density Mode
+            Loaded.DensityModeEnabled = config.DensityModeEnabled;
+            Loaded.DensityModeDurabilityCost = config.DensityModeDurabilityCost;
+
+            // Rock Mode
+            Loaded.RockModeEnabled = config.RockModeEnabled;
+            Loaded.RockModeDurabilityCost = config.RockModeDurabilityCost;
+            Loaded.RockModeSize = config.RockModeSize;
+
+            // Distance Mode
+            Loaded.DistanceModeEnabled = config.DistanceModeEnabled;
+            Loaded.DistanceModeSmallDurabilityCost = config.DistanceModeSmallDurabilityCost;
+            Loaded.DistanceModeSmallSize = config.DistanceModeSmallSize;
+            Loaded.DistanceModeMediumDurabilityCost = config.DistanceModeMediumDurabilityCost;
+            Loaded.DistanceModeMediumSize = config.DistanceModeMediumSize;
+            Loaded.DistanceModeLargeDurabilityCost = config.DistanceModeLargeDurabilityCost;
+            Loaded.DistanceModeLargeSize = config.DistanceModeLargeSize;
+
+            // Area Mode
+            Loaded.AreaModeEnabled = config.AreaModeEnabled;
+            Loaded.AreaModeSmallDurabilityCost = config.AreaModeSmallDurabilityCost;
+            Loaded.AreaModeSmallSize = config.AreaModeSmallSize;
+            Loaded.AreaModeMediumDurabilityCost = config.AreaModeMediumDurabilityCost;
+            Loaded.AreaModeMediumSize = config.AreaModeMediumSize;
+            Loaded.AreaModeLargeDurabilityCost = config.AreaModeLargeDurabilityCost;
+            Loaded.AreaModeLargeSize = config.AreaModeLargeSize;
         }
 
         api.StoreModConfig(Loaded, FileName);

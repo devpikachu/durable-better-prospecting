@@ -14,7 +14,7 @@ public class ModSystem : Vintagestory.API.Common.ModSystem
     {
         try
         {
-            ModConfig.LoadOrSaveDefault(api);
+            ModConfig.LoadAndSave(api);
             ModConfig.RegisterListeners(api);
         }
         catch (Exception ex)
