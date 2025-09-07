@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -125,25 +126,25 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
 
             case RockMode:
                 ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.RockModeSize,
-                    ProspectingTargetType.Rock);
+                    Target.Rock);
                 damage = ModConfig.Loaded.RockModeDurabilityCost;
                 break;
 
             case DistanceSmallMode:
                 ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.DistanceModeSmallSize,
-                    ProspectingTargetType.Ore);
+                    Target.Ore);
                 damage = ModConfig.Loaded.DistanceModeSmallDurabilityCost;
                 break;
 
             case DistanceMediumMode:
                 ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.DistanceModeMediumSize,
-                    ProspectingTargetType.Ore);
+                    Target.Ore);
                 damage = ModConfig.Loaded.DistanceModeMediumDurabilityCost;
                 break;
 
             case DistanceLargeMode:
                 ProbeDistanceMode(world, player, blockSelection, ModConfig.Loaded.DistanceModeLargeSize,
-                    ProspectingTargetType.Ore);
+                    Target.Ore);
                 damage = ModConfig.Loaded.DistanceModeLargeDurabilityCost;
                 break;
 
@@ -186,7 +187,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         EntityPlayer player,
         BlockSelection blockSelection,
         int searchSize,
-        ProspectingTargetType mode)
+        Target target)
     {
         var position = blockSelection.Position;
         if (position == null)
@@ -207,20 +208,19 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             return;
         }
 
-        SendNotification(serverPlayer, "Distance sample taken within a size of {0}", searchSize);
-
         var radius = searchSize / 2;
         var minPosition = position.AddCopy(-radius, -radius, -radius);
         var maxPosition = position.AddCopy(radius, radius, radius);
 
-        var distances = new Dictionary<string, int>();
+        var readings = new Dictionary<string, DistanceReading>();
         // ReSharper disable once VariableHidesOuterVariable
         api.World.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, x, y, z) =>
         {
             string key;
-            switch (mode)
+
+            switch (target)
             {
-                case ProspectingTargetType.Rock:
+                case Target.Rock:
                     if (!block.Variant.TryGetValue("rock", out var rockType))
                     {
                         return;
@@ -229,7 +229,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                     key = $"rock-{rockType}";
                     break;
 
-                case ProspectingTargetType.Ore:
+                case Target.Ore:
                     if (block.BlockMaterial != EnumBlockMaterial.Ore || !block.Variant.TryGetValue("type", out var oreType))
                     {
                         return;
@@ -239,28 +239,47 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+                    throw new ArgumentOutOfRangeException(nameof(target), target, null);
             }
 
             var distance = (int)position.DistanceTo(new BlockPos(x, y, z));
-            if (!distances.ContainsKey(key) || distances[key] > distance)
+
+            if (!readings.TryGetValue(key, out var reading))
             {
-                distances[key] = distance;
+                readings.Add(key, new DistanceReading(distance, block));
+                return;
+            }
+
+            if (reading.Distance > distance)
+            {
+                reading.Distance = distance;
             }
         });
 
-        if (distances.Count == 0)
+        var language = serverPlayer.LanguageCode;
+        var rocks = Lang.GetL(language, "rocks");
+        var ores = Lang.GetL(language, "ores");
+        var messageBuilder = new StringBuilder();
+        messageBuilder.AppendLine(Lang.GetL(language, "Distance sample taken within a size of {0}", searchSize));
+
+        if (readings.Count == 0)
         {
-            SendNotification(serverPlayer, "No {0} nearby", mode == ProspectingTargetType.Rock ? "rocks" : "ores");
+            messageBuilder.AppendLine(Lang.GetL(language, "No {0} nearby", target == Target.Rock ? rocks : ores));
+            SendNotification(serverPlayer, messageBuilder.ToString());
             return;
         }
 
-        SendNotification(serverPlayer, "Found the following {0}:", mode == ProspectingTargetType.Rock ? "rocks" : "ores");
-        foreach (var distance in distances)
+        messageBuilder.AppendLine(Lang.GetL(language, "Found the following {0}:", target == Target.Rock ? rocks : ores));
+        foreach (var reading in readings)
         {
-            var key = Lang.GetL(serverPlayer.LanguageCode, distance.Key).ToUpperInvariant();
-            SendNotification(serverPlayer, "{0}: {1} block(s) away", key, distance.Value);
+            var name = Lang.GetL(language, reading.Key);
+            var handBookLink = $"handbook://{GuiHandbookItemStackPage.PageCodeForStack(new ItemStack(reading.Value.Block))}";
+            var link = $"<a href=\"{handBookLink}\">{name}</a>";
+
+            messageBuilder.AppendLine(Lang.GetL(language, "{0}: {1} block(s) away", link, reading.Value.Distance));
         }
+
+        SendNotification(serverPlayer, messageBuilder.ToString());
     }
 
     private void ProbeAreaMode(
@@ -288,13 +307,11 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             return;
         }
 
-        SendNotification(serverPlayer, "Area sample taken within a size of {0}", searchSize);
-
         var radius = searchSize / 2;
         var minPosition = position.AddCopy(-radius, -radius, -radius);
         var maxPosition = position.AddCopy(radius, radius, radius);
 
-        var quantities = new Dictionary<string, int>();
+        var readings = new Dictionary<string, AreaReading>();
         // ReSharper disable once VariableHidesOuterVariable
         api.World.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, _, _, _) =>
         {
@@ -304,23 +321,40 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             }
 
             var key = $"ore-{oreType}";
-            quantities.TryGetValue(key, out var quantity);
-            quantities[key] = quantity + 1;
+
+            if (!readings.TryGetValue(key, out var reading))
+            {
+                readings.Add(key, new AreaReading(1, block));
+                return;
+            }
+
+            reading.Quantity += 1;
         });
 
-        if (quantities.Count == 0)
+        var language = serverPlayer.LanguageCode;
+        var ores = Lang.GetL(language, "ores");
+        var messageBuilder = new StringBuilder();
+        messageBuilder.AppendLine(Lang.GetL(language, "Area sample taken within a size of {0}", searchSize));
+
+        if (readings.Count == 0)
         {
-            SendNotification(serverPlayer, "No {0} nearby", "ores");
+            messageBuilder.AppendLine(Lang.GetL(language, "No {0} nearby", ores));
+            SendNotification(serverPlayer, messageBuilder.ToString());
             return;
         }
 
-        SendNotification(serverPlayer, "Found the following {0}:", "ores");
-        foreach (var quantity in quantities)
+        messageBuilder.AppendLine(Lang.GetL(language, "Found the following {0}:", ores));
+        foreach (var reading in readings)
         {
-            var key = Lang.GetL(serverPlayer.LanguageCode, quantity.Key);
-            var value = Lang.GetL(serverPlayer.LanguageCode, resultTextByQuantity(quantity.Value), Lang.Get(quantity.Key));
-            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, value, key), EnumChatType.Notification);
+            var name = Lang.GetL(language, reading.Key);
+            var handBookLink = $"handbook://{GuiHandbookItemStackPage.PageCodeForStack(new ItemStack(reading.Value.Block))}";
+            var link = $"<a href=\"{handBookLink}\">{name}</a>";
+            var quantity = Lang.GetL(language, resultTextByQuantity(reading.Value.Quantity), link);
+
+            messageBuilder.AppendLine(quantity);
         }
+
+        SendNotification(serverPlayer, messageBuilder.ToString());
     }
 
     private static bool IsPropickable(Block? block)
@@ -328,9 +362,9 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         return block?.Attributes?["propickable"].AsBool() == true;
     }
 
-    private static void SendNotification(IServerPlayer player, string message, params object[] args)
+    private static void SendNotification(IServerPlayer player, string message)
     {
-        player.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(player.LanguageCode, message, args), EnumChatType.Notification);
+        player.SendMessage(GlobalConstants.InfoLogChatGroup, message, EnumChatType.Notification);
     }
 
     private static LoadedTexture LoadIcon(ICoreClientAPI api, string domain, string name)
@@ -338,7 +372,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         return api.Gui.LoadSvgWithPadding(new AssetLocation(domain, $"textures/icons/{name}.svg"), 48, 48, 5, ColorUtil.WhiteArgb);
     }
 
-    private enum ProspectingTargetType
+    private enum Target
     {
         Rock,
         Ore
@@ -368,6 +402,30 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             IconDomain = iconDomain;
             IconName = iconName;
             Enabled = enabled;
+        }
+    }
+
+    private class DistanceReading
+    {
+        public int Distance { get; set; }
+        public Block Block { get; }
+
+        public DistanceReading(int distance, Block block)
+        {
+            Distance = distance;
+            Block = block;
+        }
+    }
+
+    private class AreaReading
+    {
+        public int Quantity { get; set; }
+        public Block Block { get; }
+
+        public AreaReading(int quantity, Block block)
+        {
+            Quantity = quantity;
+            Block = block;
         }
     }
 }

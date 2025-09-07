@@ -12,6 +12,8 @@
   "No {0} nearby": "No {0} nearby",
   "Found the following {0}:": "Found the following {0}:",
   "{0}: {1} block(s) away": "{0}: {1} block(s) away",
+  "rocks": "rocks",
+  "ores": "ores",
 
   "Enabled": "Enabled",
   "Durability Cost": "Durability Cost",
