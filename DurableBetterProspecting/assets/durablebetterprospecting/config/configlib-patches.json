@@ -21,6 +21,23 @@
     },
     {
       "type": "separator",
+      "title": "Node Mode"
+    },
+    {
+      "type": "boolean",
+      "code": "NodeModeEnabled",
+      "ingui": "Enabled",
+      "default": false
+    },
+    {
+      "type": "integer",
+      "code": "NodeModeDurabilityCost",
+      "ingui": "Durability Cost",
+      "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
+      "default": 2
+    },
+    {
+      "type": "separator",
       "title": "Rock Mode"
     },
     {

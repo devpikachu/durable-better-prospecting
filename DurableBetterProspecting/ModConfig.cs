@@ -28,6 +28,20 @@ public class ModConfig
 
     #endregion Density Mode
 
+    #region Node Mode
+
+    private int _nodeModeDurabilityCost = 2;
+
+    public bool NodeModeEnabled { get; set; } = false;
+
+    public int NodeModeDurabilityCost
+    {
+        get => _nodeModeDurabilityCost;
+        set => _nodeModeDurabilityCost = Math.Max(1, value);
+    }
+
+    #endregion Node Mode
+
     #region Rock Mode
 
     private int _rockModeDurabilityCost = 1;
@@ -156,6 +170,10 @@ public class ModConfig
             // Density Mode
             Loaded.DensityModeEnabled = config.DensityModeEnabled;
             Loaded.DensityModeDurabilityCost = config.DensityModeDurabilityCost;
+
+            // Node Mode
+            Loaded.NodeModeEnabled = config.NodeModeEnabled;
+            Loaded.NodeModeDurabilityCost = config.NodeModeDurabilityCost;
 
             // Rock Mode
             Loaded.RockModeEnabled = config.RockModeEnabled;

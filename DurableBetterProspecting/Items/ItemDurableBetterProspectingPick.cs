@@ -15,6 +15,7 @@ namespace DurableBetterProspecting.Items;
 public class ItemDurableBetterProspectingPick : ItemProspectingPick
 {
     private const string DensityMode = "density";
+    private const string NodeMode = "node";
     private const string RockMode = "rock";
     private const string DistanceSmallMode = "distance_small";
     private const string DistanceMediumMode = "distance_medium";
@@ -30,11 +31,13 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
     public override void OnLoaded(ICoreAPI api)
     {
         var config = ModConfig.Loaded;
+        var nodeSize = api.World.Config.GetString("propickNodeSearchRadius").ToInt();
 
         // @formatter:off
         Mode[] modes =
         [
             new(DensityMode, "Density Search Mode (Long range, chance based search)", "game", "heatmap", config.DensityModeEnabled),
+            new(NodeMode, "Node Search Mode (Short range, exact search)", "game", "rocks", nodeSize > 0 && config.NodeModeEnabled),
             new(RockMode, "Rock Search Mode (Long range, distance search for rock types)", RockMode, config.RockModeEnabled),
             new(DistanceSmallMode, "Distance Search Mode (Short range, distance search for ore types)", DistanceSmallMode, config.DistanceModeEnabled),
             new(DistanceMediumMode, "Distance Search Mode (Medium range, distance search for ore types)", DistanceMediumMode, config.DistanceModeEnabled),
@@ -112,6 +115,12 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             case DensityMode:
                 ProbeBlockDensityMode(world, byEntity, itemSlot, blockSelection);
                 damage = ModConfig.Loaded.DensityModeDurabilityCost;
+                break;
+
+            case NodeMode:
+                var nodeSize = api.World.Config.GetString("propickNodeSearchRadius").ToInt();
+                ProbeBlockNodeMode(world, byEntity, itemSlot, blockSelection, nodeSize);
+                damage = ModConfig.Loaded.NodeModeDurabilityCost;
                 break;
 
             case RockMode:
