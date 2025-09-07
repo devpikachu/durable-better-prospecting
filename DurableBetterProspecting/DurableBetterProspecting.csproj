@@ -29,12 +29,16 @@
             <Private>false</Private>
         </Reference>
     </ItemGroup>
-    
+
     <ItemGroup>
         <Reference Include="ConfigLib">
             <HintPath>../Vendor/configlib.dll</HintPath>
             <Private>false</Private>
         </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -50,7 +54,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+        <None Include="../.editorconfig" />
     </ItemGroup>
 
 </Project>

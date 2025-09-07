@@ -7,6 +7,12 @@
   "Area Search Mode (Medium range, exact search for ore types)": "Area Search Mode (Medium range, exact search for ore types)",
   "Area Search Mode (Long range, exact search for ore types)": "Area Search Mode (Long range, exact search for ore types)",
 
+  "Distance sample taken within a size of {0}": "Distance sample taken within a size of {0}",
+  "Area sample taken within a size of {0}": "Area sample taken within a size of {0}",
+  "No {0} nearby": "No {0} nearby",
+  "Found the following {0}:": "Found the following {0}:",
+  "{0}: {1} block(s) away": "{0}: {1} block(s) away",
+
   "Durability Cost": "Durability Cost",
   "Small Range Durability Cost": "Small Range Durability Cost",
   "Medium Range Durability Cost": "Medium Range Durability Cost",

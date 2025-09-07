@@ -16,7 +16,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
     private enum ProspectingTargetType
     {
         Rock,
-        Ore,
+        Ore
     }
 
     private const int DensityModeIndex = 0;
@@ -237,7 +237,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             return;
         }
 
-        SendNotification(serverPlayer, $"Distance sample taken within a size of {searchSize}");
+        SendNotification(serverPlayer, "Distance sample taken within a size of {0}", searchSize);
 
         var radius = searchSize / 2;
         var minPosition = position.AddCopy(-radius, -radius, -radius);
@@ -267,8 +267,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                     break;
 
                 case ProspectingTargetType.Ore:
-                    if (block.BlockMaterial != EnumBlockMaterial.Ore ||
-                        !block.Variant.TryGetValue("type", out var oreType))
+                    if (block.BlockMaterial != EnumBlockMaterial.Ore || !block.Variant.TryGetValue("type", out var oreType))
                     {
                         return;
                     }
@@ -290,16 +289,15 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
 
         if (distances.Count == 0)
         {
-            SendNotification(serverPlayer, $"No {(mode == ProspectingTargetType.Rock ? "rocks" : "ores")} nearby");
+            SendNotification(serverPlayer, "No {0} nearby", mode == ProspectingTargetType.Rock ? "rocks" : "ores");
             return;
         }
 
-        SendNotification(serverPlayer,
-            $"Found the following {(mode == ProspectingTargetType.Rock ? "rocks" : "ores")}:");
+        SendNotification(serverPlayer, "Found the following {0}:", mode == ProspectingTargetType.Rock ? "rocks" : "ores");
         foreach (var distance in distances)
         {
             var key = Lang.GetL(serverPlayer.LanguageCode, distance.Key).ToUpperInvariant();
-            SendNotification(serverPlayer, $"{key}: {distance.Value} block(s) away");
+            SendNotification(serverPlayer, "{0}: {1} block(s) away", key, distance.Value);
         }
     }
 
@@ -328,7 +326,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             return;
         }
 
-        SendNotification(serverPlayer, $"Area sample taken within a size of {searchSize}");
+        SendNotification(serverPlayer, "Area sample taken within a size of {0}", searchSize);
 
         var radius = searchSize / 2;
         var minPosition = position.AddCopy(-radius, -radius, -radius);
@@ -349,19 +347,16 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
 
         if (quantities.Count == 0)
         {
-            SendNotification(serverPlayer, "No ores nearby");
+            SendNotification(serverPlayer, "No {0} nearby", "ores");
             return;
         }
 
-        SendNotification(serverPlayer, "Found the following ores:");
+        SendNotification(serverPlayer, "Found the following {0}:", "ores");
         foreach (var quantity in quantities)
         {
             var key = Lang.GetL(serverPlayer.LanguageCode, quantity.Key);
-            var value = Lang.GetL(serverPlayer.LanguageCode, resultTextByQuantity(quantity.Value),
-                Lang.Get(quantity.Key));
-
-            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, value, key),
-                EnumChatType.Notification);
+            var value = Lang.GetL(serverPlayer.LanguageCode, resultTextByQuantity(quantity.Value), Lang.Get(quantity.Key));
+            serverPlayer.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(serverPlayer.LanguageCode, value, key), EnumChatType.Notification);
         }
     }
 
@@ -370,16 +365,13 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         return block?.Attributes?["propickable"].AsBool() == true;
     }
 
-    private static LoadedTexture LoadIcon(ICoreClientAPI api, string name, string domain = "durablebetterprospecting")
+    private static void SendNotification(IServerPlayer player, string message, params object[] args)
     {
-        return api.Gui.LoadSvgWithPadding(new AssetLocation(domain, $"textures/icons/{name}.svg"),
-            48, 48, 5,
-            ColorUtil.WhiteArgb);
+        player.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(player.LanguageCode, message, args), EnumChatType.Notification);
     }
 
-    private static void SendNotification(IServerPlayer player, string message)
+    private static LoadedTexture LoadIcon(ICoreClientAPI api, string name, string domain = "durablebetterprospecting")
     {
-        player.SendMessage(GlobalConstants.InfoLogChatGroup, Lang.GetL(player.LanguageCode, message),
-            EnumChatType.Notification);
+        return api.Gui.LoadSvgWithPadding(new AssetLocation(domain, $"textures/icons/{name}.svg"), 48, 48, 5, ColorUtil.WhiteArgb);
     }
 }
