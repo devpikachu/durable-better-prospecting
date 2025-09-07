@@ -4,123 +4,123 @@
   "settings": [
     {
       "type": "separator",
-      "title": "configDensityModeSeparator"
+      "title": "config-densitymode-separator"
     },
     {
       "type": "integer",
       "code": "DensityModeDurabilityCost",
-      "ingui": "configDensityModeDurabilityCostLabel",
-      "comment": "configDensityModeDurabilityCostComment",
+      "ingui": "config-densitymode-durabilitycost-label",
+      "comment": "config-densitymode-durabilitycost-comment",
       "default": 1
     },
     {
       "type": "separator",
-      "title": "configRockModeSeparator"
+      "title": "config-rockmode-separator"
     },
     {
       "type": "integer",
       "code": "RockModeDurabilityCost",
-      "ingui": "configRockModeDurabilityCostLabel",
-      "comment": "configRockModeDurabilityCostComment",
+      "ingui": "config-rockmode-durabilitycost-label",
+      "comment": "config-rockmode-durabilitycost-label",
       "default": 1
     },
     {
       "type": "integer",
       "code": "RockModeSize",
-      "ingui": "configRockModeSizeLabel",
-      "comment": "configRockModeSizeComment",
+      "ingui": "config-rockmode-size-label",
+      "comment": "config-rockmode-size-comment",
       "default": 128
     },
     {
       "type": "separator",
-      "title": "configDistanceModeSeparator"
+      "title": "config-distancemode-separator"
     },
     {
       "type": "integer",
       "code": "DistanceModeSmallDurabilityCost",
-      "ingui": "configDistanceModeSmallDurabilityCostLabel",
-      "comment": "configDistanceModeSmallDurabilityCostComment",
+      "ingui": "config-distancemode-small-durabilitycost-label",
+      "comment": "config-distancemode-small-durabilitycost-comment",
       "default": 1
     },
     {
       "type": "integer",
       "code": "DistanceModeSmallSize",
-      "ingui": "configDistanceModeSmallSizeLabel",
-      "comment": "configDistanceModeSmallSizeComment",
+      "ingui": "config-distancemode-small-size-label",
+      "comment": "config-distancemode-small-size-comment",
       "default": 32
     },
     {
       "type": "integer",
       "code": "DistanceModeMediumDurabilityCost",
-      "ingui": "configDistanceModeMediumDurabilityCostLabel",
-      "comment": "configDistanceModeMediumDurabilityCostComment",
+      "ingui": "config-distancemode-medium-durabilitycost-label",
+      "comment": "config-distancemode-medium-durabilitycost-comment",
       "default": 2
     },
     {
       "type": "integer",
       "code": "DistanceModeMediumSize",
-      "ingui": "configDistanceModeMediumSizeLabel",
-      "comment": "configDistanceModeMediumSizeComment",
+      "ingui": "config-distancemode-medium-size-label",
+      "comment": "config-distancemode-medium-size-comment",
       "default": 64
     },
     {
       "type": "integer",
       "code": "DistanceModeLargeDurabilityCost",
-      "ingui": "configDistanceModeLargeDurabilityCostLabel",
-      "comment": "configDistanceModeLargeDurabilityCostComment",
+      "ingui": "config-distancemode-large-durabilitycost-label",
+      "comment": "config-distancemode-large-durabilitycost-comment",
       "default": 2
     },
     {
       "type": "integer",
       "code": "DistanceModeLargeSize",
-      "ingui": "configDistanceModeLargeSizeLabel",
-      "comment": "configDistanceModeLargeSizeComment",
+      "ingui": "config-distancemode-large-size-label",
+      "comment": "config-distancemode-large-size-comment",
       "default": 256
     },
     {
       "type": "separator",
-      "title": "configAreaModeSeparator"
+      "title": "config-areamode-separator"
     },
     {
       "type": "integer",
       "code": "AreaModeSmallDurabilityCost",
-      "ingui": "configAreaModeSmallDurabilityCostLabel",
-      "comment": "configAreaModeSmallDurabilityCostComment",
+      "ingui": "config-areamode-small-durabilitycost-label",
+      "comment": "config-areamode-small-durabilitycost-comment",
       "default": 1
     },
     {
       "type": "integer",
       "code": "AreaModeSmallSize",
-      "ingui": "configAreaModeSmallSizeLabel",
-      "comment": "configAreaModeSmallSizeComment",
+      "ingui": "config-areamode-small-size-label",
+      "comment": "config-areamode-small-size-comment",
       "default": 16
     },
     {
       "type": "integer",
       "code": "AreaModeMediumDurabilityCost",
-      "ingui": "configAreaModeMediumDurabilityCostLabel",
-      "comment": "configAreaModeMediumDurabilityCostComment",
+      "ingui": "config-areamode-medium-durabilitycost-label",
+      "comment": "config-areamode-medium-durabilitycost-comment",
       "default": 2
     },
     {
       "type": "integer",
       "code": "AreaModeMediumSize",
-      "ingui": "configAreaModeMediumSizeLabel",
-      "comment": "configAreaModeMediumSizeComment",
+      "ingui": "config-areamode-medium-size-label",
+      "comment": "config-areamode-medium-size-comment",
       "default": 32
     },
     {
       "type": "integer",
       "code": "AreaModeLargeDurabilityCost",
-      "ingui": "configAreaModeLargeDurabilityCostLabel",
-      "comment": "configAreaModeLargeDurabilityCostComment",
+      "ingui": "config-areamode-large-durabilitycost-label",
+      "comment": "config-areamode-large-durabilitycost-comment",
       "default": 3
     },
     {
       "type": "integer",
       "code": "AreaModeLargeSize",
-      "ingui": "configAreaModeLargeSizeLabel",
-      "comment": "configAreaModeLargeSizeComment",
+      "ingui": "config-areamode-large-size-label",
+      "comment": "config-areamode-large-size-comment",
       "default": 64
     }
   ]
