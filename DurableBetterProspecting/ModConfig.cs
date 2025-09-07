@@ -11,8 +11,14 @@ public class ModConfig
 
     public static ModConfig Loaded { get; private set; } = new();
 
+    public bool DensityModeEnabled { get; init; } = true;
     public int DensityModeDurabilityCost { get; init; } = 1;
 
+    public bool RockModeEnabled { get; init; } = true;
+    public int RockModeDurabilityCost { get; init; } = 1;
+    public int RockModeSize { get; init; } = 128;
+
+    public bool DistanceModeEnabled { get; init; } = true;
     public int DistanceModeSmallDurabilityCost { get; init; } = 1;
     public int DistanceModeSmallSize { get; init; } = 32;
     public int DistanceModeMediumDurabilityCost { get; init; } = 2;
@@ -20,9 +26,7 @@ public class ModConfig
     public int DistanceModeLargeDurabilityCost { get; init; } = 2;
     public int DistanceModeLargeSize { get; init; } = 256;
 
-    public int RockModeDurabilityCost { get; init; } = 1;
-    public int RockModeSize { get; init; } = 128;
-
+    public bool AreaModeEnabled { get; init; } = true;
     public int AreaModeSmallDurabilityCost { get; init; } = 1;
     public int AreaModeSmallSize { get; init; } = 16;
     public int AreaModeMediumDurabilityCost { get; init; } = 2;

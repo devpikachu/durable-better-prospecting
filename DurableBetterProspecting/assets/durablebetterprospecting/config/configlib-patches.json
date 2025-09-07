@@ -7,6 +7,12 @@
       "title": "Density Mode"
     },
     {
+      "type": "boolean",
+      "code": "DensityModeEnabled",
+      "ingui": "Enabled",
+      "default": true
+    },
+    {
       "type": "integer",
       "code": "DensityModeDurabilityCost",
       "ingui": "Durability Cost",
@@ -16,6 +22,12 @@
     {
       "type": "separator",
       "title": "Rock Mode"
+    },
+    {
+      "type": "boolean",
+      "code": "RockModeEnabled",
+      "ingui": "Enabled",
+      "default": true
     },
     {
       "type": "integer",
@@ -34,6 +46,12 @@
     {
       "type": "separator",
       "title": "Distance Mode"
+    },
+    {
+      "type": "boolean",
+      "code": "DistanceModeEnabled",
+      "ingui": "Enabled",
+      "default": true
     },
     {
       "type": "integer",
@@ -80,6 +98,12 @@
     {
       "type": "separator",
       "title": "Area Mode"
+    },
+    {
+      "type": "boolean",
+      "code": "AreaModeEnabled",
+      "ingui": "Enabled",
+      "default": true
     },
     {
       "type": "integer",
