@@ -2,15 +2,19 @@
 
 using System;
 using ConfigLib;
+using DurableBetterProspecting.Network;
 using Vintagestory.API.Common;
 
 namespace DurableBetterProspecting;
 
 public class ModConfig
 {
+    public delegate void SynchronizedConfigHandler();
+
+    public static event SynchronizedConfigHandler? SynchronizedConfig;
+
     private const string FileName = "DurableBetterProspecting.json";
     private const string ConfigLibModId = "configlib";
-    private static ConfigLibModSystem? _configSystem;
 
     public static ModConfig Loaded { get; } = new();
 
@@ -202,6 +206,42 @@ public class ModConfig
         api.StoreModConfig(Loaded, FileName);
     }
 
+    public static void SynchronizeConfig(ConfigPacket packet)
+    {
+        // Density Mode
+        Loaded.DensityModeEnabled = packet.DensityModeEnabled;
+        Loaded.DensityModeDurabilityCost = packet.DensityModeDurabilityCost;
+
+        // Node Mode
+        Loaded.NodeModeEnabled = packet.NodeModeEnabled;
+        Loaded.NodeModeDurabilityCost = packet.NodeModeDurabilityCost;
+
+        // Rock Mode
+        Loaded.RockModeEnabled = packet.RockModeEnabled;
+        Loaded.RockModeDurabilityCost = packet.RockModeDurabilityCost;
+        Loaded.RockModeSize = packet.RockModeSize;
+
+        // Distance Mode
+        Loaded.DistanceModeEnabled = packet.DistanceModeEnabled;
+        Loaded.DistanceModeSmallDurabilityCost = packet.DistanceModeSmallDurabilityCost;
+        Loaded.DistanceModeSmallSize = packet.DistanceModeSmallSize;
+        Loaded.DistanceModeMediumDurabilityCost = packet.DistanceModeMediumDurabilityCost;
+        Loaded.DistanceModeMediumSize = packet.DistanceModeMediumSize;
+        Loaded.DistanceModeLargeDurabilityCost = packet.DistanceModeLargeDurabilityCost;
+        Loaded.DistanceModeLargeSize = packet.DistanceModeLargeSize;
+
+        // Area Mode
+        Loaded.AreaModeEnabled = packet.AreaModeEnabled;
+        Loaded.AreaModeSmallDurabilityCost = packet.AreaModeSmallDurabilityCost;
+        Loaded.AreaModeSmallSize = packet.AreaModeSmallSize;
+        Loaded.AreaModeMediumDurabilityCost = packet.AreaModeMediumDurabilityCost;
+        Loaded.AreaModeMediumSize = packet.AreaModeMediumSize;
+        Loaded.AreaModeLargeDurabilityCost = packet.AreaModeLargeDurabilityCost;
+        Loaded.AreaModeLargeSize = packet.AreaModeLargeSize;
+
+        SynchronizedConfig?.Invoke();
+    }
+
     public static void RegisterListeners(ICoreAPI api)
     {
         if (!api.ModLoader.IsModEnabled(ConfigLibModId))
@@ -209,18 +249,19 @@ public class ModConfig
             return;
         }
 
-        _configSystem = api.ModLoader.GetModSystem<ConfigLibModSystem>();
-        _configSystem.SettingChanged += OnConfigChanged;
+        var configSystem = api.ModLoader.GetModSystem<ConfigLibModSystem>();
+        configSystem.SettingChanged += OnConfigChanged;
     }
 
-    public static void UnregisterListeners()
+    public static void UnregisterListeners(ICoreAPI api)
     {
-        if (_configSystem == null)
+        if (!api.ModLoader.IsModEnabled(ConfigLibModId))
         {
             return;
         }
 
-        _configSystem.SettingChanged -= OnConfigChanged;
+        var configSystem = api.ModLoader.GetModSystem<ConfigLibModSystem>();
+        configSystem.SettingChanged -= OnConfigChanged;
     }
 
     private static void OnConfigChanged(string domain, IConfig config, ISetting setting)

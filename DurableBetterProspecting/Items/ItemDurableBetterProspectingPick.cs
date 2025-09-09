@@ -28,51 +28,12 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
     private List<Mode> _modes = [];
     private SkillItem[] _skillItems = [];
 
-    // ReSharper disable once ParameterHidesMember
-    public override void OnLoaded(ICoreAPI api)
+    public override void OnLoaded(ICoreAPI pApi)
     {
-        var config = ModConfig.Loaded;
-        var nodeSize = api.World.Config.GetString("propickNodeSearchRadius").ToInt();
+        ReloadModes();
+        base.OnLoaded(pApi);
 
-        // @formatter:off
-        Mode[] modes =
-        [
-            new(DensityMode, "Density Search Mode (Long range, chance based search)", "game", "heatmap", config.DensityModeEnabled),
-            new(NodeMode, "Node Search Mode (Short range, exact search)", "game", "rocks", nodeSize > 0 && config.NodeModeEnabled),
-            new(RockMode, "Rock Search Mode (Long range, distance search for rock types)", RockMode, config.RockModeEnabled),
-            new(DistanceSmallMode, "Distance Search Mode (Short range, distance search for ore types)", DistanceSmallMode, config.DistanceModeEnabled),
-            new(DistanceMediumMode, "Distance Search Mode (Medium range, distance search for ore types)", DistanceMediumMode, config.DistanceModeEnabled),
-            new(DistanceLargeMode, "Distance Search Mode (Long range, distance search for ore types)", DistanceLargeMode, config.DistanceModeEnabled),
-            new(AreaSmallMode, "Area Search Mode (Short range, exact search for ore types)", AreaSmallMode, config.AreaModeEnabled),
-            new(AreaMediumMode, "Area Search Mode (Medium range, exact search for ore types)", AreaMediumMode, config.AreaModeEnabled),
-            new(AreaLargeMode, "Area Search Mode (Long range, exact search for ore types)", AreaLargeMode, config.AreaModeEnabled)
-        ];
-        _modes = modes.Where(m => m.Enabled).ToList();
-        // @formatter:on
-
-        _skillItems = ObjectCacheUtil.GetOrCreate(api, "proPickToolModes", () =>
-        {
-            return _modes.Select(m =>
-            {
-                var skillItem = new SkillItem()
-                {
-                    Code = m.Code,
-                    Name = m.Name
-                };
-
-                if (api is not ICoreClientAPI capi)
-                {
-                    return skillItem;
-                }
-
-                skillItem.WithIcon(capi, LoadIcon(capi, m.IconDomain, m.IconName));
-                skillItem.TexturePremultipliedAlpha = false;
-
-                return skillItem;
-            }).ToArray();
-        });
-
-        base.OnLoaded(api);
+        ModConfig.SynchronizedConfig += ReloadModes;
     }
 
     public override float OnBlockBreaking(
@@ -180,6 +141,61 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
     public override int GetToolMode(ItemSlot slot, IPlayer byPlayer, BlockSelection blockSel)
     {
         return Math.Min(_skillItems.Length - 1, slot.Itemstack.Attributes.GetInt("toolMode"));
+    }
+
+    public override void OnUnloaded(ICoreAPI pApi)
+    {
+        ModConfig.SynchronizedConfig -= ReloadModes;
+
+        foreach (var skill in _skillItems)
+        {
+            skill.Dispose();
+        }
+    }
+
+    private void ReloadModes()
+    {
+        var config = ModConfig.Loaded;
+        var nodeSize = api.World.Config.GetString("propickNodeSearchRadius").ToInt();
+
+        // @formatter:off
+        Mode[] modes =
+        [
+            new(DensityMode, "Density Search Mode (Long range, chance based search)", "game", "heatmap", config.DensityModeEnabled),
+            new(NodeMode, "Node Search Mode (Short range, exact search)", "game", "rocks", nodeSize > 0 && config.NodeModeEnabled),
+            new(RockMode, "Rock Search Mode (Long range, distance search for rock types)", RockMode, config.RockModeEnabled),
+            new(DistanceSmallMode, "Distance Search Mode (Short range, distance search for ore types)", DistanceSmallMode, config.DistanceModeEnabled),
+            new(DistanceMediumMode, "Distance Search Mode (Medium range, distance search for ore types)", DistanceMediumMode, config.DistanceModeEnabled),
+            new(DistanceLargeMode, "Distance Search Mode (Long range, distance search for ore types)", DistanceLargeMode, config.DistanceModeEnabled),
+            new(AreaSmallMode, "Area Search Mode (Short range, exact search for ore types)", AreaSmallMode, config.AreaModeEnabled),
+            new(AreaMediumMode, "Area Search Mode (Medium range, exact search for ore types)", AreaMediumMode, config.AreaModeEnabled),
+            new(AreaLargeMode, "Area Search Mode (Long range, exact search for ore types)", AreaLargeMode, config.AreaModeEnabled)
+        ];
+        _modes = modes.Where(m => m.Enabled).ToList();
+        // @formatter:on
+
+        ObjectCacheUtil.Delete(api, "proPickToolModes");
+        _skillItems = ObjectCacheUtil.GetOrCreate(api, "proPickToolModes", () =>
+        {
+            return _modes.Select(m =>
+            {
+                var skillItem = new SkillItem()
+                {
+                    Code = m.Code,
+                    Name = m.Name
+                };
+
+                if (api is not ICoreClientAPI capi)
+                {
+                    return skillItem;
+                }
+
+                skillItem.WithIcon(capi, LoadIcon(capi, m.IconDomain, m.IconName));
+                skillItem.TexturePremultipliedAlpha = false;
+
+                return skillItem;
+            }).ToArray();
+        });
     }
 
     private void ProbeDistanceMode(
