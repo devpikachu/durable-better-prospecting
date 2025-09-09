@@ -58,7 +58,7 @@
       "code": "RockModeSize",
       "ingui": "Area Size",
       "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
-      "default": 128
+      "default": 32
     },
     {
       "type": "separator",
@@ -82,7 +82,7 @@
       "code": "DistanceModeSmallSize",
       "ingui": "Small Range Area Size",
       "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
-      "default": 32
+      "default": 16
     },
     {
       "type": "integer",
@@ -96,21 +96,21 @@
       "code": "DistanceModeMediumSize",
       "ingui": "Medium Range Area Size",
       "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
-      "default": 64
+      "default": 32
     },
     {
       "type": "integer",
       "code": "DistanceModeLargeDurabilityCost",
       "ingui": "Large Range Durability Cost",
       "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
-      "default": 2
+      "default": 4
     },
     {
       "type": "integer",
       "code": "DistanceModeLargeSize",
       "ingui": "Large Range Area Size",
       "comment": "The size of the area to check. The area is a cube, centered on the prospected block.",
-      "default": 256
+      "default": 64
     },
     {
       "type": "separator",
@@ -155,7 +155,7 @@
       "code": "AreaModeLargeDurabilityCost",
       "ingui": "Large Range Durability Cost",
       "comment": "The amount of durability damage the prospecting pickaxe takes for each prospected block in this mode.",
-      "default": 3
+      "default": 4
     },
     {
       "type": "integer",
