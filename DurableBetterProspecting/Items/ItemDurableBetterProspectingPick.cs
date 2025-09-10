@@ -293,10 +293,12 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         });
 
         var language = serverPlayer.LanguageCode;
+        var rock = Lang.GetL(language, "Rock");
+        var distance = Lang.GetL(language, "Distance");
         var rocks = Lang.GetL(language, "rocks");
         var ores = Lang.GetL(language, "ores");
         var messageBuilder = new StringBuilder();
-        messageBuilder.AppendLine(Lang.GetL(language, "Distance sample taken within a size of {0}", searchSize));
+        messageBuilder.AppendLine(Lang.GetL(language, "{0} sample taken within an area of {1} blocks", target == Target.Rock ? rock : distance, searchSize));
 
         if (readings.Count == 0)
         {
@@ -375,9 +377,10 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         });
 
         var language = serverPlayer.LanguageCode;
+        var area = Lang.GetL(language, "Area");
         var ores = Lang.GetL(language, "ores");
         var messageBuilder = new StringBuilder();
-        messageBuilder.AppendLine(Lang.GetL(language, "Area sample taken within a size of {0}", searchSize));
+        messageBuilder.AppendLine(Lang.GetL(language, "{0} sample taken within an area of {1} blocks", area, searchSize));
 
         if (readings.Count == 0)
         {

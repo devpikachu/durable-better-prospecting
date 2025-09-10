@@ -7,11 +7,13 @@
   "Area Search Mode (Medium range, exact search for ore types)": "Area Search Mode (Medium range, exact search for ore types)",
   "Area Search Mode (Long range, exact search for ore types)": "Area Search Mode (Long range, exact search for ore types)",
 
-  "Distance sample taken within a size of {0}": "Distance sample taken within a size of {0}",
-  "Area sample taken within a size of {0}": "Area sample taken within a size of {0}",
+  "{0} sample taken within an area of {1} blocks": "{0} sample taken within a size of {1}",
   "No {0} nearby": "No {0} nearby",
   "Found the following {0}:": "Found the following {0}:",
   "{0}: {1} block(s) away": "{0}: {1} block(s) away",
+  "Rock": "Rock",
+  "Distance": "Distance",
+  "Area": "Area",
   "rocks": "rocks",
   "ores": "ores",
 
