@@ -225,8 +225,8 @@ public class ModConfig
     public static void SynchronizeConfig(ConfigPacket packet)
     {
         // General
-        // Loaded.OrderReadings - Not synchronized
-        // Loaded.OrderAscending - Not synchronized
+        Loaded.OrderReadings = packet.OrderReadings;
+        Loaded.OrderReadingsDirection = packet.OrderReadingsDirection;
 
         // Density Mode
         Loaded.DensityModeEnabled = packet.DensityModeEnabled;

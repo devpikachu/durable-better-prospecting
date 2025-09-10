@@ -5,6 +5,13 @@ namespace DurableBetterProspecting.Network;
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
 public class ConfigPacket
 {
+    #region General
+
+    public bool OrderReadings;
+    public string OrderReadingsDirection = ModConfig.OrderAscending;
+
+    #endregion General
+
     #region Density Mode
 
     public bool DensityModeEnabled;
@@ -56,6 +63,10 @@ public class ConfigPacket
     {
         return new ConfigPacket
         {
+            // General
+            OrderReadings = config.OrderReadings,
+            OrderReadingsDirection = config.OrderReadingsDirection,
+
             // Density Mode
             DensityModeEnabled = config.DensityModeEnabled,
             DensityModeSimplified = config.DensityModeSimplified,
