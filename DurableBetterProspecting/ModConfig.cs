@@ -18,6 +18,16 @@ public class ModConfig
 
     public static ModConfig Loaded { get; } = new();
 
+    public const string OrderAscending = "Ascending";
+    public const string OrderDescending = "Descending";
+
+    #region General
+
+    public bool OrderReadings { get; set; } = true;
+    public string OrderReadingsDirection { get; set; } = OrderAscending;
+
+    #endregion General
+
     #region Density Mode
 
     private int _densityModeDurabilityCost = 1;
@@ -171,6 +181,10 @@ public class ModConfig
 
         if (config != null)
         {
+            // General
+            Loaded.OrderReadings = config.OrderReadings;
+            Loaded.OrderReadingsDirection = config.OrderReadingsDirection;
+
             // Density Mode
             Loaded.DensityModeEnabled = config.DensityModeEnabled;
             Loaded.DensityModeDurabilityCost = config.DensityModeDurabilityCost;
@@ -208,6 +222,10 @@ public class ModConfig
 
     public static void SynchronizeConfig(ConfigPacket packet)
     {
+        // General
+        // Loaded.OrderReadings - Not synchronized
+        // Loaded.OrderAscending - Not synchronized
+
         // Density Mode
         Loaded.DensityModeEnabled = packet.DensityModeEnabled;
         Loaded.DensityModeDurabilityCost = packet.DensityModeDurabilityCost;

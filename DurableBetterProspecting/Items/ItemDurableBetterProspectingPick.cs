@@ -1,4 +1,6 @@
-﻿using System;
+﻿// ReSharper disable AccessToModifiedClosure
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,7 +51,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         var modeIndex = GetToolMode(itemSlot, player, blockSelection);
         var mode = _modes[modeIndex];
 
-        return mode.Code switch
+        return mode.Id switch
         {
             DensityMode => remain,
             _ => (float)((remain + (double)remainingResistance) / 2.0)
@@ -72,7 +74,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         var mode = _modes[modeIndex];
 
         var damage = 1;
-        switch (mode.Code)
+        switch (mode.Id)
         {
             case DensityMode:
                 ProbeBlockDensityMode(world, byEntity, itemSlot, blockSelection);
@@ -181,7 +183,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             {
                 var skillItem = new SkillItem()
                 {
-                    Code = m.Code,
+                    Code = m.Id,
                     Name = m.Name
                 };
 
@@ -232,7 +234,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         // ReSharper disable once VariableHidesOuterVariable
         api.World.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, x, y, z) =>
         {
-            string key;
+            string id;
 
             switch (target)
             {
@@ -242,7 +244,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                         return;
                     }
 
-                    key = $"rock-{rockType}";
+                    id = $"rock-{rockType}";
                     break;
 
                 case Target.Ore:
@@ -251,7 +253,7 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
                         return;
                     }
 
-                    key = $"ore-{oreType}";
+                    id = $"ore-{oreType}";
                     break;
 
                 default:
@@ -260,9 +262,9 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
 
             var distance = (int)position.DistanceTo(new BlockPos(x, y, z));
 
-            if (!readings.TryGetValue(key, out var reading))
+            if (!readings.TryGetValue(id, out var reading))
             {
-                readings.Add(key, new DistanceReading(distance, block));
+                readings.Add(id, new DistanceReading(distance, block));
                 return;
             }
 
@@ -283,6 +285,13 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             messageBuilder.AppendLine(Lang.GetL(language, "No {0} nearby", target == Target.Rock ? rocks : ores));
             SendNotification(serverPlayer, messageBuilder.ToString());
             return;
+        }
+
+        if (ModConfig.Loaded.OrderReadings)
+        {
+            readings = ModConfig.Loaded.OrderReadingsDirection == ModConfig.OrderAscending
+                ? readings.OrderBy(r => r.Value.Distance).ToDictionary()
+                : readings.OrderByDescending(r => r.Value.Distance).ToDictionary();
         }
 
         messageBuilder.AppendLine(Lang.GetL(language, "Found the following {0}:", target == Target.Rock ? rocks : ores));
@@ -359,6 +368,13 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
             return;
         }
 
+        if (ModConfig.Loaded.OrderReadings)
+        {
+            readings = ModConfig.Loaded.OrderReadingsDirection == ModConfig.OrderAscending
+                ? readings.OrderBy(r => r.Value.Quantity).ToDictionary()
+                : readings.OrderByDescending(r => r.Value.Quantity).ToDictionary();
+        }
+
         messageBuilder.AppendLine(Lang.GetL(language, "Found the following {0}:", ores));
         foreach (var reading in readings)
         {
@@ -396,24 +412,24 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
 
     private class Mode
     {
-        public string Code { get; }
+        public string Id { get; }
         public string Name { get; }
         public string IconDomain { get; }
         public string IconName { get; }
         public bool Enabled { get; }
 
-        public Mode(string code, string name, string iconName, bool enabled)
+        public Mode(string id, string name, string iconName, bool enabled)
         {
-            Code = code;
+            Id = id;
             Name = name;
             IconDomain = ModSystem.ModId;
             IconName = iconName;
             Enabled = enabled;
         }
 
-        public Mode(string code, string name, string iconDomain, string iconName, bool enabled)
+        public Mode(string id, string name, string iconDomain, string iconName, bool enabled)
         {
-            Code = code;
+            Id = id;
             Name = name;
             IconDomain = iconDomain;
             IconName = iconName;

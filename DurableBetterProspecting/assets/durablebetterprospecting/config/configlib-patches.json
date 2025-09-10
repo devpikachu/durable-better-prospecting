@@ -3,6 +3,24 @@
   "file": "DurableBetterProspecting.json",
   "settings": [
     {
+      "type": "boolean",
+      "code": "OrderReadings",
+      "ingui": "Order Readings",
+      "comment": "If enabled, the readings are ordered by the distance / quantity",
+      "default": true
+    },
+    {
+      "type": "string",
+      "code": "OrderReadingsDirection",
+      "ingui": "Order Readings Direction",
+      "comment": "If ascending, the readings are ordered in increasing distance / quantity order",
+      "default": "Ascending",
+      "values": [
+        "Ascending",
+        "Descending"
+      ]
+    },
+    {
       "type": "separator",
       "title": "Density Mode"
     },

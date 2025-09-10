@@ -15,6 +15,10 @@
   "rocks": "rocks",
   "ores": "ores",
 
+  "Order Readings": "Order Readings",
+  "If enabled, the readings are ordered by the distance / quantity": "If enabled, the readings are ordered by the distance / quantity",
+  "Order Readings Direction": "Order Readings Direction",
+  "If ascending, the readings are ordered in increasing distance / quantity order": "If ascending, the readings are ordered in increasing distance / quantity order",
   "Enabled": "Enabled",
   "Durability Cost": "Durability Cost",
   "Small Range Durability Cost": "Small Range Durability Cost",
