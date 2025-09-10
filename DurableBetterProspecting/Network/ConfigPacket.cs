@@ -8,6 +8,7 @@ public class ConfigPacket
     #region Density Mode
 
     public bool DensityModeEnabled;
+    public bool DensityModeSimplified;
     public int DensityModeDurabilityCost;
 
     #endregion Density Mode
@@ -57,6 +58,7 @@ public class ConfigPacket
         {
             // Density Mode
             DensityModeEnabled = config.DensityModeEnabled,
+            DensityModeSimplified = config.DensityModeSimplified,
             DensityModeDurabilityCost = config.DensityModeDurabilityCost,
 
             // Node Mode

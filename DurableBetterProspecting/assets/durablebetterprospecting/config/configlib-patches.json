@@ -31,6 +31,13 @@
       "default": true
     },
     {
+      "type": "boolean",
+      "code": "DensityModeSimplified",
+      "ingui": "Simplified Operation",
+      "comment": "If enabled, only requires 1 sample to output the density readings. Will still consume the equivalent of 3 readings of durability.",
+      "default": false
+    },
+    {
       "type": "integer",
       "code": "DensityModeDurabilityCost",
       "ingui": "Durability Cost",

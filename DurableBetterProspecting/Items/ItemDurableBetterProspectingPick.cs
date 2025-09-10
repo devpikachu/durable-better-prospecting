@@ -73,12 +73,30 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         var modeIndex = GetToolMode(itemSlot, player.Player, blockSelection);
         var mode = _modes[modeIndex];
 
-        var damage = 1;
+        var damage = 0;
         switch (mode.Id)
         {
             case DensityMode:
-                ProbeBlockDensityMode(world, byEntity, itemSlot, blockSelection);
-                damage = ModConfig.Loaded.DensityModeDurabilityCost;
+                if (ModConfig.Loaded.DensityModeSimplified)
+                {
+                    var position = blockSelection.Position;
+                    var block = world.BlockAccessor.GetBlock(position);
+                    block.OnBlockBroken(world, position, player.Player, 0);
+
+                    if (player.Player is not IServerPlayer serverPlayer)
+                    {
+                        break;
+                    }
+
+                    PrintProbeResults(world, serverPlayer, itemSlot, position);
+                    damage = 3 * ModConfig.Loaded.DensityModeDurabilityCost;
+                }
+                else
+                {
+                    ProbeBlockDensityMode(world, byEntity, itemSlot, blockSelection);
+                    damage = ModConfig.Loaded.DensityModeDurabilityCost;
+                }
+
                 break;
 
             case NodeMode:

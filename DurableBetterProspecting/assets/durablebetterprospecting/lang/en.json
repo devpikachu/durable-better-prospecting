@@ -20,6 +20,8 @@
   "Order Readings Direction": "Order Readings Direction",
   "If ascending, the readings are ordered in increasing distance / quantity order": "If ascending, the readings are ordered in increasing distance / quantity order",
   "Enabled": "Enabled",
+  "Simplified Operation": "Simplified Operation",
+  "If enabled, only requires 1 sample to output the density readings. Will still consume the equivalent of 3 readings of durability.": "If enabled, only requires 1 sample to output the density readings. Will still consume the equivalent of 3 readings of durability.",
   "Durability Cost": "Durability Cost",
   "Small Range Durability Cost": "Small Range Durability Cost",
   "Medium Range Durability Cost": "Medium Range Durability Cost",

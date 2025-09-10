@@ -33,6 +33,7 @@ public class ModConfig
     private int _densityModeDurabilityCost = 1;
 
     public bool DensityModeEnabled { get; set; } = true;
+    public bool DensityModeSimplified { get; set; } = false;
 
     public int DensityModeDurabilityCost
     {
@@ -187,6 +188,7 @@ public class ModConfig
 
             // Density Mode
             Loaded.DensityModeEnabled = config.DensityModeEnabled;
+            Loaded.DensityModeSimplified = config.DensityModeSimplified;
             Loaded.DensityModeDurabilityCost = config.DensityModeDurabilityCost;
 
             // Node Mode
@@ -228,6 +230,7 @@ public class ModConfig
 
         // Density Mode
         Loaded.DensityModeEnabled = packet.DensityModeEnabled;
+        Loaded.DensityModeSimplified = packet.DensityModeSimplified;
         Loaded.DensityModeDurabilityCost = packet.DensityModeDurabilityCost;
 
         // Node Mode
