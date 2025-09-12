@@ -262,36 +262,4 @@ public class ModConfig
 
         SynchronizedConfig?.Invoke();
     }
-
-    public static void RegisterListeners(ICoreAPI api)
-    {
-        if (!api.ModLoader.IsModEnabled(ConfigLibModId))
-        {
-            return;
-        }
-
-        var configSystem = api.ModLoader.GetModSystem<ConfigLibModSystem>();
-        configSystem.SettingChanged += OnConfigChanged;
-    }
-
-    public static void UnregisterListeners(ICoreAPI api)
-    {
-        if (!api.ModLoader.IsModEnabled(ConfigLibModId))
-        {
-            return;
-        }
-
-        var configSystem = api.ModLoader.GetModSystem<ConfigLibModSystem>();
-        configSystem.SettingChanged -= OnConfigChanged;
-    }
-
-    private static void OnConfigChanged(string domain, IConfig config, ISetting setting)
-    {
-        if (domain != ModSystem.ModId)
-        {
-            return;
-        }
-
-        setting.AssignSettingValue(Loaded);
-    }
 }

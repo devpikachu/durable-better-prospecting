@@ -27,8 +27,8 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
     private const string AreaMediumMode = "area_medium";
     private const string AreaLargeMode = "area_large";
 
-    private List<Mode> _modes = [];
-    private SkillItem[] _skillItems = [];
+    private List<Mode> _modes = new();
+    private SkillItem[] _skillItems = Array.Empty<SkillItem>();
 
     public override void OnLoaded(ICoreAPI pApi)
     {
@@ -179,18 +179,17 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         var nodeSize = api.World.Config.GetString("propickNodeSearchRadius").ToInt();
 
         // @formatter:off
-        Mode[] modes =
-        [
-            new(DensityMode, "Density Search Mode (Long range, chance based search)", "game", "heatmap", config.DensityModeEnabled),
-            new(NodeMode, "Node Search Mode (Short range, exact search)", "game", "rocks", nodeSize > 0 && config.NodeModeEnabled),
-            new(RockMode, "Rock Search Mode (Long range, distance search for rock types)", RockMode, config.RockModeEnabled),
-            new(DistanceSmallMode, "Distance Search Mode (Short range, distance search for ore types)", DistanceSmallMode, config.DistanceModeEnabled),
-            new(DistanceMediumMode, "Distance Search Mode (Medium range, distance search for ore types)", DistanceMediumMode, config.DistanceModeEnabled),
-            new(DistanceLargeMode, "Distance Search Mode (Long range, distance search for ore types)", DistanceLargeMode, config.DistanceModeEnabled),
-            new(AreaSmallMode, "Area Search Mode (Short range, exact search for ore types)", AreaSmallMode, config.AreaModeEnabled),
-            new(AreaMediumMode, "Area Search Mode (Medium range, exact search for ore types)", AreaMediumMode, config.AreaModeEnabled),
-            new(AreaLargeMode, "Area Search Mode (Long range, exact search for ore types)", AreaLargeMode, config.AreaModeEnabled)
-        ];
+        var modes = new [] {
+            new Mode(DensityMode, "Density Search Mode (Long range, chance based search)", "game", "heatmap", config.DensityModeEnabled),
+            new Mode(NodeMode, "Node Search Mode (Short range, exact search)", "game", "rocks", nodeSize > 0 && config.NodeModeEnabled),
+            new Mode(RockMode, "Rock Search Mode (Long range, distance search for rock types)", RockMode, config.RockModeEnabled),
+            new Mode(DistanceSmallMode, "Distance Search Mode (Short range, distance search for ore types)", DistanceSmallMode, config.DistanceModeEnabled),
+            new Mode(DistanceMediumMode, "Distance Search Mode (Medium range, distance search for ore types)", DistanceMediumMode, config.DistanceModeEnabled),
+            new Mode(DistanceLargeMode, "Distance Search Mode (Long range, distance search for ore types)", DistanceLargeMode, config.DistanceModeEnabled),
+            new Mode(AreaSmallMode, "Area Search Mode (Short range, exact search for ore types)", AreaSmallMode, config.AreaModeEnabled),
+            new Mode(AreaMediumMode, "Area Search Mode (Medium range, exact search for ore types)", AreaMediumMode, config.AreaModeEnabled),
+            new Mode(AreaLargeMode, "Area Search Mode (Long range, exact search for ore types)", AreaLargeMode, config.AreaModeEnabled)
+        };
         _modes = modes.Where(m => m.Enabled).ToList();
         // @formatter:on
 
@@ -310,8 +309,8 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         if (ModConfig.Loaded.OrderReadings)
         {
             readings = ModConfig.Loaded.OrderReadingsDirection == ModConfig.OrderAscending
-                ? readings.OrderBy(r => r.Value.Distance).ToDictionary()
-                : readings.OrderByDescending(r => r.Value.Distance).ToDictionary();
+                ? readings.OrderBy(r => r.Value.Distance).ToDictionary(r => r.Key, r=> r.Value)
+                : readings.OrderByDescending(r => r.Value.Distance).ToDictionary(r => r.Key, r => r.Value);
         }
 
         messageBuilder.AppendLine(Lang.GetL(language, "Found the following {0}:", target == Target.Rock ? rocks : ores));
@@ -392,8 +391,8 @@ public class ItemDurableBetterProspectingPick : ItemProspectingPick
         if (ModConfig.Loaded.OrderReadings)
         {
             readings = ModConfig.Loaded.OrderReadingsDirection == ModConfig.OrderAscending
-                ? readings.OrderBy(r => r.Value.Quantity).ToDictionary()
-                : readings.OrderByDescending(r => r.Value.Quantity).ToDictionary();
+                ? readings.OrderBy(r => r.Value.Quantity).ToDictionary(r => r.Key, r => r.Value)
+                : readings.OrderByDescending(r => r.Value.Quantity).ToDictionary(r => r.Key, r => r.Value);
         }
 
         messageBuilder.AppendLine(Lang.GetL(language, "Found the following {0}:", ores));

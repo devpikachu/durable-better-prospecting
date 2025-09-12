@@ -23,7 +23,6 @@ public class ModSystem : Vintagestory.API.Common.ModSystem
         try
         {
             ModConfig.LoadAndSave(_api);
-            ModConfig.RegisterListeners(_api);
         }
         catch (Exception ex)
         {
@@ -57,8 +56,6 @@ public class ModSystem : Vintagestory.API.Common.ModSystem
 
     public override void Dispose()
     {
-        ModConfig.UnregisterListeners(_api!);
-
         if (_api is not ICoreServerAPI serverApi)
         {
             return;
