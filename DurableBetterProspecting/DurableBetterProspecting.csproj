@@ -20,7 +20,7 @@
             <HintPath>$(VINTAGE_STORY)/Lib/Newtonsoft.Json.dll</HintPath>
             <Private>false</Private>
         </Reference>
-        <Reference Include="ProtoBuf">
+        <Reference Include="protobuf-net">
             <HintPath>$(VINTAGE_STORY)/Lib/protobuf-net.dll</HintPath>
             <Private>false</Private>
         </Reference>
@@ -39,7 +39,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="ConfigLib">
+        <Reference Include="configlib">
             <HintPath>../Vendor/configlib.dll</HintPath>
             <Private>false</Private>
         </Reference>
