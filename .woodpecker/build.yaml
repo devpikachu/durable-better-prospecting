@@ -1,0 +1,23 @@
+when:
+  - event: push
+    branch: main
+
+matrix:
+  PROJECT:
+    - DurableBetterProspecting
+
+steps:
+  - name: bootstrap
+    image: git.omni.ms/omnilium/toolbox:latest
+    environment:
+      REMOTE_USERNAME:
+        from_secret: copyparty_user
+      REMOTE_PASSWORD:
+        from_secret: copyparty_password
+    commands:
+      - bash bootstrap.sh remote
+
+  - name: build
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    commands:
+      - bash build.sh --target Build --general-project ${PROJECT}

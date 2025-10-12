@@ -1,0 +1,35 @@
+{
+  "rootConfigs": [
+    {
+      "className": "DurableBetterProspectingCommonConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "version": "0.0.0",
+      "type": "Common",
+      "description": null,
+      "entries": [
+        {
+          "name": "Placeholder",
+          "type": "Bool",
+          "label": "Placeholder",
+          "description": null
+        }
+      ]
+    },
+    {
+      "className": "DurableBetterProspectingClientConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "version": "0.0.0",
+      "type": "Client",
+      "description": null,
+      "entries": [
+        {
+          "name": "Placeholder",
+          "type": "Bool",
+          "label": "Placeholder",
+          "description": null
+        }
+      ]
+    }
+  ],
+  "configs": []
+}

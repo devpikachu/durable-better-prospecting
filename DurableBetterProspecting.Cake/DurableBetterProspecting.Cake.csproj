@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cake.Frosting" Version="5.0.0"/>
+    <PackageReference Include="Cake.Json" Version="7.0.1"/>
+    <PackageReference Include="Common.Build" Version="0.4.0"/>
+    <PackageReference Include="Common.Build.Generator" Version="0.4.0"/>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../.editorconfig"/>
+    <None Include="../.gitignore"/>
+    <None Include="../build.sh"/>
+    <None Include="../buildConfig.json"/>
+    <None Include="../CHANGELOG.md"/>
+    <None Include="../README.md"/>
+  </ItemGroup>
+
+</Project>

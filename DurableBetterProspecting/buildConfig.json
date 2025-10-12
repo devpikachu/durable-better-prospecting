@@ -1,0 +1,8 @@
+{
+  "name": null,
+  "outputSubdir": "durablebetterprospecting",
+  "substitute": [
+    "DurableBetterProspectingSystem.cs",
+    "modinfo.json"
+  ]
+}

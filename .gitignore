@@ -1,0 +1,6 @@
+bin/
+obj/
+out/
+run/
+vendor/
+*.sln.DotSettings.user

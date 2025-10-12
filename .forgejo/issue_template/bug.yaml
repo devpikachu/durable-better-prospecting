@@ -1,0 +1,51 @@
+name: Bug Report
+about: Report a bug
+title: '[:bug:] '
+labels:
+  - Kind/Bug
+  - Status/New
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to file a bug report!
+        Try to be as detailed as possible as this will help get it reviewed faster.
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: A brief summary of the issue
+      placeholder: Help! This isn't working!
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The version of the mod used
+      placeholder: 21.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe in as much detail as you can what the issue is
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste any logs that are relevant to this issue
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: code
+    attributes:
+      label: Relevant code
+      description: Paste any code that is relevant to this issue
+      render: shell
+    validations:
+      required: false

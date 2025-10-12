@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Library": {
+      "commandName": "Project",
+      "executablePath": "dotnet",
+      "commandLineArgs": "--target Build --project \"DurableBetterProspecting\" --skip-substitution true",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}

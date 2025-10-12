@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DurableBetterProspecting.Cake", "DurableBetterProspecting.Cake\DurableBetterProspecting.Cake.csproj", "{73D8F651-B610-4C6B-AF49-5B60057DE4D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DurableBetterProspecting", "DurableBetterProspecting\DurableBetterProspecting.csproj", "{5BF8A2AD-2ABA-42CB-98E5-0ED9A0ABE9D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73D8F651-B610-4C6B-AF49-5B60057DE4D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73D8F651-B610-4C6B-AF49-5B60057DE4D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73D8F651-B610-4C6B-AF49-5B60057DE4D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73D8F651-B610-4C6B-AF49-5B60057DE4D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BF8A2AD-2ABA-42CB-98E5-0ED9A0ABE9D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BF8A2AD-2ABA-42CB-98E5-0ED9A0ABE9D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BF8A2AD-2ABA-42CB-98E5-0ED9A0ABE9D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BF8A2AD-2ABA-42CB-98E5-0ED9A0ABE9D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
