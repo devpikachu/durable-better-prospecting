@@ -4,6 +4,8 @@ using DryIoc;
 using DurableBetterProspecting.Core;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 
 namespace DurableBetterProspecting.Items;
@@ -13,6 +15,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
     public const string ItemRegistryId = "ItemProspectingPick";
 
     private const string CacheKey = "proPickToolModes";
+    private const string NodeModeRadiusKey = "propickNodeSearchRadius";
 
     private static Mode? _densityMode;
     private static Mode? _nodeMode;
@@ -25,6 +28,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
     private static Mode? _quantityMediumMode;
     private static Mode? _quantityLongMode;
 
+    private static DurableBetterProspectingCommonConfig? _commonConfig;
     private static Mode[]? _modes;
     private static SkillItem[] _skillItems = [];
 
@@ -54,87 +58,158 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         return _skillItems;
     }
 
+    public override float OnBlockBreaking(IPlayer player, BlockSelection blockSel, ItemSlot itemSlot, float remainingResistance, float dt, int counter)
+    {
+        var remain = base.OnBlockBreaking(player, blockSel, itemSlot, remainingResistance, dt, counter);
+        var mode = GetCurrentMode(itemSlot, player, blockSel);
+        return mode.Equals(_densityMode) ? remain : (float)((remain + (double)remainingResistance) / 2.0f);
+    }
+
+    public override bool OnBlockBrokenWith(IWorldAccessor world, Entity byEntity, ItemSlot itemSlot, BlockSelection blockSel, float dropQuantityMultiplier = 1)
+    {
+        if (byEntity is not EntityPlayer player)
+        {
+            return false;
+        }
+
+        var mode = GetCurrentMode(itemSlot, player.Player, blockSel);
+        var damage = 0;
+
+        #region Density mode
+
+        if (mode.Equals(_densityMode))
+        {
+            if (_commonConfig!.DensityMode.Simplified)
+            {
+                var position = blockSel.Position;
+                var block = world.BlockAccessor.GetBlock(position);
+                block.OnBlockBroken(world, position, player.Player, 0);
+
+                if (player.Player is IServerPlayer serverPlayer)
+                {
+                    PrintProbeResults(world, serverPlayer, itemSlot, position);
+                    damage = 3 * _commonConfig.DensityMode.DurabilityCost;
+                }
+            }
+            else
+            {
+                ProbeBlockDensityMode(world, byEntity, itemSlot, blockSel);
+                damage = _commonConfig.DensityMode.DurabilityCost;
+            }
+        }
+
+        #endregion Density mode
+
+        #region Node mode
+
+        if (mode.Equals(_nodeMode))
+        {
+            var nodeSize = api.World.Config.GetString(NodeModeRadiusKey).ToInt(6);
+            ProbeBlockNodeMode(world, byEntity, itemSlot, blockSel, nodeSize);
+            damage = _commonConfig!.NodeMode.DurabilityCost;
+        }
+
+        #endregion Node mode
+
+        // TODO: Column mode
+
+        // TODO: Distance mode
+
+        // TODO: Quantity mode
+
+        if (DamagedBy is not null && DamagedBy.Contains(EnumItemDamageSource.BlockBreaking))
+        {
+            DamageItem(world, byEntity, itemSlot, damage);
+        }
+
+        return true;
+    }
+
     private static void GenerateModes()
     {
         var container = DurableBetterProspectingSystem.Instance!.Container;
         var api = container.Resolve<ICoreAPI>();
-        var config = container.Resolve<IConfigSystem>().GetCommon<DurableBetterProspectingCommonConfig>();
+
+        var configSystem = container.Resolve<IConfigSystem>();
+        configSystem.Synchronized += GenerateModes;
+
+        _commonConfig = configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
 
         // TODO: Icons
 
         #region Mode instantiation
 
-        _densityMode ??= Mode.Create(
+        _densityMode = Mode.Create(
             id: "density",
             name: "Density Mode (Long range, chance based)",
             icon: Icon.Create("game", "heatmap"),
-            enabled: () => config.DensityMode.Enabled
+            enabled: _commonConfig.DensityMode.Enabled
         );
 
-        _nodeMode ??= Mode.Create(
+        _nodeMode = Mode.Create(
             id: "node",
             name: "Node Mode (Short range, quantity based)",
             icon: Icon.Create("game", "rocks"),
-            enabled: () => config.NodeMode.Enabled
+            enabled: _commonConfig.NodeMode.Enabled && api.World.Config.GetString(NodeModeRadiusKey).ToInt() > 0
         );
 
-        _rockMode ??= Mode.Create(
+        _rockMode = Mode.Create(
             id: "rock",
             name: "Rock Mode (Medium range, distance based)",
             icon: Icon.Create("game", "heatmap"),
-            enabled: () => config.DensityMode.Enabled
+            enabled: _commonConfig.DensityMode.Enabled
         );
 
-        _columnMode ??= Mode.Create(
+        _columnMode = Mode.Create(
             id: "column",
             name: "Column Mode (Long range, presence based)",
             icon: Icon.Create("game", "heatmap"),
-            enabled: () => config.DensityMode.Enabled
+            enabled: _commonConfig.DensityMode.Enabled
         );
 
-        _distanceShortMode ??= Mode.Create(
+        _distanceShortMode = Mode.Create(
             id: "distance_short",
             name: "Distance Mode (Short range, distance based)",
             icon: Icon.Create("game", "heatmap"),
-            enabled: () => config.DensityMode.Enabled
+            enabled: _commonConfig.DensityMode.Enabled
         );
 
-        _distanceMediumMode ??= Mode.Create(
+        _distanceMediumMode = Mode.Create(
             id: "distance_medium",
             name: "Distance Mode (Medium range, distance based)",
             icon: Icon.Create("game", "heatmap"),
-            enabled: () => config.DensityMode.Enabled
+            enabled: _commonConfig.DensityMode.Enabled
         );
 
-        _distanceLongMode ??= Mode.Create(
+        _distanceLongMode = Mode.Create(
             id: "distance_long",
             name: "Distance Mode (Long range, distance based)",
             icon: Icon.Create("game", "heatmap"),
-            enabled: () => config.DensityMode.Enabled
+            enabled: _commonConfig.DensityMode.Enabled
         );
 
-        _quantityShortMode ??= Mode.Create(
+        _quantityShortMode = Mode.Create(
             id: "quantity_short",
             name: "Quantity Mode (Short range, quantity based)",
             icon: Icon.Create("game", "heatmap"),
-            enabled: () => config.DensityMode.Enabled
+            enabled: _commonConfig.DensityMode.Enabled
         );
 
-        _quantityMediumMode ??= Mode.Create(
+        _quantityMediumMode = Mode.Create(
             id: "quantity_medium",
             name: "Quantity Mode (Medium range, quantity based)",
             icon: Icon.Create("game", "heatmap"),
-            enabled: () => config.DensityMode.Enabled
+            enabled: _commonConfig.DensityMode.Enabled
         );
 
-        _quantityLongMode ??= Mode.Create(
+        _quantityLongMode = Mode.Create(
             id: "quantity_long",
             name: "Quantity Mode (Long range, quantity based)",
             icon: Icon.Create("game", "heatmap"),
-            enabled: () => config.DensityMode.Enabled
+            enabled: _commonConfig.DensityMode.Enabled
         );
 
-        _modes ??=
+        _modes =
         [
             _densityMode,
             _nodeMode,
@@ -154,7 +229,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         _skillItems = ObjectCacheUtil.GetOrCreate(api, CacheKey, () =>
         {
             return _modes
-                .Where(mode => mode.Enabled.Invoke())
+                .Where(mode => mode.Enabled)
                 .Select(mode =>
                 {
                     var skillItem = new SkillItem
@@ -175,5 +250,12 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
                 })
                 .ToArray();
         });
+    }
+
+    private Mode GetCurrentMode(ItemSlot itemSlot, IPlayer player, BlockSelection blockSel)
+    {
+        var skillIndex = GetToolMode(itemSlot, player, blockSel);
+        var skill = _skillItems[skillIndex];
+        return _modes!.First(mode => mode.Id == skill.Code.Path);
     }
 }
