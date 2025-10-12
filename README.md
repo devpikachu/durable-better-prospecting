@@ -4,11 +4,14 @@
 
 Improve your prospecting experience, without removing the difficulty completely.
 
-
 ## Vintage Story Mods
 
 Get this mod at https://mods.vintagestory.at/durablebetterprospecting.
 
+## Reading on GitHub?
+
+This is a read-only mirror of https://git.omni.ms/vintage-story-mods/durable-better-prospecting. Please submit all issues and pull requests there, as this
+repository will not be worked with directly.
 
 ## License
 
@@ -16,7 +19,7 @@ Get this mod at https://mods.vintagestory.at/durablebetterprospecting.
 
 The contents of this repository are licensed under the [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) license.
 
-Copyright (C) 2025  Andrei "DetPikachu" Hava.
+Copyright (C) 2025 Andrei "DetPikachu" Hava.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,8 +28,8 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+along with this program. If not, see <https://www.gnu.org/licenses/>.
