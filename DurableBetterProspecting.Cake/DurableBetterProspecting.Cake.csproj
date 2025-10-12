@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RunWorkingDirectory>$(MSBuildProjectDirectory)</RunWorkingDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cake.Frosting" Version="5.0.0"/>
+    <PackageReference Include="Cake.Json" Version="7.0.1"/>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../build.ps1"/>
+    <None Include="../build.sh"/>
+    <None Include="../buildConfig.json"/>
+  </ItemGroup>
+
+</Project>

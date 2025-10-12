@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using DurableBetterProspecting.Items;
 using DurableBetterProspecting.Network;
 using JetBrains.Annotations;

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Mod": {
+      "commandName": "Project",
+      "executablePath": "dotnet",
+      "commandLineArgs": "-t Package --project \"WatchfulEye.Mod\"",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}

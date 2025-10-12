@@ -1,4 +1,4 @@
-﻿// ReSharper disable AccessToModifiedClosure
+// ReSharper disable AccessToModifiedClosure
 
 using System;
 using System.Collections.Generic;
