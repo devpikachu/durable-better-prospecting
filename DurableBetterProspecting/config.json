@@ -8,10 +8,54 @@
       "description": null,
       "entries": [
         {
-          "name": "Placeholder",
+          "name": "ReadingDirectionAllowed",
           "type": "Bool",
-          "label": "Placeholder",
-          "description": null
+          "defaultValue": true,
+          "label": "Allow Reading Direction",
+          "description": "If enabled, allows players to enable reading direction output in their client configs"
+        },
+        {
+          "name": "MapMarkingAllowed",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "Allow Map Marking",
+          "description": "If enabled, allows players to enable automatic map marker creation in their client configs"
+        },
+        {
+          "name": "DensityMode",
+          "type": "Nested",
+          "nested": "DensityModeConfig",
+          "label": "Density Mode"
+        },
+        {
+          "name": "NodeMode",
+          "type": "Nested",
+          "nested": "NodeModeConfig",
+          "label": "Node Mode"
+        },
+        {
+          "name": "RockMode",
+          "type": "Nested",
+          "nested": "RockModeConfig",
+          "label": "Rock Mode"
+        },
+        {
+          "name": "ColumnMode",
+          "type": "Nested",
+          "nested": "ColumnModeConfig",
+          "label": "Column Mode"
+        },
+        {
+          "name": "DistanceMode",
+          "type": "Nested",
+          "nested": "DistanceModeConfig",
+          "label": "Distance Mode"
+        },
+        {
+          "name": "QuantityMode",
+          "type": "Nested",
+          "nested": "QuantityModeConfig",
+          "label": "Quantity Mode"
         }
       ]
     },
@@ -23,13 +67,278 @@
       "description": null,
       "entries": [
         {
-          "name": "Placeholder",
+          "name": "ReadingDirection",
           "type": "Bool",
-          "label": "Placeholder",
-          "description": null
+          "defaultValue": true,
+          "label": "Reading Direction",
+          "description": "If enabled and allowed by the server, adds the direction of the reading to the output, in addition to distance / quantity"
+        },
+        {
+          "name": "MapMarking",
+          "type": "Bool",
+          "defaultValue": false,
+          "label": "Map Marking",
+          "description": "If enabled and allowed by the server, automatically creates a map marker for long-range distance and quantity samples"
+        },
+        {
+          "name": "Ordering",
+          "type": "Nested",
+          "nested": "OrderingConfig",
+          "label": "Ordering"
         }
       ]
     }
   ],
-  "configs": []
+  "configs": [
+    {
+      "className": "DensityModeConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "description": "Density mode configuration",
+      "entries": [
+        {
+          "name": "Enabled",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "Enabled",
+          "description": null
+        },
+        {
+          "name": "Simplified",
+          "type": "Bool",
+          "defaultValue": false,
+          "label": "Simplified Operation",
+          "description": "If enabled, only requires 1 sample to output the density readings. Will still consume the equivalent of 3 samples of durability"
+        },
+        {
+          "name": "DurabilityCost",
+          "type": "Int32",
+          "defaultValue": 1,
+          "label": "Durability Cost",
+          "description": "The amount of durability damage to take for each sample"
+        }
+      ]
+    },
+    {
+      "className": "NodeModeConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "description": "Node mode configuration",
+      "entries": [
+        {
+          "name": "Enabled",
+          "type": "Bool",
+          "defaultValue": false,
+          "label": "Enabled",
+          "description": null
+        },
+        {
+          "name": "DurabilityCost",
+          "type": "Int32",
+          "defaultValue": 2,
+          "label": "Durability Cost",
+          "description": "The amount of durability damage to take for each sample"
+        }
+      ]
+    },
+    {
+      "className": "RockModeConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "description": "Rock mode configuration",
+      "entries": [
+        {
+          "name": "Enabled",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "Enabled",
+          "description": null
+        },
+        {
+          "name": "DurabilityCost",
+          "type": "Int32",
+          "defaultValue": 2,
+          "label": "Durability Cost",
+          "description": "The amount of durability damage to take for each sample"
+        },
+        {
+          "name": "SampleSize",
+          "type": "Int32",
+          "defaultValue": 32,
+          "label": "Sample Size",
+          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+        }
+      ]
+    },
+    {
+      "className": "ColumnModeConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "description": "Column mode configuration",
+      "entries": [
+        {
+          "name": "Enabled",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "Enabled",
+          "description": null
+        },
+        {
+          "name": "DurabilityCost",
+          "type": "Int32",
+          "defaultValue": 2,
+          "label": "Durability Cost",
+          "description": "The amount of durability damage to take for each sample"
+        },
+        {
+          "name": "SampleSize",
+          "type": "Int32",
+          "defaultValue": 32,
+          "label": "Sample Size",
+          "description": "The size of the sampled area. This area is a cuboid, centered on the sampled block and stretching from the mantle to the world height"
+        }
+      ]
+    },
+    {
+      "className": "DistanceModeConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "description": "Distance mode configuration",
+      "entries": [
+        {
+          "name": "Enabled",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "Enabled",
+          "description": null
+        },
+        {
+          "name": "DurabilityCostShort",
+          "type": "Int32",
+          "defaultValue": 1,
+          "label": "Durability Cost (Short Range)",
+          "description": "The amount of durability damage to take for each sample"
+        },
+        {
+          "name": "SampleSizeShort",
+          "type": "Int32",
+          "defaultValue": 16,
+          "label": "Sample Size (Short Range)",
+          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+        },
+        {
+          "name": "DurabilityCostMedium",
+          "type": "Int32",
+          "defaultValue": 2,
+          "label": "Durability Cost (Medium Range)",
+          "description": "The amount of durability damage to take for each sample"
+        },
+        {
+          "name": "SampleSizeMedium",
+          "type": "Int32",
+          "defaultValue": 32,
+          "label": "Sample Size (Medium Range)",
+          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+        },
+        {
+          "name": "DurabilityCostLong",
+          "type": "Int32",
+          "defaultValue": 4,
+          "label": "Durability Cost (Long Range)",
+          "description": "The amount of durability damage to take for each sample"
+        },
+        {
+          "name": "SampleSizeLong",
+          "type": "Int32",
+          "defaultValue": 64,
+          "label": "Sample Size (Long Range)",
+          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+        }
+      ]
+    },
+    {
+      "className": "QuantityModeConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "description": "Quantity mode configuration",
+      "entries": [
+        {
+          "name": "Enabled",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "Enabled",
+          "description": null
+        },
+        {
+          "name": "DurabilityCostShort",
+          "type": "Int32",
+          "defaultValue": 1,
+          "label": "Durability Cost (Short Range)",
+          "description": "The amount of durability damage to take for each sample"
+        },
+        {
+          "name": "SampleSizeShort",
+          "type": "Int32",
+          "defaultValue": 16,
+          "label": "Sample Size (Short Range)",
+          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+        },
+        {
+          "name": "DurabilityCostMedium",
+          "type": "Int32",
+          "defaultValue": 2,
+          "label": "Durability Cost (Medium Range)",
+          "description": "The amount of durability damage to take for each sample"
+        },
+        {
+          "name": "SampleSizeMedium",
+          "type": "Int32",
+          "defaultValue": 32,
+          "label": "Sample Size (Medium Range)",
+          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+        },
+        {
+          "name": "DurabilityCostLong",
+          "type": "Int32",
+          "defaultValue": 4,
+          "label": "Durability Cost (Long Range)",
+          "description": "The amount of durability damage to take for each sample"
+        },
+        {
+          "name": "SampleSizeLong",
+          "type": "Int32",
+          "defaultValue": 64,
+          "label": "Sample Size (Long Range)",
+          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+        }
+      ]
+    },
+    {
+      "className": "OrderingConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "description": "Readings ordering configuration",
+      "entries": [
+        {
+          "name": "Enabled",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "Enabled",
+          "description": "If enabled, the readings are ordered by the distance / quantity"
+        },
+        {
+          "name": "Direction",
+          "type": "Enum",
+          "enum": "OrderingDirection",
+          "defaultValue": "Ascending",
+          "label": "Direction",
+          "description": "If ascending, the readings are ordered in increasing distance / quantity order"
+        }
+      ]
+    }
+  ],
+  "enums": [
+    {
+      "enumName": "OrderingDirection",
+      "enumNamespace": "DurableBetterProspecting",
+      "description": "Ordering directions",
+      "values": [
+        "Ascending",
+        "Descending"
+      ]
+    }
+  ]
 }

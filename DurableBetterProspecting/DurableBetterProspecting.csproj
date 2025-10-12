@@ -14,6 +14,10 @@
       <HintPath>../vendor/VintagestoryAPI.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="VSSurvivalMod">
+      <HintPath>../vendor/VSSurvivalMod.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
 
     <Reference Include="protobuf-net">
       <HintPath>../vendor/protobuf-net.dll</HintPath>
@@ -35,8 +39,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Common.Mod" Version="0.1.4" />
-    <PackageReference Include="Common.Mod.Generator" Version="0.1.4" />
+    <PackageReference Include="Common.Mod" Version="0.2.2" />
+    <PackageReference Include="Common.Mod.Generator" Version="0.2.2" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
       <PrivateAssets>all</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>
