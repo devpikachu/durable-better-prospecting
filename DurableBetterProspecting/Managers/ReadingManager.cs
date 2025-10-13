@@ -22,7 +22,7 @@ public class ReadingManager
     public ReadingManager(ICoreAPI api, ILogger logger, ITranslations translations, IConfigSystem configSystem)
     {
         _api = api;
-        _logger = logger;
+        _logger = logger.Named(nameof(ReadingManager));
         _translations = translations;
         _configSystem = configSystem;
 

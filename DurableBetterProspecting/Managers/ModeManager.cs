@@ -38,7 +38,7 @@ public class ModeManager
     public ModeManager(ICoreAPI api, ILogger logger, ITranslations translations, IConfigSystem configSystem)
     {
         _api = api;
-        _logger = logger;
+        _logger = logger.Named(nameof(ModeManager));
         _translations = translations;
         _configSystem = configSystem;
 
