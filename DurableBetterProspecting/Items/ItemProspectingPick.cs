@@ -10,7 +10,6 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.Server;
-using ILogger = Common.Mod.Common.Core.ILogger;
 
 namespace DurableBetterProspecting.Items;
 
@@ -126,7 +125,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         if (mode.Equals(_modeManager.RockMode))
         {
-            SampleArea(world, player, blockSel, SampleType.Rock, SampleShape.Cube, _commonConfig.RockMode.SampleSize);
+            SampleArea(world, player, blockSel, SampleMode.Rock, SampleType.Rock, SampleShape.Cube, _commonConfig.RockMode.SampleSize);
         }
 
         #endregion Rock mode
@@ -135,7 +134,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         if (mode.Equals(_modeManager.ColumnMode))
         {
-            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cuboid, _commonConfig.ColumnMode.SampleSize);
+            SampleArea(world, player, blockSel, SampleMode.Column, SampleType.Ore, SampleShape.Cuboid, _commonConfig.ColumnMode.SampleSize);
         }
 
         #endregion Column mode
@@ -144,17 +143,17 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         if (mode.Equals(_modeManager.DistanceShortMode))
         {
-            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeShort);
+            SampleArea(world, player, blockSel, SampleMode.Distance, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeShort);
         }
 
         if (mode.Equals(_modeManager.DistanceMediumMode))
         {
-            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeMedium);
+            SampleArea(world, player, blockSel, SampleMode.Distance, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeMedium);
         }
 
         if (mode.Equals(_modeManager.DistanceLongMode))
         {
-            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeLong);
+            SampleArea(world, player, blockSel, SampleMode.Distance, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeLong);
         }
 
         #endregion Distance mode
@@ -163,17 +162,17 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         if (mode.Equals(_modeManager.QuantityShortMode))
         {
-            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeShort);
+            SampleArea(world, player, blockSel, SampleMode.Quantity, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeShort);
         }
 
         if (mode.Equals(_modeManager.QuantityMediumMode))
         {
-            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeMedium);
+            SampleArea(world, player, blockSel, SampleMode.Quantity, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeMedium);
         }
 
         if (mode.Equals(_modeManager.QuantityLongMode))
         {
-            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeLong);
+            SampleArea(world, player, blockSel, SampleMode.Quantity, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeLong);
         }
 
         #endregion Quantity mode
@@ -190,6 +189,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         IWorldAccessor world,
         EntityPlayer player,
         BlockSelection blockSel,
+        SampleMode mode,
         SampleType type,
         SampleShape shape,
         int size
@@ -282,6 +282,8 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         var readingPacket = new ReadingPacket
         {
+            Mode = mode,
+            SampleSize = size,
             Readings = readings.Values.ToArray()
         };
         serverChannel.SendPacket(readingPacket, serverPlayer);
