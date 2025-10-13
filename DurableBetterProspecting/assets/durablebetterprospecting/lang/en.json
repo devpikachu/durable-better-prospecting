@@ -15,6 +15,16 @@
   "mode--quantity-medium": "Quantity Mode (Medium range, distance based)",
   "mode--quantity-long": "Quantity Mode (Long range, distance based)",
 
+  "reading--rocks": "rocks",
+  "reading--ores": "ores",
+  "reading--mode-rock": "Rock",
+  "reading--mode-column": "Column",
+  "reading--mode-distance": "Distance",
+  "reading--mode-quantity": "Quantity",
+  "reading--sample-taken": "{0} sample taken within an area of {1} block(s)",
+  "reading--sample-empty": "No {0} found",
+  "reading--sample-not-empty": "Found the following {0}:",
+
   "config--button--reset": "Reset to default: {0}",
 
   "config--label--reading-direction-allowed": "Allow Reading Direction",

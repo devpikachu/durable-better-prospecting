@@ -1,9 +1,11 @@
 using System.Text;
 using Common.Mod.Common.Config;
+using Common.Mod.Common.Core;
 using DurableBetterProspecting.Core;
 using DurableBetterProspecting.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using ILogger = Common.Mod.Common.Core.ILogger;
 
 namespace DurableBetterProspecting.Managers;
@@ -12,14 +14,16 @@ public class ReadingManager
 {
     private readonly ICoreAPI _api;
     private readonly ILogger _logger;
+    private readonly ITranslations _translations;
     private readonly IConfigSystem _configSystem;
 
     private DurableBetterProspectingClientConfig? _clientConfig;
 
-    public ReadingManager(ICoreAPI api, ILogger logger, IConfigSystem configSystem)
+    public ReadingManager(ICoreAPI api, ILogger logger, ITranslations translations, IConfigSystem configSystem)
     {
         _api = api;
         _logger = logger;
+        _translations = translations;
         _configSystem = configSystem;
 
         if (api is ICoreClientAPI)
@@ -46,12 +50,28 @@ public class ReadingManager
         _logger.Verbose("Received reading packet with {0} readings", packet.Readings?.Length ?? 0);
 
         var messageBuilder = new StringBuilder();
-        messageBuilder.AppendFormat("{0} sample taken within an area of {1} block(s)\n", packet.Mode, packet.SampleSize);
+
+        var rocksString = _translations.Get("reading--rocks");
+        var oresString = _translations.Get("reading--ores");
+        var modeString = packet.Mode switch
+        {
+            SampleMode.Rock => _translations.Get("reading--mode-rock"),
+            SampleMode.Column => _translations.Get("reading--mode-column"),
+            SampleMode.Distance => _translations.Get("reading--mode-distance"),
+            SampleMode.Quantity => _translations.Get("reading--mode-quantity"),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        var sampleTakenString = _translations.Get("reading--sample-taken", modeString, packet.SampleSize);
+        messageBuilder.AppendLine(sampleTakenString);
 
         if ((packet.Readings?.Length ?? 0) == 0)
         {
-            messageBuilder.AppendLine("No ore/rock found");
+            var sampleEmptyString = _translations.Get("reading--sample-empty", packet.Mode is SampleMode.Rock ? rocksString : oresString);
+
+            messageBuilder.AppendLine(sampleEmptyString);
             clientApi.ShowChatMessage(messageBuilder.ToString());
+
             return;
         }
 
@@ -82,10 +102,13 @@ public class ReadingManager
             }
         }
 
-        messageBuilder.AppendLine("Found the following ore/rock:");
+        var sampleNotEmptyString = _translations.Get("reading--sample-not-empty", packet.Mode is SampleMode.Rock ? rocksString : oresString);
+        messageBuilder.AppendLine(sampleNotEmptyString);
+
         foreach (var reading in readings)
         {
-            messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>\n", reading.HandbookLink, reading.BlockId);
+            var nameString = Lang.GetL(Lang.CurrentLocale, reading.BlockId);
+            messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>\n", reading.HandbookLink, nameString);
         }
 
         clientApi.ShowChatMessage(messageBuilder.ToString());
