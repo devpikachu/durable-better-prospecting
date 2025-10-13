@@ -21,8 +21,10 @@ done
 # Fetch Vintage Story files
 vsFiles=(
     "Lib/protobuf-net.dll"
+    "Lib/SkiaSharp.dll"
     "Mods/VSSurvivalMod.dll"
     "VintagestoryAPI.dll"
+    "VintagestoryLib.dll"
 )
 for vsFile in "${vsFiles[@]}"; do
     baseVsFile=$(basename "$vsFile")

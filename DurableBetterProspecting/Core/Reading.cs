@@ -1,30 +1,56 @@
+using ProtoBuf;
 using Vintagestory.API.Common;
+using Vintagestory.GameContent;
 
 namespace DurableBetterProspecting.Core;
 
-public record Reading
+[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+public struct Reading
 {
-    public required int? Distance { get; init; }
-    public required int? Quantity { get; init; }
-    public required Block Block { get; init; }
+    [ProtoMember(1)]
+    public required int Distance { get; set; }
 
-    public static Reading CreateDistance(int distance, Block block)
+    [ProtoMember(2)]
+    public required int Quantity { get; set; }
+
+    [ProtoMember(3)]
+    public required string BlockId { get; init; }
+
+    [ProtoMember(4)]
+    public required string HandbookLink { get; init; }
+
+    public static Reading Create(int distance, int quantity, Block block)
+    {
+        var blockId = string.Empty;
+
+        if (block.Variant.TryGetValue("rock", out var rockType))
+        {
+            blockId = $"rock-{rockType}";
+        }
+
+        if (block.BlockMaterial is EnumBlockMaterial.Ore && block.Variant.TryGetValue("type", out var oreType))
+        {
+            blockId = $"ore-{oreType}";
+        }
+
+        if (string.IsNullOrWhiteSpace(blockId))
+        {
+            throw new InvalidOperationException();
+        }
+
+        var handbookLink = $"handbook://{GuiHandbookItemStackPage.PageCodeForStack(new ItemStack(block))}";
+
+        return Create(distance, quantity, blockId, handbookLink);
+    }
+
+    private static Reading Create(int distance, int quantity, string blockId, string handbookLink)
     {
         return new Reading
         {
             Distance = distance,
-            Quantity = null,
-            Block = block
-        };
-    }
-
-    public static Reading CreateQuantity(int quantity, Block block)
-    {
-        return new Reading
-        {
-            Distance = null,
             Quantity = quantity,
-            Block = block
+            BlockId = blockId,
+            HandbookLink = handbookLink
         };
     }
 }

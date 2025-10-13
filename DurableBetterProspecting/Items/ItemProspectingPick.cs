@@ -1,12 +1,16 @@
-using System.Diagnostics.CodeAnalysis;
 using Common.Mod.Common.Config;
 using DryIoc;
 using DurableBetterProspecting.Core;
+using DurableBetterProspecting.Managers;
+using DurableBetterProspecting.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
+using Vintagestory.Server;
+using ILogger = Common.Mod.Common.Core.ILogger;
 
 namespace DurableBetterProspecting.Items;
 
@@ -14,55 +18,62 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 {
     public const string ItemRegistryId = "ItemProspectingPick";
 
-    private const string CacheKey = "proPickToolModes";
-    private const string NodeModeRadiusKey = "propickNodeSearchRadius";
+    private const string ProspectableAttributeKey = "propickable";
 
-    private static Mode? _densityMode;
-    private static Mode? _nodeMode;
-    private static Mode? _rockMode;
-    private static Mode? _columnMode;
-    private static Mode? _distanceShortMode;
-    private static Mode? _distanceMediumMode;
-    private static Mode? _distanceLongMode;
-    private static Mode? _quantityShortMode;
-    private static Mode? _quantityMediumMode;
-    private static Mode? _quantityLongMode;
+    private readonly IConfigSystem _configSystem;
+    private readonly INetworkChannel _channel;
+    private readonly ModeManager _modeManager;
 
-    private static DurableBetterProspectingCommonConfig? _commonConfig;
-    private static Mode[]? _modes;
-    private static SkillItem[] _skillItems = [];
+    private DurableBetterProspectingCommonConfig _commonConfig;
 
-    [SuppressMessage("ReSharper", "ParameterHidesMember")]
-    public override void OnLoaded(ICoreAPI api)
+    public ItemProspectingPick()
     {
-        GenerateModes();
-        base.OnLoaded(api);
-    }
+        var container = DurableBetterProspectingSystem.Instance.Container;
 
-    [SuppressMessage("ReSharper", "ParameterHidesMember")]
-    public override void OnUnloaded(ICoreAPI api)
-    {
-        foreach (var skillItem in _skillItems)
+        _configSystem = container.Resolve<IConfigSystem>();
+        _channel = container.Resolve<INetworkChannel>();
+        _modeManager = container.Resolve<ModeManager>();
+
+        _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
+        _configSystem.Updated += type =>
         {
-            skillItem.Dispose();
+            if (type is RootConfigType.Common)
+            {
+                _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
+            }
+        };
+
+        if (_channel is IServerNetworkChannel serverChannel)
+        {
+            serverChannel
+                .RegisterMessageType<ReadingPacket>()
+                .SetMessageHandler<ReadingPacket>((_, _) => { });
+        }
+
+        if (_channel is IClientNetworkChannel clientChannel)
+        {
+            var readingManager = container.Resolve<ReadingManager>();
+            clientChannel
+                .RegisterMessageType<ReadingPacket>()
+                .SetMessageHandler<ReadingPacket>(readingManager.ProcessReading);
         }
     }
 
     public override int GetToolMode(ItemSlot slot, IPlayer byPlayer, BlockSelection blockSel)
     {
-        return Math.Min(_skillItems.Length - 1, slot.Itemstack.Attributes.GetInt("toolMode"));
+        return Math.Min(_modeManager.GetSkillItems().Length - 1, slot.Itemstack.Attributes.GetInt("toolMode"));
     }
 
     public override SkillItem[] GetToolModes(ItemSlot slot, IClientPlayer forPlayer, BlockSelection blockSel)
     {
-        return _skillItems;
+        return _modeManager.GetSkillItems();
     }
 
     public override float OnBlockBreaking(IPlayer player, BlockSelection blockSel, ItemSlot itemSlot, float remainingResistance, float dt, int counter)
     {
         var remain = base.OnBlockBreaking(player, blockSel, itemSlot, remainingResistance, dt, counter);
-        var mode = GetCurrentMode(itemSlot, player, blockSel);
-        return mode.Equals(_densityMode) ? remain : (float)((remain + (double)remainingResistance) / 2.0f);
+        var mode = _modeManager.GetMode(GetToolMode(itemSlot, player, blockSel));
+        return mode.Equals(_modeManager.DensityMode) ? remain : (float)((remain + (double)remainingResistance) / 2.0f);
     }
 
     public override bool OnBlockBrokenWith(IWorldAccessor world, Entity byEntity, ItemSlot itemSlot, BlockSelection blockSel, float dropQuantityMultiplier = 1)
@@ -72,14 +83,14 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
             return false;
         }
 
-        var mode = GetCurrentMode(itemSlot, player.Player, blockSel);
+        var mode = _modeManager.GetMode(GetToolMode(itemSlot, player.Player, blockSel));
         var damage = 0;
 
         #region Density mode
 
-        if (mode.Equals(_densityMode))
+        if (mode.Equals(_modeManager.DensityMode))
         {
-            if (_commonConfig!.DensityMode.Simplified)
+            if (_commonConfig.DensityMode.Simplified)
             {
                 var position = blockSel.Position;
                 var block = world.BlockAccessor.GetBlock(position);
@@ -102,20 +113,70 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         #region Node mode
 
-        if (mode.Equals(_nodeMode))
+        if (mode.Equals(_modeManager.NodeMode))
         {
-            var nodeSize = api.World.Config.GetString(NodeModeRadiusKey).ToInt(6);
+            var nodeSize = api.World.Config.GetString(ModeManager.NodeModeSampleSizeKey).ToInt(6);
             ProbeBlockNodeMode(world, byEntity, itemSlot, blockSel, nodeSize);
-            damage = _commonConfig!.NodeMode.DurabilityCost;
+            damage = _commonConfig.NodeMode.DurabilityCost;
         }
 
         #endregion Node mode
 
-        // TODO: Column mode
+        #region Rock mode
 
-        // TODO: Distance mode
+        if (mode.Equals(_modeManager.RockMode))
+        {
+            SampleArea(world, player, blockSel, SampleType.Rock, SampleShape.Cube, _commonConfig.RockMode.SampleSize);
+        }
 
-        // TODO: Quantity mode
+        #endregion Rock mode
+
+        #region Column mode
+
+        if (mode.Equals(_modeManager.ColumnMode))
+        {
+            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cuboid, _commonConfig.ColumnMode.SampleSize);
+        }
+
+        #endregion Column mode
+
+        #region Distance mode
+
+        if (mode.Equals(_modeManager.DistanceShortMode))
+        {
+            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeShort);
+        }
+
+        if (mode.Equals(_modeManager.DistanceMediumMode))
+        {
+            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeMedium);
+        }
+
+        if (mode.Equals(_modeManager.DistanceLongMode))
+        {
+            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeLong);
+        }
+
+        #endregion Distance mode
+
+        #region Quantity mode
+
+        if (mode.Equals(_modeManager.QuantityShortMode))
+        {
+            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeShort);
+        }
+
+        if (mode.Equals(_modeManager.QuantityMediumMode))
+        {
+            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeMedium);
+        }
+
+        if (mode.Equals(_modeManager.QuantityLongMode))
+        {
+            SampleArea(world, player, blockSel, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeLong);
+        }
+
+        #endregion Quantity mode
 
         if (DamagedBy is not null && DamagedBy.Contains(EnumItemDamageSource.BlockBreaking))
         {
@@ -125,137 +186,104 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         return true;
     }
 
-    private static void GenerateModes()
+    private void SampleArea(
+        IWorldAccessor world,
+        EntityPlayer player,
+        BlockSelection blockSel,
+        SampleType type,
+        SampleShape shape,
+        int size
+    )
     {
-        var container = DurableBetterProspectingSystem.Instance!.Container;
-        var api = container.Resolve<ICoreAPI>();
-
-        var configSystem = container.Resolve<IConfigSystem>();
-        configSystem.Synchronized += GenerateModes;
-
-        _commonConfig = configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
-
-        // TODO: Icons
-
-        #region Mode instantiation
-
-        _densityMode = Mode.Create(
-            id: "density",
-            name: "Density Mode (Long range, chance based)",
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        _nodeMode = Mode.Create(
-            id: "node",
-            name: "Node Mode (Short range, quantity based)",
-            icon: Icon.Create("game", "rocks"),
-            enabled: _commonConfig.NodeMode.Enabled && api.World.Config.GetString(NodeModeRadiusKey).ToInt() > 0
-        );
-
-        _rockMode = Mode.Create(
-            id: "rock",
-            name: "Rock Mode (Medium range, distance based)",
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        _columnMode = Mode.Create(
-            id: "column",
-            name: "Column Mode (Long range, presence based)",
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        _distanceShortMode = Mode.Create(
-            id: "distance_short",
-            name: "Distance Mode (Short range, distance based)",
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        _distanceMediumMode = Mode.Create(
-            id: "distance_medium",
-            name: "Distance Mode (Medium range, distance based)",
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        _distanceLongMode = Mode.Create(
-            id: "distance_long",
-            name: "Distance Mode (Long range, distance based)",
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        _quantityShortMode = Mode.Create(
-            id: "quantity_short",
-            name: "Quantity Mode (Short range, quantity based)",
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        _quantityMediumMode = Mode.Create(
-            id: "quantity_medium",
-            name: "Quantity Mode (Medium range, quantity based)",
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        _quantityLongMode = Mode.Create(
-            id: "quantity_long",
-            name: "Quantity Mode (Long range, quantity based)",
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        _modes =
-        [
-            _densityMode,
-            _nodeMode,
-            _rockMode,
-            _columnMode,
-            _distanceShortMode,
-            _distanceMediumMode,
-            _distanceLongMode,
-            _quantityShortMode,
-            _quantityMediumMode,
-            _quantityLongMode
-        ];
-
-        #endregion Mode instantiation
-
-        ObjectCacheUtil.Delete(api, CacheKey);
-        _skillItems = ObjectCacheUtil.GetOrCreate(api, CacheKey, () =>
+        var position = blockSel.Position;
+        if (position is null)
         {
-            return _modes
-                .Where(mode => mode.Enabled)
-                .Select(mode =>
-                {
-                    var skillItem = new SkillItem
-                    {
-                        Code = mode.Id,
-                        Name = mode.Name
-                    };
+            return;
+        }
 
-                    if (api is not ICoreClientAPI clientApi)
+        var sampledBlock = world.BlockAccessor.GetBlock(position);
+        sampledBlock.OnBlockBroken(world, position, player.Player, 0);
+
+        if (!sampledBlock.Attributes?[ProspectableAttributeKey].AsBool() ?? false)
+        {
+            return;
+        }
+
+        if (_channel is not IServerNetworkChannel serverChannel
+            || world is not ServerMain serverWorld
+            || player.Player is not IServerPlayer serverPlayer)
+        {
+            return;
+        }
+
+        var halfSize = (int)MathF.Round(size / 2.0f);
+        var bottomPosition = shape is SampleShape.Cube ? position.Y - halfSize : 0;
+        var topPosition = shape is SampleShape.Cube ? position.Y + halfSize : serverWorld.MapSize.Y;
+        var minPosition = new Vec3i(position.X - halfSize, bottomPosition, position.Z - halfSize).ToBlockPos();
+        var maxPosition = new Vec3i(position.X + halfSize, topPosition, position.Z + halfSize).ToBlockPos();
+
+        Dictionary<string, Reading> readings = [];
+        serverWorld.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, x, y, z) =>
+        {
+            Reading currentReading;
+
+            switch (type)
+            {
+                case SampleType.Rock:
+                {
+                    if (!block.Variant.TryGetValue("rock", out var rockType))
                     {
-                        return skillItem;
+                        return;
                     }
 
-                    skillItem.WithIcon(clientApi, mode.Icon.Load(clientApi));
-                    skillItem.TexturePremultipliedAlpha = false;
+                    var rockId = $"rock-{rockType}";
+                    if (readings.TryGetValue(rockId, out var reading))
+                    {
+                        currentReading = reading;
+                        break;
+                    }
 
-                    return skillItem;
-                })
-                .ToArray();
+                    currentReading = Reading.Create(int.MaxValue, 0, block);
+                    readings.Add(rockId, currentReading);
+                    break;
+                }
+
+                case SampleType.Ore:
+                {
+                    if (block.BlockMaterial is not EnumBlockMaterial.Ore || !block.Variant.TryGetValue("type", out var oreType))
+                    {
+                        return;
+                    }
+
+                    var oreId = $"ore-{oreType}";
+                    if (readings.TryGetValue(oreId, out var reading))
+                    {
+                        currentReading = reading;
+                        break;
+                    }
+
+                    currentReading = Reading.Create(int.MaxValue, 0, block);
+                    readings.Add(oreId, currentReading);
+                    break;
+                }
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+
+            var distance = (int)MathF.Round(position.DistanceTo(new Vec3i(x, y, z).ToBlockPos()));
+            if (currentReading.Distance > distance)
+            {
+                currentReading.Distance = distance;
+            }
+
+            currentReading.Quantity += 1;
         });
-    }
 
-    private Mode GetCurrentMode(ItemSlot itemSlot, IPlayer player, BlockSelection blockSel)
-    {
-        var skillIndex = GetToolMode(itemSlot, player, blockSel);
-        var skill = _skillItems[skillIndex];
-        return _modes!.First(mode => mode.Id == skill.Code.Path);
+        var readingPacket = new ReadingPacket
+        {
+            Readings = readings.Values.ToArray()
+        };
+        serverChannel.SendPacket(readingPacket, serverPlayer);
     }
 }
