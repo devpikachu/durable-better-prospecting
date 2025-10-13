@@ -1,9 +1,19 @@
 {
   "Durable Better Prospecting Common Configuration": "Durable Better Prospecting Common Configuration",
   "Durable Better Prospecting Client Configuration": "Durable Better Prospecting Client Configuration",
-
   "Ascending": "Ascending",
   "Descending": "Descending",
+
+  "mode--density": "Density Mode (Long range, chance based)",
+  "mode--node": "Node Mode (Short range, quantity based)",
+  "mode--rock": "Rock Mode (Medium range, distance based)",
+  "mode--column": "Column Mode (Long range, presence based)",
+  "mode--distance-short": "Distance Mode (Short range, distance based)",
+  "mode--distance-medium": "Distance Mode (Medium range, distance based)",
+  "mode--distance-long": "Distance Mode (Long range, distance based)",
+  "mode--quantity-short": "Quantity Mode (Short range, distance based)",
+  "mode--quantity-medium": "Quantity Mode (Medium range, distance based)",
+  "mode--quantity-long": "Quantity Mode (Long range, distance based)",
 
   "config--button--reset": "Reset to default: {0}",
 

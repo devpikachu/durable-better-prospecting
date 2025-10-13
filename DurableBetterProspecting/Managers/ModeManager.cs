@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Common.Mod.Common.Config;
+using Common.Mod.Common.Core;
 using DurableBetterProspecting.Core;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -16,6 +17,7 @@ public class ModeManager
 
     private readonly ICoreAPI _api;
     private readonly ILogger _logger;
+    private readonly ITranslations _translations;
     private readonly IConfigSystem _configSystem;
 
     public Mode DensityMode { get; private set; }
@@ -32,18 +34,19 @@ public class ModeManager
     private Mode[] _modes = [];
     private SkillItem[] _skillItems = [];
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public ModeManager(ICoreAPI api, ILogger logger, IConfigSystem configSystem)
+#pragma warning disable CS8618
+    public ModeManager(ICoreAPI api, ILogger logger, ITranslations translations, IConfigSystem configSystem)
     {
         _api = api;
         _logger = logger;
+        _translations = translations;
         _configSystem = configSystem;
 
         _configSystem.Updated += CreateModes;
 
         CreateModes();
     }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+#pragma warning restore CS8618
 
     public SkillItem[] GetSkillItems() => _skillItems;
 
@@ -69,70 +72,70 @@ public class ModeManager
 
         DensityMode = Mode.Create(
             id: "density",
-            name: "Density Mode (Long range, chance based)",
+            name: _translations.Get("mode--density"),
             icon: Icon.Create("game", "heatmap"),
             enabled: commonConfig.DensityMode.Enabled
         );
 
         NodeMode = Mode.Create(
             id: "node",
-            name: "Node Mode (Short range, quantity based)",
+            name: _translations.Get("mode--node"),
             icon: Icon.Create("game", "rocks"),
             enabled: commonConfig.NodeMode.Enabled && _api.World.Config.GetString(NodeModeSampleSizeKey).ToInt() > 0
         );
 
         RockMode = Mode.Create(
             id: "rock",
-            name: "Rock Mode (Medium range, distance based)",
+            name: _translations.Get("mode--rock"),
             icon: Icon.Create("game", "heatmap"),
             enabled: commonConfig.DensityMode.Enabled
         );
 
         ColumnMode = Mode.Create(
             id: "column",
-            name: "Column Mode (Long range, presence based)",
+            name: _translations.Get("mode--column"),
             icon: Icon.Create("game", "heatmap"),
             enabled: commonConfig.DensityMode.Enabled
         );
 
         DistanceShortMode = Mode.Create(
             id: "distance_short",
-            name: "Distance Mode (Short range, distance based)",
+            name: _translations.Get("mode--distance-short"),
             icon: Icon.Create("game", "heatmap"),
             enabled: commonConfig.DensityMode.Enabled
         );
 
         DistanceMediumMode = Mode.Create(
             id: "distance_medium",
-            name: "Distance Mode (Medium range, distance based)",
+            name: _translations.Get("mode--distance-medium"),
             icon: Icon.Create("game", "heatmap"),
             enabled: commonConfig.DensityMode.Enabled
         );
 
         DistanceLongMode = Mode.Create(
             id: "distance_long",
-            name: "Distance Mode (Long range, distance based)",
+            name: _translations.Get("mode--distance-long"),
             icon: Icon.Create("game", "heatmap"),
             enabled: commonConfig.DensityMode.Enabled
         );
 
         QuantityShortMode = Mode.Create(
             id: "quantity_short",
-            name: "Quantity Mode (Short range, quantity based)",
+            name: _translations.Get("mode--quantity-short"),
             icon: Icon.Create("game", "heatmap"),
             enabled: commonConfig.DensityMode.Enabled
         );
 
         QuantityMediumMode = Mode.Create(
             id: "quantity_medium",
-            name: "Quantity Mode (Medium range, quantity based)",
+            name: _translations.Get("mode--quantity-medium"),
             icon: Icon.Create("game", "heatmap"),
             enabled: commonConfig.DensityMode.Enabled
         );
 
         QuantityLongMode = Mode.Create(
             id: "quantity_long",
-            name: "Quantity Mode (Long range, quantity based)",
+            name: _translations.Get("mode--quantity-long"),
             icon: Icon.Create("game", "heatmap"),
             enabled: commonConfig.DensityMode.Enabled
         );
