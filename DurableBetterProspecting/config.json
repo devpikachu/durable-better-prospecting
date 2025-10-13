@@ -11,51 +11,51 @@
           "name": "ReadingDirectionAllowed",
           "type": "Bool",
           "defaultValue": true,
-          "label": "Allow Reading Direction",
-          "description": "If enabled, allows players to enable reading direction output in their client configs"
+          "label": "config--label--reading-direction-allowed",
+          "description": "config--description--reading-direction-allowed"
         },
         {
           "name": "MapMarkingAllowed",
           "type": "Bool",
           "defaultValue": true,
-          "label": "Allow Map Marking",
-          "description": "If enabled, allows players to enable automatic map marker creation in their client configs"
+          "label": "config--label--map-marking-allowed",
+          "description": "config--description--map-marking-allowed"
         },
         {
           "name": "DensityMode",
           "type": "Nested",
           "nested": "DensityModeConfig",
-          "label": "Density Mode"
+          "label": "config--label--density-mode"
         },
         {
           "name": "NodeMode",
           "type": "Nested",
           "nested": "NodeModeConfig",
-          "label": "Node Mode"
+          "label": "config--label--node-mode"
         },
         {
           "name": "RockMode",
           "type": "Nested",
           "nested": "RockModeConfig",
-          "label": "Rock Mode"
+          "label": "config--label--rock-mode"
         },
         {
           "name": "ColumnMode",
           "type": "Nested",
           "nested": "ColumnModeConfig",
-          "label": "Column Mode"
+          "label": "config--label--column-mode"
         },
         {
           "name": "DistanceMode",
           "type": "Nested",
           "nested": "DistanceModeConfig",
-          "label": "Distance Mode"
+          "label": "config--label--distance-mode"
         },
         {
           "name": "QuantityMode",
           "type": "Nested",
           "nested": "QuantityModeConfig",
-          "label": "Quantity Mode"
+          "label": "config--label--quantity-mode"
         }
       ]
     },
@@ -70,21 +70,21 @@
           "name": "ReadingDirection",
           "type": "Bool",
           "defaultValue": true,
-          "label": "Reading Direction",
-          "description": "If enabled and allowed by the server, adds the direction of the reading to the output, in addition to distance / quantity"
+          "label": "config--label--reading-direction",
+          "description": "config--description--reading-direction"
         },
         {
           "name": "MapMarking",
           "type": "Bool",
           "defaultValue": false,
-          "label": "Map Marking",
-          "description": "If enabled and allowed by the server, automatically creates a map marker for long-range distance and quantity samples"
+          "label": "config--label--map-marking",
+          "description": "config--description--map-marking"
         },
         {
           "name": "Ordering",
           "type": "Nested",
           "nested": "OrderingConfig",
-          "label": "Ordering"
+          "label": "config--label--ordering"
         }
       ]
     }
@@ -99,22 +99,22 @@
           "name": "Enabled",
           "type": "Bool",
           "defaultValue": true,
-          "label": "Enabled",
+          "label": "config--label--enabled",
           "description": null
         },
         {
           "name": "Simplified",
           "type": "Bool",
           "defaultValue": false,
-          "label": "Simplified Operation",
-          "description": "If enabled, only requires 1 sample to output the density readings. Will still consume the equivalent of 3 samples of durability"
+          "label": "config--label--simplified",
+          "description": "config--description--simplified"
         },
         {
           "name": "DurabilityCost",
           "type": "Int32",
           "defaultValue": 1,
-          "label": "Durability Cost",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost",
+          "description": "config--description--durability-cost"
         }
       ]
     },
@@ -127,15 +127,15 @@
           "name": "Enabled",
           "type": "Bool",
           "defaultValue": false,
-          "label": "Enabled",
+          "label": "config--label--enabled",
           "description": null
         },
         {
           "name": "DurabilityCost",
           "type": "Int32",
           "defaultValue": 2,
-          "label": "Durability Cost",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost",
+          "description": "config--description--durability-cost"
         }
       ]
     },
@@ -148,22 +148,22 @@
           "name": "Enabled",
           "type": "Bool",
           "defaultValue": true,
-          "label": "Enabled",
+          "label": "config--label--enabled",
           "description": null
         },
         {
           "name": "DurabilityCost",
           "type": "Int32",
           "defaultValue": 2,
-          "label": "Durability Cost",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost",
+          "description": "config--description--durability-cost"
         },
         {
           "name": "SampleSize",
           "type": "Int32",
           "defaultValue": 32,
-          "label": "Sample Size",
-          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+          "label": "config--label--sample-size",
+          "description": "config--description--sample-size-cube"
         }
       ]
     },
@@ -176,22 +176,22 @@
           "name": "Enabled",
           "type": "Bool",
           "defaultValue": true,
-          "label": "Enabled",
+          "label": "config--label--enabled",
           "description": null
         },
         {
           "name": "DurabilityCost",
           "type": "Int32",
           "defaultValue": 2,
-          "label": "Durability Cost",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost",
+          "description": "config--description--durability-cost"
         },
         {
           "name": "SampleSize",
           "type": "Int32",
           "defaultValue": 32,
-          "label": "Sample Size",
-          "description": "The size of the sampled area. This area is a cuboid, centered on the sampled block and stretching from the mantle to the world height"
+          "label": "config--label--sample-size",
+          "description": "config--description--sample-size-cuboid"
         }
       ]
     },
@@ -204,50 +204,50 @@
           "name": "Enabled",
           "type": "Bool",
           "defaultValue": true,
-          "label": "Enabled",
+          "label": "config--label--enabled",
           "description": null
         },
         {
           "name": "DurabilityCostShort",
           "type": "Int32",
           "defaultValue": 1,
-          "label": "Durability Cost (Short Range)",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost-short",
+          "description": "config--description--durability-cost"
         },
         {
           "name": "SampleSizeShort",
           "type": "Int32",
           "defaultValue": 16,
-          "label": "Sample Size (Short Range)",
-          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+          "label": "config--label--sample-size-short",
+          "description": "config--description--sample-size-cube"
         },
         {
           "name": "DurabilityCostMedium",
           "type": "Int32",
           "defaultValue": 2,
-          "label": "Durability Cost (Medium Range)",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost-medium",
+          "description": "config--description--durability-cost"
         },
         {
           "name": "SampleSizeMedium",
           "type": "Int32",
           "defaultValue": 32,
-          "label": "Sample Size (Medium Range)",
-          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+          "label": "config--label--sample-size-medium",
+          "description": "config--description--sample-size-cube"
         },
         {
           "name": "DurabilityCostLong",
           "type": "Int32",
           "defaultValue": 4,
-          "label": "Durability Cost (Long Range)",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost-long",
+          "description": "config--description--durability-cost"
         },
         {
           "name": "SampleSizeLong",
           "type": "Int32",
           "defaultValue": 64,
-          "label": "Sample Size (Long Range)",
-          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+          "label": "config--label--sample-size-long",
+          "description": "config--description--sample-size-cube"
         }
       ]
     },
@@ -260,50 +260,50 @@
           "name": "Enabled",
           "type": "Bool",
           "defaultValue": true,
-          "label": "Enabled",
+          "label": "config--label--enabled",
           "description": null
         },
         {
           "name": "DurabilityCostShort",
           "type": "Int32",
           "defaultValue": 1,
-          "label": "Durability Cost (Short Range)",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost-short",
+          "description": "config--description--durability-cost"
         },
         {
           "name": "SampleSizeShort",
           "type": "Int32",
           "defaultValue": 16,
-          "label": "Sample Size (Short Range)",
-          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+          "label": "config--label--sample-size-short",
+          "description": "config--description--sample-size-cube"
         },
         {
           "name": "DurabilityCostMedium",
           "type": "Int32",
           "defaultValue": 2,
-          "label": "Durability Cost (Medium Range)",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost-medium",
+          "description": "config--description--durability-cost"
         },
         {
           "name": "SampleSizeMedium",
           "type": "Int32",
           "defaultValue": 32,
-          "label": "Sample Size (Medium Range)",
-          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+          "label": "config--label--sample-size-medium",
+          "description": "config--description--sample-size-cube"
         },
         {
           "name": "DurabilityCostLong",
           "type": "Int32",
           "defaultValue": 4,
-          "label": "Durability Cost (Long Range)",
-          "description": "The amount of durability damage to take for each sample"
+          "label": "config--label--durability-cost-long",
+          "description": "config--description--durability-cost"
         },
         {
           "name": "SampleSizeLong",
           "type": "Int32",
           "defaultValue": 64,
-          "label": "Sample Size (Long Range)",
-          "description": "The size of the sampled area. This area is a cube, centered on the sampled block"
+          "label": "config--label--sample-size-long",
+          "description": "config--description--sample-size-cube"
         }
       ]
     },
@@ -316,16 +316,16 @@
           "name": "Enabled",
           "type": "Bool",
           "defaultValue": true,
-          "label": "Enabled",
-          "description": "If enabled, the readings are ordered by the distance / quantity"
+          "label": "config--label--enabled",
+          "description": "config--description--ordering-enabled"
         },
         {
           "name": "Direction",
           "type": "Enum",
           "enum": "OrderingDirection",
           "defaultValue": "Ascending",
-          "label": "Direction",
-          "description": "If ascending, the readings are ordered in increasing distance / quantity order"
+          "label": "config--label--direction",
+          "description": "config--description--ordering-direction"
         }
       ]
     }

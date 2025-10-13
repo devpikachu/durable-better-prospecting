@@ -27,7 +27,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
     public ItemProspectingPick()
     {
-        var container = DurableBetterProspectingSystem.Instance.Container;
+        var container = DurableBetterProspectingSystem.Instance!.Container;
 
         _configSystem = container.Resolve<IConfigSystem>();
         _channel = container.Resolve<INetworkChannel>();
