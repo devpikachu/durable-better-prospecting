@@ -225,8 +225,6 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         Dictionary<string, Reading> readings = [];
         serverWorld.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, x, y, z) =>
         {
-            Reading currentReading;
-
             switch (type)
             {
                 case SampleType.Rock:
@@ -237,14 +235,20 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
                     }
 
                     var rockId = $"rock-{rockType}";
+                    var distance = (int)MathF.Round(position.DistanceTo(new Vec3i(x, y, z).ToBlockPos()));
+
                     if (readings.TryGetValue(rockId, out var reading))
                     {
-                        currentReading = reading;
+                        if (reading.Distance > distance)
+                        {
+                            reading.Distance = distance;
+                        }
+
+                        reading.Quantity += 1;
                         break;
                     }
 
-                    currentReading = Reading.Create(int.MaxValue, 0, block);
-                    readings.Add(rockId, currentReading);
+                    readings.Add(rockId, Reading.Create(distance, 1, block));
                     break;
                 }
 
@@ -256,28 +260,26 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
                     }
 
                     var oreId = $"ore-{oreType}";
+                    var distance = (int)MathF.Round(position.DistanceTo(new Vec3i(x, y, z).ToBlockPos()));
+
                     if (readings.TryGetValue(oreId, out var reading))
                     {
-                        currentReading = reading;
+                        if (reading.Distance > distance)
+                        {
+                            reading.Distance = distance;
+                        }
+
+                        reading.Quantity += 1;
                         break;
                     }
 
-                    currentReading = Reading.Create(int.MaxValue, 0, block);
-                    readings.Add(oreId, currentReading);
+                    readings.Add(oreId, Reading.Create(distance, 1, block));
                     break;
                 }
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-
-            var distance = (int)MathF.Round(position.DistanceTo(new Vec3i(x, y, z).ToBlockPos()));
-            if (currentReading.Distance > distance)
-            {
-                currentReading.Distance = distance;
-            }
-
-            currentReading.Quantity += 1;
         });
 
         var readingPacket = new ReadingPacket

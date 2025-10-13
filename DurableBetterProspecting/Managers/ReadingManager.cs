@@ -51,6 +51,7 @@ public class ReadingManager
 
         var messageBuilder = new StringBuilder();
 
+        var blocksAwayString = _translations.Get("reading--blocks-away");
         var rocksString = _translations.Get("reading--rocks");
         var oresString = _translations.Get("reading--ores");
         var modeString = packet.Mode switch
@@ -108,9 +109,45 @@ public class ReadingManager
         foreach (var reading in readings)
         {
             var nameString = Lang.GetL(Lang.CurrentLocale, reading.BlockId);
-            messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>\n", reading.HandbookLink, nameString);
+
+            switch (packet.Mode)
+            {
+                case SampleMode.Rock:
+                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}\n", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
+                    break;
+
+                case SampleMode.Column:
+                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>\n", reading.HandbookLink, nameString);
+                    break;
+
+                case SampleMode.Distance:
+                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}\n", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
+                    break;
+
+                case SampleMode.Quantity:
+                    var quantityString = TranslateQuantity(reading.Quantity);
+                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2}\n", reading.HandbookLink, nameString, quantityString);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         clientApi.ShowChatMessage(messageBuilder.ToString());
+    }
+
+    private string TranslateQuantity(int value)
+    {
+        return value switch
+        {
+            < 10 => _translations.Get("reading--amount-trace"),
+            < 20 => _translations.Get("reading--amount-small"),
+            < 40 => _translations.Get("reading--amount-medium"),
+            < 80 => _translations.Get("reading--amount-large"),
+            _ => value < 160
+                ? _translations.Get("reading--amount-very-large")
+                : _translations.Get("reading--amount-huge")
+        };
     }
 }

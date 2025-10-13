@@ -5,7 +5,7 @@ using Vintagestory.GameContent;
 namespace DurableBetterProspecting.Core;
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-public struct Reading
+public class Reading
 {
     [ProtoMember(1)]
     public required int Distance { get; set; }
