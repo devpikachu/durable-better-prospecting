@@ -95,56 +95,56 @@ public class ModeManager
         RockMode = Mode.Create(
             id: "rock",
             name: _translations.Get("mode--rock"),
-            icon: Icon.Create("game", "heatmap"),
+            icon: Icon.Create("mode_rock"),
             enabled: _commonConfig.DensityMode.Enabled
         );
 
         ColumnMode = Mode.Create(
             id: "column",
             name: _translations.Get("mode--column"),
-            icon: Icon.Create("game", "heatmap"),
+            icon: Icon.Create("mode_column"),
             enabled: _commonConfig.DensityMode.Enabled
         );
 
         DistanceShortMode = Mode.Create(
             id: "distance_short",
             name: _translations.Get("mode--distance-short"),
-            icon: Icon.Create("game", "heatmap"),
+            icon: Icon.Create("mode_distance_short"),
             enabled: _commonConfig.DensityMode.Enabled
         );
 
         DistanceMediumMode = Mode.Create(
             id: "distance_medium",
             name: _translations.Get("mode--distance-medium"),
-            icon: Icon.Create("game", "heatmap"),
+            icon: Icon.Create("mode_distance_medium"),
             enabled: _commonConfig.DensityMode.Enabled
         );
 
         DistanceLongMode = Mode.Create(
             id: "distance_long",
             name: _translations.Get("mode--distance-long"),
-            icon: Icon.Create("game", "heatmap"),
+            icon: Icon.Create("mode_distance_long"),
             enabled: _commonConfig.DensityMode.Enabled
         );
 
         QuantityShortMode = Mode.Create(
             id: "quantity_short",
             name: _translations.Get("mode--quantity-short"),
-            icon: Icon.Create("game", "heatmap"),
+            icon: Icon.Create("mode_quantity_short"),
             enabled: _commonConfig.DensityMode.Enabled
         );
 
         QuantityMediumMode = Mode.Create(
             id: "quantity_medium",
             name: _translations.Get("mode--quantity-medium"),
-            icon: Icon.Create("game", "heatmap"),
+            icon: Icon.Create("mode_quantity_medium"),
             enabled: _commonConfig.DensityMode.Enabled
         );
 
         QuantityLongMode = Mode.Create(
             id: "quantity_long",
             name: _translations.Get("mode--quantity-long"),
-            icon: Icon.Create("game", "heatmap"),
+            icon: Icon.Create("mode_quantity_long"),
             enabled: _commonConfig.DensityMode.Enabled
         );
 
