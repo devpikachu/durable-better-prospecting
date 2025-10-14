@@ -113,21 +113,48 @@ public class ReadingManager
             switch (packet.Mode)
             {
                 case SampleMode.Rock:
-                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}\n", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
+                {
+                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
+
+                    if (reading.Direction is not null && reading.Direction is not Direction.None && _clientConfig.ReadingDirection)
+                    {
+                        messageBuilder.AppendFormat(" - {0}", TranslateDirection((Direction)reading.Direction));
+                    }
+
+                    messageBuilder.Append('\n');
                     break;
+                }
 
                 case SampleMode.Column:
                     messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>\n", reading.HandbookLink, nameString);
                     break;
 
                 case SampleMode.Distance:
-                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}\n", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
+                {
+                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
+
+                    if (reading.Direction is not null && reading.Direction is not Direction.None && _clientConfig.ReadingDirection)
+                    {
+                        messageBuilder.AppendFormat(" - {0}", TranslateDirection((Direction)reading.Direction));
+                    }
+
+                    messageBuilder.Append('\n');
                     break;
+                }
 
                 case SampleMode.Quantity:
+                {
                     var quantityString = TranslateQuantity(reading.Quantity);
-                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2}\n", reading.HandbookLink, nameString, quantityString);
+                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2}", reading.HandbookLink, nameString, quantityString);
+
+                    if (reading.Direction is not null && reading.Direction is not Direction.None && _clientConfig.ReadingDirection)
+                    {
+                        messageBuilder.AppendFormat(" - {0}", TranslateDirection((Direction)reading.Direction));
+                    }
+
+                    messageBuilder.Append('\n');
                     break;
+                }
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -149,5 +176,77 @@ public class ReadingManager
                 ? _translations.Get("reading--amount-very-large")
                 : _translations.Get("reading--amount-huge")
         };
+    }
+
+    private string TranslateDirection(Direction direction)
+    {
+        var stringBuilder = new StringBuilder();
+        var vertical = false;
+        var horizontal = false;
+
+        // Up/Down
+        {
+            if (direction.HasFlag(Direction.Up))
+            {
+                stringBuilder.Append(_translations.Get("reading--up"));
+                vertical = true;
+            }
+
+            if (direction.HasFlag(Direction.Down))
+            {
+                stringBuilder.Append(_translations.Get("reading--down"));
+                vertical = true;
+            }
+        }
+
+        // North/South
+        {
+            if (direction.HasFlag(Direction.North))
+            {
+                if (vertical)
+                {
+                    stringBuilder.Append(", ");
+                }
+
+                stringBuilder.Append(_translations.Get("reading--north"));
+                horizontal = true;
+            }
+
+            if (direction.HasFlag(Direction.South))
+            {
+                if (vertical)
+                {
+                    stringBuilder.Append(", ");
+                }
+
+                stringBuilder.Append(_translations.Get("reading--south"));
+                horizontal = true;
+            }
+        }
+
+        // East/West
+        {
+            if (direction.HasFlag(Direction.East))
+            {
+                if (vertical && !horizontal)
+                {
+                    stringBuilder.Append(", ");
+                }
+
+                stringBuilder.Append(_translations.Get("reading--east"));
+            }
+
+            if (direction.HasFlag(Direction.West))
+            {
+                if (vertical && !horizontal)
+                {
+                    stringBuilder.Append(", ");
+                }
+
+                stringBuilder.Append(_translations.Get("reading--west"));
+            }
+        }
+
+        return stringBuilder.ToString();
     }
 }

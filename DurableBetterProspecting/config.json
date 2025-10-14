@@ -8,18 +8,17 @@
       "description": null,
       "entries": [
         {
-          "name": "ReadingDirectionAllowed",
-          "type": "Bool",
-          "defaultValue": true,
-          "label": "config--label--reading-direction-allowed",
-          "description": "config--description--reading-direction-allowed"
-        },
-        {
           "name": "MapMarkingAllowed",
           "type": "Bool",
           "defaultValue": true,
           "label": "config--label--map-marking-allowed",
           "description": "config--description--map-marking-allowed"
+        },
+        {
+          "name": "Direction",
+          "type": "Nested",
+          "nested": "DirectionConfig",
+          "label": "config--label--direction"
         },
         {
           "name": "DensityMode",
@@ -76,7 +75,7 @@
         {
           "name": "MapMarking",
           "type": "Bool",
-          "defaultValue": false,
+          "defaultValue": true,
           "label": "config--label--map-marking",
           "description": "config--description--map-marking"
         },
@@ -90,6 +89,27 @@
     }
   ],
   "configs": [
+    {
+      "className": "DirectionConfig",
+      "classNamespace": "DurableBetterProspecting",
+      "description": "Direction configuration",
+      "entries": [
+        {
+          "name": "Allowed",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "config--label--direction-allowed",
+          "description": "config--description--direction-allowed"
+        },
+        {
+          "name": "Threshold",
+          "type": "Int32",
+          "defaultValue": 3,
+          "label": "config--label--direction-threshold",
+          "description": "config--description--direction-threshold"
+        }
+      ]
+    },
     {
       "className": "DensityModeConfig",
       "classNamespace": "DurableBetterProspecting",

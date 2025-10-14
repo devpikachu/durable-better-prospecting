@@ -236,19 +236,21 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
                     var rockId = $"rock-{rockType}";
                     var distance = (int)MathF.Round(position.DistanceTo(new Vec3i(x, y, z).ToBlockPos()));
+                    Direction? direction = _commonConfig.Direction.Allowed ? CalculateDirection(position, x, y, z) : null;
 
                     if (readings.TryGetValue(rockId, out var reading))
                     {
                         if (reading.Distance > distance)
                         {
                             reading.Distance = distance;
+                            reading.Direction = direction;
                         }
 
                         reading.Quantity += 1;
                         break;
                     }
 
-                    readings.Add(rockId, Reading.Create(distance, 1, block));
+                    readings.Add(rockId, Reading.Create(distance, 1, direction, block));
                     break;
                 }
 
@@ -261,19 +263,21 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
                     var oreId = $"ore-{oreType}";
                     var distance = (int)MathF.Round(position.DistanceTo(new Vec3i(x, y, z).ToBlockPos()));
+                    Direction? direction = _commonConfig.Direction.Allowed ? CalculateDirection(position, x, y, z) : null;
 
                     if (readings.TryGetValue(oreId, out var reading))
                     {
                         if (reading.Distance > distance)
                         {
                             reading.Distance = distance;
+                            reading.Direction = direction;
                         }
 
                         reading.Quantity += 1;
                         break;
                     }
 
-                    readings.Add(oreId, Reading.Create(distance, 1, block));
+                    readings.Add(oreId, Reading.Create(distance, 1, direction, block));
                     break;
                 }
 
@@ -289,5 +293,52 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
             Readings = readings.Values.ToArray()
         };
         serverChannel.SendPacket(readingPacket, serverPlayer);
+    }
+
+    private Direction CalculateDirection(BlockPos sampledPosition, int x, int y, int z)
+    {
+        var direction = Direction.None;
+        var threshold = _commonConfig.Direction.Threshold;
+
+        // Up/Down
+        {
+            if (y < sampledPosition.Y && Math.Abs(sampledPosition.Y - y) > threshold)
+            {
+                direction |= Direction.Down;
+            }
+
+            if (y > sampledPosition.Y && Math.Abs(y - sampledPosition.Y) > threshold)
+            {
+                direction |= Direction.Up;
+            }
+        }
+
+        // North/South
+        {
+            if (z < sampledPosition.Z && Math.Abs(sampledPosition.Z - z) > threshold)
+            {
+                direction |= Direction.North;
+            }
+
+            if (z > sampledPosition.Z && Math.Abs(z - sampledPosition.Z) > threshold)
+            {
+                direction |= Direction.South;
+            }
+        }
+
+        // East/West
+        {
+            if (x < sampledPosition.X && Math.Abs(sampledPosition.X - x) > threshold)
+            {
+                direction |= Direction.West;
+            }
+
+            if (x > sampledPosition.X && Math.Abs(x - sampledPosition.X) > threshold)
+            {
+                direction |= Direction.East;
+            }
+        }
+
+        return direction;
     }
 }
