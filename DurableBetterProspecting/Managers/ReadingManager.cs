@@ -19,6 +19,7 @@ public class ReadingManager
     private readonly IConfigSystem _configSystem;
 
     private DurableBetterProspectingClientConfig? _clientConfig;
+    private IClientNetworkChannel? _channel;
 
     public ReadingManager(ICoreAPI api, ILogger logger, ITranslations translations, IConfigSystem configSystem)
     {
@@ -54,7 +55,8 @@ public class ReadingManager
 
     private void OnClientRegisterMessageTypes(IClientNetworkChannel channel)
     {
-        channel
+        _channel = channel;
+        _channel
             .RegisterMessageType<ReadingPacket>()
             .SetMessageHandler<ReadingPacket>(ProcessReading);
     }
@@ -83,7 +85,7 @@ public class ReadingManager
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        var sampleTakenString = _translations.Get("reading--sample-taken", modeString, packet.SampleSize);
+        var sampleTakenString = _translations.Get("reading--sample-taken", modeString, packet.Size);
         messageBuilder.AppendLine(sampleTakenString);
 
         if ((packet.Readings?.Length ?? 0) == 0)
@@ -126,9 +128,11 @@ public class ReadingManager
         var sampleNotEmptyString = _translations.Get("reading--sample-not-empty", packet.Mode is SampleMode.Rock ? rocksString : oresString);
         messageBuilder.AppendLine(sampleNotEmptyString);
 
+        var readingsBuilder = new StringBuilder();
         foreach (var reading in readings)
         {
             var nameString = Lang.GetL(Lang.CurrentLocale, reading.BlockId);
+            readingsBuilder.AppendLine(nameString);
 
             switch (packet.Mode)
             {
@@ -179,6 +183,12 @@ public class ReadingManager
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        if (packet.Position is not null && _clientConfig.MapMarking)
+        {
+            var markingPacket = MarkingPacket.Create(packet.Position, readingsBuilder.ToString());
+            _channel!.SendPacket(markingPacket);
         }
 
         clientApi.ShowChatMessage(messageBuilder.ToString());

@@ -1,5 +1,6 @@
 using DurableBetterProspecting.Core;
 using ProtoBuf;
+using Vintagestory.API.MathTools;
 
 namespace DurableBetterProspecting.Network;
 
@@ -10,8 +11,11 @@ public record ReadingPacket
     public required SampleMode Mode { get; init; }
 
     [ProtoMember(2)]
-    public required int SampleSize { get; init; }
+    public required int Size { get; init; }
 
     [ProtoMember(3)]
+    public required Vec3i? Position { get; init; }
+
+    [ProtoMember(4)]
     public required Reading[]? Readings { get; init; }
 }

@@ -41,6 +41,7 @@
   "config--button--reset": "Reset to default: {0}",
 
   "config--label--direction": "Direction",
+  "config--label--marker": "Marking",
   "config--label--density-mode": "Density Mode",
   "config--label--node-mode": "Node Mode",
   "config--label--rock-mode": "Rock Mode",

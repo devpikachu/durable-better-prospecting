@@ -14,6 +14,12 @@
           "label": "config--label--direction"
         },
         {
+          "name": "Marker",
+          "type": "Nested",
+          "nested": "MarkerConfig",
+          "label": "config--label--marker"
+        },
+        {
           "name": "DensityMode",
           "type": "Nested",
           "nested": "DensityModeConfig",

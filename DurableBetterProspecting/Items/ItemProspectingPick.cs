@@ -110,7 +110,16 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         if (mode.Equals(_modeManager.RockMode))
         {
-            SampleArea(world, player, blockSel, SampleMode.Rock, SampleType.Rock, SampleShape.Cube, _commonConfig.RockMode.SampleSize);
+            SampleArea(
+                world: world,
+                player: player,
+                blockSel: blockSel,
+                mode: SampleMode.Rock,
+                type: SampleType.Rock,
+                shape: SampleShape.Cube,
+                size: _commonConfig.RockMode.SampleSize,
+                markerEligible: false
+            );
         }
 
         #endregion Rock mode
@@ -119,7 +128,16 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         if (mode.Equals(_modeManager.ColumnMode))
         {
-            SampleArea(world, player, blockSel, SampleMode.Column, SampleType.Ore, SampleShape.Cuboid, _commonConfig.ColumnMode.SampleSize);
+            SampleArea(
+                world: world,
+                player: player,
+                blockSel: blockSel,
+                mode: SampleMode.Column,
+                type: SampleType.Ore,
+                shape: SampleShape.Cuboid,
+                size: _commonConfig.ColumnMode.SampleSize,
+                markerEligible: _commonConfig.Marker.Allowed
+            );
         }
 
         #endregion Column mode
@@ -128,17 +146,44 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         if (mode.Equals(_modeManager.DistanceShortMode))
         {
-            SampleArea(world, player, blockSel, SampleMode.Distance, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeShort);
+            SampleArea(
+                world: world,
+                player: player,
+                blockSel: blockSel,
+                mode: SampleMode.Distance,
+                type: SampleType.Ore,
+                shape: SampleShape.Cube,
+                size: _commonConfig.DistanceMode.SampleSizeShort,
+                markerEligible: false
+            );
         }
 
         if (mode.Equals(_modeManager.DistanceMediumMode))
         {
-            SampleArea(world, player, blockSel, SampleMode.Distance, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeMedium);
+            SampleArea(
+                world: world,
+                player: player,
+                blockSel: blockSel,
+                mode: SampleMode.Distance,
+                type: SampleType.Ore,
+                shape: SampleShape.Cube,
+                size: _commonConfig.DistanceMode.SampleSizeMedium,
+                markerEligible: false
+            );
         }
 
         if (mode.Equals(_modeManager.DistanceLongMode))
         {
-            SampleArea(world, player, blockSel, SampleMode.Distance, SampleType.Ore, SampleShape.Cube, _commonConfig.DistanceMode.SampleSizeLong);
+            SampleArea(
+                world: world,
+                player: player,
+                blockSel: blockSel,
+                mode: SampleMode.Distance,
+                type: SampleType.Ore,
+                shape: SampleShape.Cube,
+                size: _commonConfig.DistanceMode.SampleSizeLong,
+                markerEligible: _commonConfig.Marker.Allowed
+            );
         }
 
         #endregion Distance mode
@@ -147,17 +192,44 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         if (mode.Equals(_modeManager.QuantityShortMode))
         {
-            SampleArea(world, player, blockSel, SampleMode.Quantity, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeShort);
+            SampleArea(
+                world: world,
+                player: player,
+                blockSel: blockSel,
+                mode: SampleMode.Quantity,
+                type: SampleType.Ore,
+                shape: SampleShape.Cube,
+                size: _commonConfig.QuantityMode.SampleSizeShort,
+                markerEligible: false
+            );
         }
 
         if (mode.Equals(_modeManager.QuantityMediumMode))
         {
-            SampleArea(world, player, blockSel, SampleMode.Quantity, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeMedium);
+            SampleArea(
+                world: world,
+                player: player,
+                blockSel: blockSel,
+                mode: SampleMode.Quantity,
+                type: SampleType.Ore,
+                shape: SampleShape.Cube,
+                size: _commonConfig.QuantityMode.SampleSizeMedium,
+                markerEligible: false
+            );
         }
 
         if (mode.Equals(_modeManager.QuantityLongMode))
         {
-            SampleArea(world, player, blockSel, SampleMode.Quantity, SampleType.Ore, SampleShape.Cube, _commonConfig.QuantityMode.SampleSizeLong);
+            SampleArea(
+                world: world,
+                player: player,
+                blockSel: blockSel,
+                mode: SampleMode.Quantity,
+                type: SampleType.Ore,
+                shape: SampleShape.Cube,
+                size: _commonConfig.QuantityMode.SampleSizeLong,
+                markerEligible: _commonConfig.Marker.Allowed
+            );
         }
 
         #endregion Quantity mode
@@ -177,7 +249,8 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         SampleMode mode,
         SampleType type,
         SampleShape shape,
-        int size
+        int size,
+        bool markerEligible
     )
     {
         var position = blockSel.Position;
@@ -274,8 +347,9 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         var readingPacket = new ReadingPacket
         {
             Mode = mode,
-            SampleSize = size,
-            Readings = readings.Values.ToArray()
+            Size = size,
+            Position = markerEligible ? position.ToVec3i() : null,
+            Readings = readings.Values.ToArray(),
         };
         serverChannel.SendPacket(readingPacket, serverPlayer);
     }

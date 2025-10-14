@@ -26,7 +26,7 @@ public class MarkerManager
 
     public MarkerManager(ICoreAPI api, ILogger logger, IConfigSystem configSystem)
     {
-        _logger = logger;
+        _logger = logger.Named("MarkerManager");
         _configSystem = configSystem;
 
         DurableBetterProspectingSystem.Instance!.ServerRegisterMessageTypes += OnServerRegisterMessageTypes;
@@ -64,6 +64,11 @@ public class MarkerManager
 
     private void ProcessMarking(IServerPlayer player, MarkingPacket packet)
     {
+        if (!_commonConfig!.Marker.Allowed)
+        {
+            return;
+        }
+
         _logger.Verbose($"Processing marking packet for {player.PlayerName} ({player.PlayerUID})");
     }
 }
