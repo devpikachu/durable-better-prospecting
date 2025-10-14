@@ -41,21 +41,6 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
                 _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
             }
         };
-
-        if (_channel is IServerNetworkChannel serverChannel)
-        {
-            serverChannel
-                .RegisterMessageType<ReadingPacket>()
-                .SetMessageHandler<ReadingPacket>((_, _) => { });
-        }
-
-        if (_channel is IClientNetworkChannel clientChannel)
-        {
-            var readingManager = container.Resolve<ReadingManager>();
-            clientChannel
-                .RegisterMessageType<ReadingPacket>()
-                .SetMessageHandler<ReadingPacket>(readingManager.ProcessReading);
-        }
     }
 
     public override int GetToolMode(ItemSlot slot, IPlayer byPlayer, BlockSelection blockSel)

@@ -18,6 +18,10 @@
       <HintPath>../vendor/VintagestoryLib.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="VSEssentials">
+      <HintPath>../vendor/VSEssentials.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="VSSurvivalMod">
       <HintPath>../vendor/VSSurvivalMod.dll</HintPath>
       <Private>false</Private>

@@ -20,8 +20,17 @@ public class DurableBetterProspectingSystem : System<DurableBetterProspectingSys
     public override void StartPre(ICoreAPI api)
     {
         base.StartPre(api);
+        Container.Register<MarkerManager>(Reuse.Singleton);
         Container.Register<ModeManager>(Reuse.Singleton);
         Container.Register<ReadingManager>(Reuse.Singleton);
+
+        // Make sure that managers are instantiated
+        {
+            // ReSharper disable once UnusedVariable
+            var markerManager = Container.Resolve<MarkerManager>();
+            // ReSharper disable once UnusedVariable
+            var readingManager = Container.Resolve<ReadingManager>();
+        }
     }
 
     public override void Start(ICoreAPI api)

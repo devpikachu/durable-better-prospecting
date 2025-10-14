@@ -22,6 +22,7 @@ done
 vsFiles=(
     "Lib/protobuf-net.dll"
     "Lib/SkiaSharp.dll"
+    "Mods/VSEssentials.dll"
     "Mods/VSSurvivalMod.dll"
     "VintagestoryAPI.dll"
     "VintagestoryLib.dll"

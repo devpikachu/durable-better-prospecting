@@ -40,7 +40,6 @@
 
   "config--button--reset": "Reset to default: {0}",
 
-  "config--label--map-marking-allowed": "Allow Map Marking",
   "config--label--direction": "Direction",
   "config--label--density-mode": "Density Mode",
   "config--label--node-mode": "Node Mode",
@@ -53,6 +52,8 @@
   "config--label--ordering": "Ordering",
   "config--label--direction-allowed": "Allow Direction",
   "config--label--direction-threshold": "Distance Threshold",
+  "config--label--marking-allowed": "Allow Map Marking",
+  "config--label--marking-threshold": "Distance Threshold",
   "config--label--enabled": "Enabled",
   "config--label--simplified": "Simplified Operation",
   "config--label--durability-cost": "Durability Cost",
@@ -64,11 +65,12 @@
   "config--label--sample-size-medium": "Sample Size (Medium Range)",
   "config--label--sample-size-long": "Sample Size (Long Range)",
 
-  "config--description--map-marking-allowed": "If enabled, allows players to enable automatic map marker creation in their client configs",
   "config--description--reading-direction": "If enabled and allowed by the server, adds the direction of the reading to the output, in addition to distance / quantity",
   "config--description--map-marking": "If enabled and allowed by the server, automatically creates a map marker for column and long-range distance and quantity samples",
   "config--description--direction-allowed": "If enabled, allows players to enable reading direction output in their client configs",
   "config--description--direction-threshold": "The number of blocks to ignore direction within. I.e. if the block is within 3 blocks of the sampled block, don't output a direction for it",
+  "config--description--marking-allowed": "If enabled, allows players to enable automatic map marker creation in their client configs",
+  "config--description--marking-threshold": "The minimum distance between 2 different map markers",
   "config--description--simplified": "If enabled, only requires 1 sample to output the density readings. Will still consume the equivalent of 3 samples of durability",
   "config--description--durability-cost": "The amount of durability damage to take for each sample",
   "config--description--sample-size-cube": "The size of the sampled area. This area is a cube, centered on the sampled block",

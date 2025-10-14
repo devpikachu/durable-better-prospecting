@@ -6,6 +6,7 @@ using DurableBetterProspecting.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Server;
 using ILogger = Common.Mod.Common.Core.ILogger;
 
 namespace DurableBetterProspecting.Managers;
@@ -26,20 +27,39 @@ public class ReadingManager
         _translations = translations;
         _configSystem = configSystem;
 
-        if (api is ICoreClientAPI)
+        DurableBetterProspectingSystem.Instance!.ServerRegisterMessageTypes += OnServerRegisterMessageTypes;
+        DurableBetterProspectingSystem.Instance.ClientRegisterMessageTypes += OnClientRegisterMessageTypes;
+
+        if (api is not ICoreClientAPI)
         {
-            _clientConfig = _configSystem.GetClient<DurableBetterProspectingClientConfig>();
-            _configSystem.Updated += type =>
-            {
-                if (type is RootConfigType.Client)
-                {
-                    _clientConfig = _configSystem.GetClient<DurableBetterProspectingClientConfig>();
-                }
-            };
+            return;
         }
+
+        _clientConfig = _configSystem.GetClient<DurableBetterProspectingClientConfig>();
+        _configSystem.Updated += type =>
+        {
+            if (type is RootConfigType.Client)
+            {
+                _clientConfig = _configSystem.GetClient<DurableBetterProspectingClientConfig>();
+            }
+        };
     }
 
-    public void ProcessReading(ReadingPacket packet)
+    private void OnServerRegisterMessageTypes(IServerNetworkChannel channel)
+    {
+        channel
+            .RegisterMessageType<ReadingPacket>()
+            .SetMessageHandler<ReadingPacket>((_, _) => { });
+    }
+
+    private void OnClientRegisterMessageTypes(IClientNetworkChannel channel)
+    {
+        channel
+            .RegisterMessageType<ReadingPacket>()
+            .SetMessageHandler<ReadingPacket>(ProcessReading);
+    }
+
+    private void ProcessReading(ReadingPacket packet)
     {
         if (_api is not ICoreClientAPI clientApi)
         {
