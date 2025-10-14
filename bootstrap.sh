@@ -2,7 +2,7 @@
 
 set -e
 
-vsVersion="1.21.4"
+vsVersion="1.21.5"
 vsImGuiVersion="1.1.14"
 configLibVersion="1.10.6"
 autoConfigLibVersion="2.0.9"
