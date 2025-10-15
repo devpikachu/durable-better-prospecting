@@ -51,8 +51,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Common.Mod" Version="0.5.3" />
-    <PackageReference Include="Common.Mod.Generator" Version="0.5.3" />
+    <PackageReference Include="Common.Mod" Version="0.5.4" />
+    <PackageReference Include="Common.Mod.Generator" Version="0.5.4" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2">
       <PrivateAssets>all</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>
