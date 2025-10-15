@@ -57,7 +57,7 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
     {
         var remain = base.OnBlockBreaking(player, blockSel, itemSlot, remainingResistance, dt, counter);
         var mode = _modeManager.GetMode(GetToolMode(itemSlot, player, blockSel));
-        return mode.Equals(_modeManager.DensityMode) ? remain : (float)((remain + (double)remainingResistance) / 2.0f);
+        return mode.Id is Constants.DensityModeId ? remain : (float)((remain + (double)remainingResistance) / 2.0f);
     }
 
     public override bool OnBlockBrokenWith(IWorldAccessor world, Entity byEntity, ItemSlot itemSlot, BlockSelection blockSel, float dropQuantityMultiplier = 1)
@@ -72,7 +72,7 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
 
         #region Density mode
 
-        if (mode.Equals(_modeManager.DensityMode))
+        if (mode.Id is Constants.DensityModeId)
         {
             if (_commonConfig.DensityMode.Simplified)
             {
@@ -96,7 +96,7 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
 
         #region Node mode
 
-        if (mode.Equals(_modeManager.NodeMode))
+        if (mode.Id is Constants.NodeModeId)
         {
             var nodeSize = api.World.Config.GetString(Constants.NodeSearchRadiusConfigKey).ToInt(6);
             ProbeBlockNodeMode(world, byEntity, itemSlot, blockSel, nodeSize);
@@ -104,7 +104,7 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
 
         #endregion Node mode
 
-        if (!mode.Equals(_modeManager.DensityMode) && !mode.Equals(_modeManager.NodeMode))
+        if (mode.Id is not Constants.DensityModeId && mode.Id is not Constants.NodeModeId)
         {
             SampleArea(world, player, blockSel, mode);
         }

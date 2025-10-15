@@ -21,16 +21,16 @@ internal class ModeManager
     private readonly ITranslations _translations;
     private readonly IConfigSystem _configSystem;
 
-    public PickaxeMode DensityMode { get; private set; }
-    public PickaxeMode NodeMode { get; private set; }
-    public PickaxeMode RockMode { get; private set; }
-    public PickaxeMode ColumnMode { get; private set; }
-    public PickaxeMode DistanceShortMode { get; private set; }
-    public PickaxeMode DistanceMediumMode { get; private set; }
-    public PickaxeMode DistanceLongMode { get; private set; }
-    public PickaxeMode QuantityShortMode { get; private set; }
-    public PickaxeMode QuantityMediumMode { get; private set; }
-    public PickaxeMode QuantityLongMode { get; private set; }
+    private PickaxeMode DensityMode { get; set; }
+    private PickaxeMode NodeMode { get; set; }
+    private PickaxeMode RockMode { get; set; }
+    private PickaxeMode ColumnMode { get; set; }
+    private PickaxeMode DistanceShortMode { get; set; }
+    private PickaxeMode DistanceMediumMode { get; set; }
+    private PickaxeMode DistanceLongMode { get; set; }
+    private PickaxeMode QuantityShortMode { get; set; }
+    private PickaxeMode QuantityMediumMode { get; set; }
+    private PickaxeMode QuantityLongMode { get; set; }
 
     private DurableBetterProspectingCommonConfig _commonConfig;
     private PickaxeMode[] _modes = [];
@@ -116,7 +116,7 @@ internal class ModeManager
             SampleType = SampleType.Rock,
             SampleSize = _commonConfig.RockMode.SampleSize,
             DurabilityCost = _commonConfig.RockMode.DurabilityCost,
-            Enabled = _commonConfig.DensityMode.Enabled
+            Enabled = _commonConfig.RockMode.Enabled
         };
 
         ColumnMode = new PickaxeMode
@@ -128,7 +128,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.ColumnMode.SampleSize,
             DurabilityCost = _commonConfig.ColumnMode.DurabilityCost,
-            Enabled = _commonConfig.DensityMode.Enabled
+            Enabled = _commonConfig.ColumnMode.Enabled
         };
 
         DistanceShortMode = new PickaxeMode
@@ -140,7 +140,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.DistanceMode.SampleSizeShort,
             DurabilityCost = _commonConfig.DistanceMode.DurabilityCostShort,
-            Enabled = _commonConfig.DensityMode.Enabled
+            Enabled = _commonConfig.DistanceMode.Enabled
         };
 
         DistanceMediumMode = new PickaxeMode
@@ -152,7 +152,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.DistanceMode.SampleSizeMedium,
             DurabilityCost = _commonConfig.DistanceMode.DurabilityCostMedium,
-            Enabled = _commonConfig.DensityMode.Enabled
+            Enabled = _commonConfig.DistanceMode.Enabled
         };
 
         DistanceLongMode = new PickaxeMode
@@ -164,7 +164,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.DistanceMode.SampleSizeLong,
             DurabilityCost = _commonConfig.DistanceMode.DurabilityCostLong,
-            Enabled = _commonConfig.DensityMode.Enabled
+            Enabled = _commonConfig.DistanceMode.Enabled
         };
 
         QuantityShortMode = new PickaxeMode
@@ -176,7 +176,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.QuantityMode.SampleSizeShort,
             DurabilityCost = _commonConfig.QuantityMode.DurabilityCostShort,
-            Enabled = _commonConfig.DensityMode.Enabled
+            Enabled = _commonConfig.QuantityMode.Enabled
         };
 
         QuantityMediumMode = new PickaxeMode
@@ -188,7 +188,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.QuantityMode.SampleSizeMedium,
             DurabilityCost = _commonConfig.QuantityMode.DurabilityCostMedium,
-            Enabled = _commonConfig.DensityMode.Enabled
+            Enabled = _commonConfig.QuantityMode.Enabled
         };
 
         QuantityLongMode = new PickaxeMode
@@ -200,7 +200,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.QuantityMode.SampleSizeLong,
             DurabilityCost = _commonConfig.QuantityMode.DurabilityCostLong,
-            Enabled = _commonConfig.DensityMode.Enabled
+            Enabled = _commonConfig.QuantityMode.Enabled
         };
 
         _modes =
