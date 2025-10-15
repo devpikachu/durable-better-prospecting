@@ -23,7 +23,14 @@ public class DurableBetterProspectingSystem : System<DurableBetterProspectingSys
     public override void StartPre(ICoreAPI api)
     {
         base.StartPre(api);
+        Container.Register<LegacyConfigManager>(Reuse.Singleton);
         Container.Register<ModeManager>(Reuse.Singleton);
+
+        // Make sure that legacy configuration is migrated if it exists
+        {
+            var legacyConfigManager = Container.Resolve<LegacyConfigManager>();
+            legacyConfigManager.Migrate();
+        }
     }
 
     public override void Start(ICoreAPI api)
