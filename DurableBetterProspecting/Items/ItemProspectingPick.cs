@@ -104,7 +104,10 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
 
         #endregion Node mode
 
-        SampleArea(world, player, blockSel, mode);
+        if (!mode.Equals(_modeManager.DensityMode) && !mode.Equals(_modeManager.NodeMode))
+        {
+            SampleArea(world, player, blockSel, mode);
+        }
 
         if (DamagedBy is not null && DamagedBy.Contains(EnumItemDamageSource.BlockBreaking))
         {
