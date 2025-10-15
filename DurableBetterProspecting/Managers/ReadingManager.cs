@@ -148,7 +148,7 @@ internal class ReadingManager
                     {
                         markerBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
 
-                        if (reading.Direction is not null && reading.Direction is not ReadingDirection.None && _clientConfig.ReadingDirection)
+                        if (reading.Direction is not null && reading.Direction is not ReadingDirection.None && _clientConfig.Direction)
                         {
                             markerBuilder.AppendFormat(" - {0}", TranslateDirection((ReadingDirection)reading.Direction));
                         }
@@ -167,7 +167,7 @@ internal class ReadingManager
                     {
                         markerBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
 
-                        if (reading.Direction is not null && reading.Direction is not ReadingDirection.None && _clientConfig.ReadingDirection)
+                        if (reading.Direction is not null && reading.Direction is not ReadingDirection.None && _clientConfig.Direction)
                         {
                             markerBuilder.AppendFormat(" - {0}", TranslateDirection((ReadingDirection)reading.Direction));
                         }
@@ -182,7 +182,7 @@ internal class ReadingManager
                     {
                         markerBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2}", reading.HandbookLink, nameString, TranslateQuantity(reading.Quantity));
 
-                        if (reading.Direction is not null && reading.Direction is not ReadingDirection.None && _clientConfig.ReadingDirection)
+                        if (reading.Direction is not null && reading.Direction is not ReadingDirection.None && _clientConfig.Direction)
                         {
                             markerBuilder.AppendFormat(" - {0}", TranslateDirection((ReadingDirection)reading.Direction));
                         }
@@ -202,7 +202,7 @@ internal class ReadingManager
 
         // Send marker packet
         {
-            if (packet.Position is not null && _clientConfig.MapMarking)
+            if (packet.Position is not null && _clientConfig.Marker)
             {
                 var markerPacket = MarkerPacket.Create(packet.Position, $"{Constants.MarkerPrefix}\n{markerString}");
                 _channel.SendPacket(markerPacket);

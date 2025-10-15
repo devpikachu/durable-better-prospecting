@@ -3,7 +3,7 @@
     {
       "className": "DurableBetterProspectingCommonConfig",
       "classNamespace": "DurableBetterProspecting",
-      "version": "0.0.0",
+      "version": "12.34.56",
       "type": "Common",
       "description": null,
       "entries": [
@@ -11,13 +11,13 @@
           "name": "Direction",
           "type": "Nested",
           "nested": "DirectionConfig",
-          "label": "config--label--direction"
+          "label": "config--label--common--direction"
         },
         {
           "name": "Marker",
           "type": "Nested",
           "nested": "MarkerConfig",
-          "label": "config--label--marker"
+          "label": "config--label--common--marker"
         },
         {
           "name": "DensityMode",
@@ -65,18 +65,18 @@
       "description": null,
       "entries": [
         {
-          "name": "ReadingDirection",
+          "name": "Direction",
           "type": "Bool",
           "defaultValue": true,
-          "label": "config--label--reading-direction",
-          "description": "config--description--reading-direction"
+          "label": "config--label--client--direction",
+          "description": "config--description--direction"
         },
         {
-          "name": "MapMarking",
+          "name": "Marker",
           "type": "Bool",
           "defaultValue": true,
-          "label": "config--label--map-marking",
-          "description": "config--description--map-marking"
+          "label": "config--label--client--marker",
+          "description": "config--description--marker"
         },
         {
           "name": "Ordering",
@@ -97,14 +97,14 @@
           "name": "Allowed",
           "type": "Bool",
           "defaultValue": true,
-          "label": "config--label--direction-allowed",
+          "label": "config--label--allowed",
           "description": "config--description--direction-allowed"
         },
         {
           "name": "Threshold",
           "type": "Int32",
           "defaultValue": 3,
-          "label": "config--label--direction-threshold",
+          "label": "config--label--threshold",
           "description": "config--description--direction-threshold"
         }
       ]
@@ -118,15 +118,15 @@
           "name": "Allowed",
           "type": "Bool",
           "defaultValue": true,
-          "label": "config--label--marking-allowed",
-          "description": "config--description--marking-allowed"
+          "label": "config--label--allowed",
+          "description": "config--description--marker-allowed"
         },
         {
           "name": "Threshold",
           "type": "Int32",
           "defaultValue": 16,
-          "label": "config--label--marking-threshold",
-          "description": "config--description--marking-threshold"
+          "label": "config--label--threshold",
+          "description": "config--description--marker-threshold"
         }
       ]
     },
@@ -365,7 +365,7 @@
           "enum": "OrderingDirection",
           "defaultValue": "Ascending",
           "label": "config--label--direction",
-          "description": "config--description--ordering-direction"
+          "description": null
         }
       ]
     }
