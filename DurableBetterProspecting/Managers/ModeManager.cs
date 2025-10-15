@@ -73,6 +73,16 @@ internal class ModeManager
         _logger.Verbose("(Re)Creating prospecting pickaxe modes");
         var stopwatch = Stopwatch.StartNew();
 
+        // Dispose of existing skill items, if any
+        if (_skillItems.Length > 0)
+        {
+            foreach (var skillItem in _skillItems)
+            {
+                skillItem.Dispose();
+            }
+        }
+
+        // Create modes
         DensityMode = new PickaxeMode
         {
             Id = Constants.DensityModeId,
@@ -207,6 +217,7 @@ internal class ModeManager
             QuantityLongMode
         ];
 
+        // Create skill items
         ObjectCacheUtil.Delete(_api, Constants.SkillItemsCacheKey);
         _skillItems = ObjectCacheUtil.GetOrCreate(_api, Constants.SkillItemsCacheKey, () =>
         {
