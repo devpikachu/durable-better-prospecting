@@ -9,31 +9,31 @@ using ILogger = Common.Mod.Common.Core.ILogger;
 
 namespace DurableBetterProspecting.Managers;
 
-public class ModeManager
+/// <summary>
+/// Manages prospecting pickaxe modes.
+/// <br/><br/>
+/// <b>Side:</b> Universal
+/// </summary>
+internal class ModeManager
 {
-    public const string NodeModeSampleSizeKey = "propickNodeSearchRadius";
-
-    private const string SkillItemsCacheKey = "proPickToolModes";
-
     private readonly ICoreAPI _api;
     private readonly ILogger _logger;
     private readonly ITranslations _translations;
     private readonly IConfigSystem _configSystem;
 
-    public Mode DensityMode { get; private set; }
-    public Mode NodeMode { get; private set; }
-    public Mode RockMode { get; private set; }
-    public Mode ColumnMode { get; private set; }
-    public Mode DistanceShortMode { get; private set; }
-    public Mode DistanceMediumMode { get; private set; }
-    public Mode DistanceLongMode { get; private set; }
-    public Mode QuantityShortMode { get; private set; }
-    public Mode QuantityMediumMode { get; private set; }
-    public Mode QuantityLongMode { get; private set; }
+    public PickaxeMode DensityMode { get; private set; }
+    public PickaxeMode NodeMode { get; private set; }
+    public PickaxeMode RockMode { get; private set; }
+    public PickaxeMode ColumnMode { get; private set; }
+    public PickaxeMode DistanceShortMode { get; private set; }
+    public PickaxeMode DistanceMediumMode { get; private set; }
+    public PickaxeMode DistanceLongMode { get; private set; }
+    public PickaxeMode QuantityShortMode { get; private set; }
+    public PickaxeMode QuantityMediumMode { get; private set; }
+    public PickaxeMode QuantityLongMode { get; private set; }
 
     private DurableBetterProspectingCommonConfig _commonConfig;
-
-    private Mode[] _modes = [];
+    private PickaxeMode[] _modes = [];
     private SkillItem[] _skillItems = [];
 
 #pragma warning disable CS8618
@@ -47,11 +47,13 @@ public class ModeManager
         _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
         _configSystem.Updated += type =>
         {
-            if (type is RootConfigType.Common)
+            if (type is not RootConfigType.Common)
             {
-                _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
-                CreateModes();
+                return;
             }
+
+            _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
+            CreateModes();
         };
 
         CreateModes();
@@ -60,93 +62,136 @@ public class ModeManager
 
     public SkillItem[] GetSkillItems() => _skillItems;
 
-    public Mode GetMode(int skillIndex)
+    public PickaxeMode GetMode(int skillIndex)
     {
         var skill = _skillItems[skillIndex];
         return _modes.First(mode => mode.Id == skill.Code.Path);
     }
 
-    private void CreateModes(RootConfigType type = RootConfigType.Common)
+    private void CreateModes()
     {
-        if (type is not RootConfigType.Common)
-        {
-            return;
-        }
-
         _logger.Verbose("(Re)Creating prospecting pickaxe modes");
         var stopwatch = Stopwatch.StartNew();
 
-        // TODO: Icons
+        DensityMode = new PickaxeMode
+        {
+            Id = Constants.DensityModeId,
+            Name = _translations.Get("mode--density"),
+            Icon = Icon.Create("game", "heatmap"),
+            SampleShape = SampleShape.Vanilla,
+            SampleType = SampleType.Vanilla,
+            SampleSize = int.MaxValue,
+            DurabilityCost = _commonConfig.DensityMode.DurabilityCost,
+            Enabled = _commonConfig.DensityMode.Enabled
+        };
 
-        DensityMode = Mode.Create(
-            id: "density",
-            name: _translations.Get("mode--density"),
-            icon: Icon.Create("game", "heatmap"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
+        NodeMode = new PickaxeMode
+        {
+            Id = Constants.NodeModeId,
+            Name = _translations.Get("mode--node"),
+            Icon = Icon.Create("game", "rocks"),
+            SampleShape = SampleShape.Vanilla,
+            SampleType = SampleType.Vanilla,
+            SampleSize = int.MaxValue,
+            DurabilityCost = _commonConfig.NodeMode.DurabilityCost,
+            Enabled = _commonConfig.NodeMode.Enabled && _api.World.Config.GetString(Constants.NodeSearchRadiusConfigKey).ToInt() > 0
+        };
 
-        NodeMode = Mode.Create(
-            id: "node",
-            name: _translations.Get("mode--node"),
-            icon: Icon.Create("game", "rocks"),
-            enabled: _commonConfig.NodeMode.Enabled && _api.World.Config.GetString(NodeModeSampleSizeKey).ToInt() > 0
-        );
+        RockMode = new PickaxeMode
+        {
+            Id = Constants.RockModeId,
+            Name = _translations.Get("mode--rock"),
+            Icon = Icon.Create("mode_rock"),
+            SampleShape = SampleShape.Cube,
+            SampleType = SampleType.Rock,
+            SampleSize = _commonConfig.RockMode.SampleSize,
+            DurabilityCost = _commonConfig.RockMode.DurabilityCost,
+            Enabled = _commonConfig.DensityMode.Enabled
+        };
 
-        RockMode = Mode.Create(
-            id: "rock",
-            name: _translations.Get("mode--rock"),
-            icon: Icon.Create("mode_rock"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
+        ColumnMode = new PickaxeMode
+        {
+            Id = Constants.ColumnModeId,
+            Name = _translations.Get("mode--column"),
+            Icon = Icon.Create("mode_column"),
+            SampleShape = SampleShape.Cuboid,
+            SampleType = SampleType.Ore,
+            SampleSize = _commonConfig.ColumnMode.SampleSize,
+            DurabilityCost = _commonConfig.ColumnMode.DurabilityCost,
+            Enabled = _commonConfig.DensityMode.Enabled
+        };
 
-        ColumnMode = Mode.Create(
-            id: "column",
-            name: _translations.Get("mode--column"),
-            icon: Icon.Create("mode_column"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
+        DistanceShortMode = new PickaxeMode
+        {
+            Id = Constants.DistanceShortModeId,
+            Name = _translations.Get("mode--distance-short"),
+            Icon = Icon.Create("mode_distance_short"),
+            SampleShape = SampleShape.Cube,
+            SampleType = SampleType.Ore,
+            SampleSize = _commonConfig.DistanceMode.SampleSizeShort,
+            DurabilityCost = _commonConfig.DistanceMode.DurabilityCostShort,
+            Enabled = _commonConfig.DensityMode.Enabled
+        };
 
-        DistanceShortMode = Mode.Create(
-            id: "distance_short",
-            name: _translations.Get("mode--distance-short"),
-            icon: Icon.Create("mode_distance_short"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
+        DistanceMediumMode = new PickaxeMode
+        {
+            Id = Constants.DistanceMediumModeId,
+            Name = _translations.Get("mode--distance-medium"),
+            Icon = Icon.Create("mode_distance_medium"),
+            SampleShape = SampleShape.Cube,
+            SampleType = SampleType.Ore,
+            SampleSize = _commonConfig.DistanceMode.SampleSizeMedium,
+            DurabilityCost = _commonConfig.DistanceMode.DurabilityCostMedium,
+            Enabled = _commonConfig.DensityMode.Enabled
+        };
 
-        DistanceMediumMode = Mode.Create(
-            id: "distance_medium",
-            name: _translations.Get("mode--distance-medium"),
-            icon: Icon.Create("mode_distance_medium"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
+        DistanceLongMode = new PickaxeMode
+        {
+            Id = Constants.DistanceLongModeId,
+            Name = _translations.Get("mode--distance-long"),
+            Icon = Icon.Create("mode_distance_long"),
+            SampleShape = SampleShape.Cube,
+            SampleType = SampleType.Ore,
+            SampleSize = _commonConfig.DistanceMode.SampleSizeLong,
+            DurabilityCost = _commonConfig.DistanceMode.DurabilityCostLong,
+            Enabled = _commonConfig.DensityMode.Enabled
+        };
 
-        DistanceLongMode = Mode.Create(
-            id: "distance_long",
-            name: _translations.Get("mode--distance-long"),
-            icon: Icon.Create("mode_distance_long"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
+        QuantityShortMode = new PickaxeMode
+        {
+            Id = Constants.QuantityShortModeId,
+            Name = _translations.Get("mode--quantity-short"),
+            Icon = Icon.Create("mode_quantity_short"),
+            SampleShape = SampleShape.Cube,
+            SampleType = SampleType.Ore,
+            SampleSize = _commonConfig.QuantityMode.SampleSizeShort,
+            DurabilityCost = _commonConfig.QuantityMode.DurabilityCostShort,
+            Enabled = _commonConfig.DensityMode.Enabled
+        };
 
-        QuantityShortMode = Mode.Create(
-            id: "quantity_short",
-            name: _translations.Get("mode--quantity-short"),
-            icon: Icon.Create("mode_quantity_short"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
+        QuantityMediumMode = new PickaxeMode
+        {
+            Id = Constants.QuantityMediumModeId,
+            Name = _translations.Get("mode--quantity-medium"),
+            Icon = Icon.Create("mode_quantity_medium"),
+            SampleShape = SampleShape.Cube,
+            SampleType = SampleType.Ore,
+            SampleSize = _commonConfig.QuantityMode.SampleSizeMedium,
+            DurabilityCost = _commonConfig.QuantityMode.DurabilityCostMedium,
+            Enabled = _commonConfig.DensityMode.Enabled
+        };
 
-        QuantityMediumMode = Mode.Create(
-            id: "quantity_medium",
-            name: _translations.Get("mode--quantity-medium"),
-            icon: Icon.Create("mode_quantity_medium"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
-
-        QuantityLongMode = Mode.Create(
-            id: "quantity_long",
-            name: _translations.Get("mode--quantity-long"),
-            icon: Icon.Create("mode_quantity_long"),
-            enabled: _commonConfig.DensityMode.Enabled
-        );
+        QuantityLongMode = new PickaxeMode
+        {
+            Id = Constants.QuantityLongModeId,
+            Name = _translations.Get("mode--quantity-long"),
+            Icon = Icon.Create("mode_quantity_long"),
+            SampleShape = SampleShape.Cube,
+            SampleType = SampleType.Ore,
+            SampleSize = _commonConfig.QuantityMode.SampleSizeLong,
+            DurabilityCost = _commonConfig.QuantityMode.DurabilityCostLong,
+            Enabled = _commonConfig.DensityMode.Enabled
+        };
 
         _modes =
         [
@@ -162,8 +207,8 @@ public class ModeManager
             QuantityLongMode
         ];
 
-        ObjectCacheUtil.Delete(_api, SkillItemsCacheKey);
-        _skillItems = ObjectCacheUtil.GetOrCreate(_api, SkillItemsCacheKey, () =>
+        ObjectCacheUtil.Delete(_api, Constants.SkillItemsCacheKey);
+        _skillItems = ObjectCacheUtil.GetOrCreate(_api, Constants.SkillItemsCacheKey, () =>
         {
             return _modes
                 .Where(mode => mode.Enabled)

@@ -4,7 +4,7 @@ using Vintagestory.API.MathTools;
 
 namespace DurableBetterProspecting.Core;
 
-public record Icon
+internal record Icon
 {
     public required string Domain { get; init; }
     public required string Name { get; init; }

@@ -1,7 +1,8 @@
 namespace DurableBetterProspecting.Core;
 
-public enum SampleType
+internal enum SampleType
 {
+    Vanilla,
     Rock,
     Ore
 }

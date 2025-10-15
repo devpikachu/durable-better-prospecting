@@ -1,24 +1,17 @@
 namespace DurableBetterProspecting.Core;
 
-public record Mode
+internal record PickaxeMode
 {
     public required string Id { get; init; }
     public required string Name { get; init; }
     public required Icon Icon { get; init; }
+    public required SampleShape SampleShape { get; init; }
+    public required SampleType SampleType { get; init; }
+    public required int SampleSize { get; init; }
+    public required int DurabilityCost { get; init; }
     public required bool Enabled { get; init; }
 
-    public static Mode Create(string id, string name, Icon icon, bool enabled)
-    {
-        return new Mode
-        {
-            Id = id,
-            Name = name,
-            Icon = icon,
-            Enabled = enabled
-        };
-    }
-
-    public virtual bool Equals(Mode? other)
+    public virtual bool Equals(PickaxeMode? other)
     {
         if (other is null)
         {

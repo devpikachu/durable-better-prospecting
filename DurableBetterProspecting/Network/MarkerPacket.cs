@@ -4,7 +4,7 @@ using Vintagestory.API.MathTools;
 namespace DurableBetterProspecting.Network;
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-public record MarkingPacket
+public record MarkerPacket
 {
     [ProtoMember(1)]
     public required Vec3i Position { get; init; }
@@ -12,9 +12,9 @@ public record MarkingPacket
     [ProtoMember(2)]
     public required string Text { get; init; }
 
-    public static MarkingPacket Create(Vec3i position, string text)
+    public static MarkerPacket Create(Vec3i position, string text)
     {
-        return new MarkingPacket
+        return new MarkerPacket
         {
             Position = position,
             Text = text

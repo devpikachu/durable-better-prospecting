@@ -1,7 +1,8 @@
 namespace DurableBetterProspecting.Core;
 
-public enum SampleShape
+internal enum SampleShape
 {
+    Vanilla,
     Cube,
     Cuboid
 }

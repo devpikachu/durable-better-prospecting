@@ -13,14 +13,14 @@ using Vintagestory.Server;
 
 namespace DurableBetterProspecting.Items;
 
-public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
+internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 {
     public const string ItemRegistryId = "ItemProspectingPick";
 
     private const string ProspectableAttributeKey = "propickable";
 
-    private readonly IConfigSystem _configSystem;
     private readonly INetworkChannel _channel;
+    private readonly IConfigSystem _configSystem;
     private readonly ModeManager _modeManager;
 
     private DurableBetterProspectingCommonConfig _commonConfig;
@@ -29,8 +29,8 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
     {
         var container = DurableBetterProspectingSystem.Instance!.Container;
 
-        _configSystem = container.Resolve<IConfigSystem>();
         _channel = container.Resolve<INetworkChannel>();
+        _configSystem = container.Resolve<IConfigSystem>();
         _modeManager = container.Resolve<ModeManager>();
 
         _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
@@ -68,7 +68,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         }
 
         var mode = _modeManager.GetMode(GetToolMode(itemSlot, player.Player, blockSel));
-        var damage = 0;
+        var damage = mode.DurabilityCost;
 
         #region Density mode
 
@@ -83,13 +83,12 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
                 if (player.Player is IServerPlayer serverPlayer)
                 {
                     PrintProbeResults(world, serverPlayer, itemSlot, position);
-                    damage = 3 * _commonConfig.DensityMode.DurabilityCost;
+                    damage = 3 * mode.DurabilityCost;
                 }
             }
             else
             {
                 ProbeBlockDensityMode(world, byEntity, itemSlot, blockSel);
-                damage = _commonConfig.DensityMode.DurabilityCost;
             }
         }
 
@@ -99,140 +98,13 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
         if (mode.Equals(_modeManager.NodeMode))
         {
-            var nodeSize = api.World.Config.GetString(ModeManager.NodeModeSampleSizeKey).ToInt(6);
+            var nodeSize = api.World.Config.GetString(Constants.NodeSearchRadiusConfigKey).ToInt(6);
             ProbeBlockNodeMode(world, byEntity, itemSlot, blockSel, nodeSize);
-            damage = _commonConfig.NodeMode.DurabilityCost;
         }
 
         #endregion Node mode
 
-        #region Rock mode
-
-        if (mode.Equals(_modeManager.RockMode))
-        {
-            SampleArea(
-                world: world,
-                player: player,
-                blockSel: blockSel,
-                mode: SampleMode.Rock,
-                type: SampleType.Rock,
-                shape: SampleShape.Cube,
-                size: _commonConfig.RockMode.SampleSize,
-                markerEligible: false
-            );
-        }
-
-        #endregion Rock mode
-
-        #region Column mode
-
-        if (mode.Equals(_modeManager.ColumnMode))
-        {
-            SampleArea(
-                world: world,
-                player: player,
-                blockSel: blockSel,
-                mode: SampleMode.Column,
-                type: SampleType.Ore,
-                shape: SampleShape.Cuboid,
-                size: _commonConfig.ColumnMode.SampleSize,
-                markerEligible: _commonConfig.Marker.Allowed
-            );
-        }
-
-        #endregion Column mode
-
-        #region Distance mode
-
-        if (mode.Equals(_modeManager.DistanceShortMode))
-        {
-            SampleArea(
-                world: world,
-                player: player,
-                blockSel: blockSel,
-                mode: SampleMode.Distance,
-                type: SampleType.Ore,
-                shape: SampleShape.Cube,
-                size: _commonConfig.DistanceMode.SampleSizeShort,
-                markerEligible: false
-            );
-        }
-
-        if (mode.Equals(_modeManager.DistanceMediumMode))
-        {
-            SampleArea(
-                world: world,
-                player: player,
-                blockSel: blockSel,
-                mode: SampleMode.Distance,
-                type: SampleType.Ore,
-                shape: SampleShape.Cube,
-                size: _commonConfig.DistanceMode.SampleSizeMedium,
-                markerEligible: false
-            );
-        }
-
-        if (mode.Equals(_modeManager.DistanceLongMode))
-        {
-            SampleArea(
-                world: world,
-                player: player,
-                blockSel: blockSel,
-                mode: SampleMode.Distance,
-                type: SampleType.Ore,
-                shape: SampleShape.Cube,
-                size: _commonConfig.DistanceMode.SampleSizeLong,
-                markerEligible: _commonConfig.Marker.Allowed
-            );
-        }
-
-        #endregion Distance mode
-
-        #region Quantity mode
-
-        if (mode.Equals(_modeManager.QuantityShortMode))
-        {
-            SampleArea(
-                world: world,
-                player: player,
-                blockSel: blockSel,
-                mode: SampleMode.Quantity,
-                type: SampleType.Ore,
-                shape: SampleShape.Cube,
-                size: _commonConfig.QuantityMode.SampleSizeShort,
-                markerEligible: false
-            );
-        }
-
-        if (mode.Equals(_modeManager.QuantityMediumMode))
-        {
-            SampleArea(
-                world: world,
-                player: player,
-                blockSel: blockSel,
-                mode: SampleMode.Quantity,
-                type: SampleType.Ore,
-                shape: SampleShape.Cube,
-                size: _commonConfig.QuantityMode.SampleSizeMedium,
-                markerEligible: false
-            );
-        }
-
-        if (mode.Equals(_modeManager.QuantityLongMode))
-        {
-            SampleArea(
-                world: world,
-                player: player,
-                blockSel: blockSel,
-                mode: SampleMode.Quantity,
-                type: SampleType.Ore,
-                shape: SampleShape.Cube,
-                size: _commonConfig.QuantityMode.SampleSizeLong,
-                markerEligible: _commonConfig.Marker.Allowed
-            );
-        }
-
-        #endregion Quantity mode
+        SampleArea(world, player, blockSel, mode);
 
         if (DamagedBy is not null && DamagedBy.Contains(EnumItemDamageSource.BlockBreaking))
         {
@@ -246,11 +118,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         IWorldAccessor world,
         EntityPlayer player,
         BlockSelection blockSel,
-        SampleMode mode,
-        SampleType type,
-        SampleShape shape,
-        int size,
-        bool markerEligible
+        PickaxeMode mode
     )
     {
         var position = blockSel.Position;
@@ -274,16 +142,20 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
             return;
         }
 
-        var halfSize = (int)MathF.Round(size / 2.0f);
-        var bottomPosition = shape is SampleShape.Cube ? position.Y - halfSize : 0;
-        var topPosition = shape is SampleShape.Cube ? position.Y + halfSize : serverWorld.MapSize.Y;
+        var sampleShape = mode.SampleShape;
+        var sampleType = mode.SampleType;
+        var sampleSize = mode.SampleSize;
+
+        var halfSize = (int)MathF.Round(sampleSize / 2.0f);
+        var bottomPosition = sampleShape is SampleShape.Cube ? position.Y - halfSize : 0;
+        var topPosition = sampleShape is SampleShape.Cube ? position.Y + halfSize : serverWorld.MapSize.Y;
         var minPosition = new Vec3i(position.X - halfSize, bottomPosition, position.Z - halfSize).ToBlockPos();
         var maxPosition = new Vec3i(position.X + halfSize, topPosition, position.Z + halfSize).ToBlockPos();
 
         Dictionary<string, Reading> readings = [];
         serverWorld.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, x, y, z) =>
         {
-            switch (type)
+            switch (sampleType)
             {
                 case SampleType.Rock:
                 {
@@ -294,7 +166,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
                     var rockId = $"rock-{rockType}";
                     var distance = (int)MathF.Round(position.DistanceTo(new Vec3i(x, y, z).ToBlockPos()));
-                    Direction? direction = _commonConfig.Direction.Allowed ? CalculateDirection(position, x, y, z) : null;
+                    ReadingDirection? direction = _commonConfig.Direction.Allowed ? CalculateDirection(position, x, y, z) : null;
 
                     if (readings.TryGetValue(rockId, out var reading))
                     {
@@ -321,7 +193,7 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
 
                     var oreId = $"ore-{oreType}";
                     var distance = (int)MathF.Round(position.DistanceTo(new Vec3i(x, y, z).ToBlockPos()));
-                    Direction? direction = _commonConfig.Direction.Allowed ? CalculateDirection(position, x, y, z) : null;
+                    ReadingDirection? direction = _commonConfig.Direction.Allowed ? CalculateDirection(position, x, y, z) : null;
 
                     if (readings.TryGetValue(oreId, out var reading))
                     {
@@ -340,35 +212,37 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
                 }
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                    throw new ArgumentOutOfRangeException(nameof(sampleType), sampleType, null);
             }
         });
 
+        var markerEligible = mode.Id is Constants.ColumnModeId or Constants.DistanceLongModeId or Constants.QuantityLongModeId;
         var readingPacket = new ReadingPacket
         {
-            Mode = mode,
-            Size = size,
+            Mode = mode.Id,
+            Size = mode.SampleSize,
             Position = markerEligible ? position.ToVec3i() : null,
             Readings = readings.Values.ToArray(),
         };
+
         serverChannel.SendPacket(readingPacket, serverPlayer);
     }
 
-    private Direction CalculateDirection(BlockPos sampledPosition, int x, int y, int z)
+    private ReadingDirection CalculateDirection(BlockPos sampledPosition, int x, int y, int z)
     {
-        var direction = Direction.None;
+        var direction = ReadingDirection.None;
         var threshold = _commonConfig.Direction.Threshold;
 
         // Up/Down
         {
             if (y < sampledPosition.Y && Math.Abs(sampledPosition.Y - y) > threshold)
             {
-                direction |= Direction.Down;
+                direction |= ReadingDirection.Down;
             }
 
             if (y > sampledPosition.Y && Math.Abs(y - sampledPosition.Y) > threshold)
             {
-                direction |= Direction.Up;
+                direction |= ReadingDirection.Up;
             }
         }
 
@@ -376,12 +250,12 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         {
             if (z < sampledPosition.Z && Math.Abs(sampledPosition.Z - z) > threshold)
             {
-                direction |= Direction.North;
+                direction |= ReadingDirection.North;
             }
 
             if (z > sampledPosition.Z && Math.Abs(z - sampledPosition.Z) > threshold)
             {
-                direction |= Direction.South;
+                direction |= ReadingDirection.South;
             }
         }
 
@@ -389,12 +263,12 @@ public class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPick
         {
             if (x < sampledPosition.X && Math.Abs(sampledPosition.X - x) > threshold)
             {
-                direction |= Direction.West;
+                direction |= ReadingDirection.West;
             }
 
             if (x > sampledPosition.X && Math.Abs(x - sampledPosition.X) > threshold)
             {
-                direction |= Direction.East;
+                direction |= ReadingDirection.East;
             }
         }
 

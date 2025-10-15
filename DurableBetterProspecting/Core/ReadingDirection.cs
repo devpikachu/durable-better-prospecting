@@ -1,7 +1,7 @@
 namespace DurableBetterProspecting.Core;
 
 [Flags]
-public enum Direction
+internal enum ReadingDirection
 {
     None = 0,
     Up = 1,

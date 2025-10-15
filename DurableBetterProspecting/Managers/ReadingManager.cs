@@ -1,40 +1,53 @@
+using System.Diagnostics;
 using System.Text;
 using Common.Mod.Common.Config;
 using Common.Mod.Common.Core;
+using Common.Mod.Exceptions;
 using DurableBetterProspecting.Core;
 using DurableBetterProspecting.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Server;
 using ILogger = Common.Mod.Common.Core.ILogger;
 
 namespace DurableBetterProspecting.Managers;
 
-public class ReadingManager
+/// <summary>
+/// Manages sorting and printing readings.
+/// <br/><br/>
+/// <b>Side:</b> Client
+/// </summary>
+internal class ReadingManager
 {
-    private readonly ICoreAPI _api;
+    private readonly ICoreClientAPI _api;
     private readonly ILogger _logger;
+    private readonly IClientNetworkChannel _channel;
     private readonly ITranslations _translations;
     private readonly IConfigSystem _configSystem;
 
-    private DurableBetterProspectingClientConfig? _clientConfig;
-    private IClientNetworkChannel? _channel;
+    private DurableBetterProspectingClientConfig _clientConfig;
 
-    public ReadingManager(ICoreAPI api, ILogger logger, ITranslations translations, IConfigSystem configSystem)
+    public ReadingManager(
+        ICoreAPI api,
+        EnumAppSide side,
+        ILogger logger,
+        IClientNetworkChannel channel,
+        ITranslations translations,
+        IConfigSystem configSystem
+    )
     {
-        _api = api;
+        if (side is not EnumAppSide.Client)
+        {
+            throw new InvalidSideException(side);
+        }
+
+        _api = (api as ICoreClientAPI)!;
         _logger = logger.Named(nameof(ReadingManager));
+        _channel = channel;
         _translations = translations;
         _configSystem = configSystem;
 
-        DurableBetterProspectingSystem.Instance!.ServerRegisterMessageTypes += OnServerRegisterMessageTypes;
-        DurableBetterProspectingSystem.Instance.ClientRegisterMessageTypes += OnClientRegisterMessageTypes;
-
-        if (api is not ICoreClientAPI)
-        {
-            return;
-        }
+        _channel.SetMessageHandler<ReadingPacket>(ProcessReading);
 
         _clientConfig = _configSystem.GetClient<DurableBetterProspectingClientConfig>();
         _configSystem.Updated += type =>
@@ -46,78 +59,69 @@ public class ReadingManager
         };
     }
 
-    private void OnServerRegisterMessageTypes(IServerNetworkChannel channel)
-    {
-        channel
-            .RegisterMessageType<ReadingPacket>()
-            .SetMessageHandler<ReadingPacket>((_, _) => { });
-    }
-
-    private void OnClientRegisterMessageTypes(IClientNetworkChannel channel)
-    {
-        _channel = channel;
-        _channel
-            .RegisterMessageType<ReadingPacket>()
-            .SetMessageHandler<ReadingPacket>(ProcessReading);
-    }
-
     private void ProcessReading(ReadingPacket packet)
     {
-        if (_api is not ICoreClientAPI clientApi)
-        {
-            _logger.Warning("Received reading packet on the server. This is probably a bug.");
-            return;
-        }
-
-        _logger.Verbose("Received reading packet with {0} readings", packet.Readings?.Length ?? 0);
+        _logger.Verbose("Received packet with {0} readings", packet.Readings.Length);
+        var stopwatch = Stopwatch.StartNew();
 
         var messageBuilder = new StringBuilder();
+        var markerBuilder = new StringBuilder();
 
-        var blocksAwayString = _translations.Get("reading--blocks-away");
-        var rocksString = _translations.Get("reading--rocks");
-        var oresString = _translations.Get("reading--ores");
-        var modeString = packet.Mode switch
+        // Message: X sample taken in a Y blocks area
         {
-            SampleMode.Rock => _translations.Get("reading--mode-rock"),
-            SampleMode.Column => _translations.Get("reading--mode-column"),
-            SampleMode.Distance => _translations.Get("reading--mode-distance"),
-            SampleMode.Quantity => _translations.Get("reading--mode-quantity"),
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            var modeString = packet.Mode switch
+            {
+                Constants.RockModeId => _translations.Get("reading--mode-rock"),
+                Constants.ColumnModeId => _translations.Get("reading--mode-column"),
+                Constants.DistanceShortModeId or Constants.DistanceMediumModeId or Constants.DistanceLongModeId => _translations.Get("reading--mode-distance"),
+                Constants.QuantityShortModeId or Constants.QuantityMediumModeId or Constants.QuantityLongModeId => _translations.Get("reading--mode-quantity"),
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
-        var sampleTakenString = _translations.Get("reading--sample-taken", modeString, packet.Size);
-        messageBuilder.AppendLine(sampleTakenString);
-
-        if ((packet.Readings?.Length ?? 0) == 0)
-        {
-            var sampleEmptyString = _translations.Get("reading--sample-empty", packet.Mode is SampleMode.Rock ? rocksString : oresString);
-
-            messageBuilder.AppendLine(sampleEmptyString);
-            clientApi.ShowChatMessage(messageBuilder.ToString());
-
-            return;
+            var sampleTakenString = _translations.Get("reading--sample-taken", modeString, packet.Size);
+            messageBuilder.AppendLine(sampleTakenString);
         }
 
-        var readings = packet.Readings!.AsEnumerable();
-        if (_clientConfig!.Ordering.Enabled)
+        var rocksString = _translations.Get("reading--rocks");
+        var oresString = _translations.Get("reading--ores");
+
+        // Message: No rocks/ores found
+        {
+            if (packet.Readings.Length == 0)
+            {
+                var sampleEmptyString = _translations.Get("reading--sample-empty", packet.Mode is Constants.RockModeId ? rocksString : oresString);
+
+                messageBuilder.AppendLine(sampleEmptyString);
+                _api.ShowChatMessage(messageBuilder.ToString());
+
+                stopwatch.Stop();
+                _logger.Verbose("Done processing packet in {0} ms", stopwatch.ElapsedMilliseconds);
+
+                return;
+            }
+        }
+
+        // Sort readings
+        var readings = packet.Readings.AsEnumerable();
+        if (_clientConfig.Ordering.Enabled)
         {
             var ascending = _clientConfig.Ordering.Direction is OrderingDirection.Ascending;
 
-            if (packet.Mode is SampleMode.Rock or SampleMode.Distance)
+            if (packet.Mode is Constants.RockModeId or Constants.DistanceShortModeId or Constants.DistanceMediumModeId or Constants.DistanceLongModeId)
             {
                 readings = ascending
                     ? readings.OrderBy(r => r.Distance)
                     : readings.OrderByDescending(r => r.Distance);
             }
 
-            if (packet.Mode is SampleMode.Column)
+            if (packet.Mode is Constants.ColumnModeId)
             {
                 readings = ascending
                     ? readings.OrderBy(r => r.BlockId)
                     : readings.OrderByDescending(r => r.BlockId);
             }
 
-            if (packet.Mode is SampleMode.Quantity)
+            if (packet.Mode is Constants.QuantityShortModeId or Constants.QuantityMediumModeId or Constants.QuantityLongModeId)
             {
                 readings = ascending
                     ? readings.OrderBy(r => r.Quantity)
@@ -125,73 +129,90 @@ public class ReadingManager
             }
         }
 
-        var sampleNotEmptyString = _translations.Get("reading--sample-not-empty", packet.Mode is SampleMode.Rock ? rocksString : oresString);
-        messageBuilder.AppendLine(sampleNotEmptyString);
-
-        var readingsBuilder = new StringBuilder();
-        foreach (var reading in readings)
+        // Message: Found the following rocks/ores
         {
-            var nameString = Lang.GetL(Lang.CurrentLocale, reading.BlockId);
-            readingsBuilder.AppendLine(nameString);
+            var sampleNotEmptyString = _translations.Get("reading--sample-not-empty", packet.Mode is Constants.RockModeId ? rocksString : oresString);
+            messageBuilder.AppendLine(sampleNotEmptyString);
+        }
 
-            switch (packet.Mode)
+        // Add each reading to the message / marker
+        {
+            var blocksAwayString = _translations.Get("reading--blocks-away");
+            foreach (var reading in readings)
             {
-                case SampleMode.Rock:
-                {
-                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
+                var nameString = Lang.GetL(Lang.CurrentLocale, reading.BlockId);
 
-                    if (reading.Direction is not null && reading.Direction is not Direction.None && _clientConfig.ReadingDirection)
+                switch (packet.Mode)
+                {
+                    case Constants.RockModeId:
                     {
-                        messageBuilder.AppendFormat(" - {0}", TranslateDirection((Direction)reading.Direction));
+                        markerBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
+
+                        if (reading.Direction is not null && reading.Direction is not ReadingDirection.None && _clientConfig.ReadingDirection)
+                        {
+                            markerBuilder.AppendFormat(" - {0}", TranslateDirection((ReadingDirection)reading.Direction));
+                        }
+
+                        markerBuilder.Append('\n');
+                        break;
                     }
 
-                    messageBuilder.Append('\n');
-                    break;
-                }
+                    case Constants.ColumnModeId:
+                        markerBuilder.AppendFormat("<a href=\"{0}\">{1}</a>\n", reading.HandbookLink, nameString);
+                        break;
 
-                case SampleMode.Column:
-                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>\n", reading.HandbookLink, nameString);
-                    break;
-
-                case SampleMode.Distance:
-                {
-                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
-
-                    if (reading.Direction is not null && reading.Direction is not Direction.None && _clientConfig.ReadingDirection)
+                    case Constants.DistanceShortModeId:
+                    case Constants.DistanceMediumModeId:
+                    case Constants.DistanceLongModeId:
                     {
-                        messageBuilder.AppendFormat(" - {0}", TranslateDirection((Direction)reading.Direction));
+                        markerBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2} {3}", reading.HandbookLink, nameString, reading.Distance, blocksAwayString);
+
+                        if (reading.Direction is not null && reading.Direction is not ReadingDirection.None && _clientConfig.ReadingDirection)
+                        {
+                            markerBuilder.AppendFormat(" - {0}", TranslateDirection((ReadingDirection)reading.Direction));
+                        }
+
+                        markerBuilder.Append('\n');
+                        break;
                     }
 
-                    messageBuilder.Append('\n');
-                    break;
-                }
-
-                case SampleMode.Quantity:
-                {
-                    var quantityString = TranslateQuantity(reading.Quantity);
-                    messageBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2}", reading.HandbookLink, nameString, quantityString);
-
-                    if (reading.Direction is not null && reading.Direction is not Direction.None && _clientConfig.ReadingDirection)
+                    case Constants.QuantityShortModeId:
+                    case Constants.QuantityMediumModeId:
+                    case Constants.QuantityLongModeId:
                     {
-                        messageBuilder.AppendFormat(" - {0}", TranslateDirection((Direction)reading.Direction));
+                        markerBuilder.AppendFormat("<a href=\"{0}\">{1}</a>: {2}", reading.HandbookLink, nameString, TranslateQuantity(reading.Quantity));
+
+                        if (reading.Direction is not null && reading.Direction is not ReadingDirection.None && _clientConfig.ReadingDirection)
+                        {
+                            markerBuilder.AppendFormat(" - {0}", TranslateDirection((ReadingDirection)reading.Direction));
+                        }
+
+                        markerBuilder.Append('\n');
+                        break;
                     }
 
-                    messageBuilder.Append('\n');
-                    break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
-
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        if (packet.Position is not null && _clientConfig.MapMarking)
+        var markerString = markerBuilder.ToString();
+        messageBuilder.Append(markerString);
+
+        // Send marker packet
         {
-            var markingPacket = MarkingPacket.Create(packet.Position, readingsBuilder.ToString());
-            _channel!.SendPacket(markingPacket);
+            if (packet.Position is not null && _clientConfig.MapMarking)
+            {
+                var markerPacket = MarkerPacket.Create(packet.Position, $"{Constants.MarkerPrefix}\n{markerString}");
+                _channel.SendPacket(markerPacket);
+            }
         }
 
-        clientApi.ShowChatMessage(messageBuilder.ToString());
+        stopwatch.Stop();
+        _logger.Verbose("Done processing packet in {0} ms", stopwatch.ElapsedMilliseconds);
+
+        _api.ShowChatMessage(messageBuilder.ToString());
     }
 
     private string TranslateQuantity(int value)
@@ -208,7 +229,7 @@ public class ReadingManager
         };
     }
 
-    private string TranslateDirection(Direction direction)
+    private string TranslateDirection(ReadingDirection readingDirection)
     {
         var stringBuilder = new StringBuilder();
         var vertical = false;
@@ -216,13 +237,13 @@ public class ReadingManager
 
         // Up/Down
         {
-            if (direction.HasFlag(Direction.Up))
+            if (readingDirection.HasFlag(ReadingDirection.Up))
             {
                 stringBuilder.Append(_translations.Get("reading--up"));
                 vertical = true;
             }
 
-            if (direction.HasFlag(Direction.Down))
+            if (readingDirection.HasFlag(ReadingDirection.Down))
             {
                 stringBuilder.Append(_translations.Get("reading--down"));
                 vertical = true;
@@ -231,7 +252,7 @@ public class ReadingManager
 
         // North/South
         {
-            if (direction.HasFlag(Direction.North))
+            if (readingDirection.HasFlag(ReadingDirection.North))
             {
                 if (vertical)
                 {
@@ -242,7 +263,7 @@ public class ReadingManager
                 horizontal = true;
             }
 
-            if (direction.HasFlag(Direction.South))
+            if (readingDirection.HasFlag(ReadingDirection.South))
             {
                 if (vertical)
                 {
@@ -256,7 +277,7 @@ public class ReadingManager
 
         // East/West
         {
-            if (direction.HasFlag(Direction.East))
+            if (readingDirection.HasFlag(ReadingDirection.East))
             {
                 if (vertical && !horizontal)
                 {
@@ -266,7 +287,7 @@ public class ReadingManager
                 stringBuilder.Append(_translations.Get("reading--east"));
             }
 
-            if (direction.HasFlag(Direction.West))
+            if (readingDirection.HasFlag(ReadingDirection.West))
             {
                 if (vertical && !horizontal)
                 {

@@ -1,21 +1,27 @@
+using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
 using Common.Mod.Common.Config;
+using Common.Mod.Exceptions;
+using DurableBetterProspecting.Core;
 using DurableBetterProspecting.Network;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using ILogger = Common.Mod.Common.Core.ILogger;
 
 namespace DurableBetterProspecting.Managers;
 
+/// <summary>
+/// Manages the creation of map markers
+/// <br/><br/>
+/// <b>Side:</b> Server
+/// </summary>
 public class MarkerManager
 {
     private static readonly MethodInfo ResendWaypointsMethod =
         typeof(WaypointMapLayer).GetMethod("ResendWaypoints", BindingFlags.NonPublic | BindingFlags.Instance)!;
-
-    private static readonly MethodInfo RebuildMapComponentsMethod =
-        typeof(WaypointMapLayer).GetMethod("RebuildMapComponents", BindingFlags.NonPublic | BindingFlags.Instance)!;
 
     private readonly ILogger _logger;
     private readonly IConfigSystem _configSystem;
@@ -24,20 +30,20 @@ public class MarkerManager
 
     private DurableBetterProspectingCommonConfig? _commonConfig;
 
-    public MarkerManager(ICoreAPI api, ILogger logger, IConfigSystem configSystem)
+    public MarkerManager(ICoreAPI api, EnumAppSide side, ILogger logger, IServerNetworkChannel channel, IConfigSystem configSystem)
     {
+        if (side is not EnumAppSide.Server)
+        {
+            throw new InvalidSideException(side);
+        }
+
         _logger = logger.Named("MarkerManager");
         _configSystem = configSystem;
 
-        DurableBetterProspectingSystem.Instance!.ServerRegisterMessageTypes += OnServerRegisterMessageTypes;
-        DurableBetterProspectingSystem.Instance.ClientRegisterMessageTypes += OnClientRegisterMessageTypes;
+        channel.SetMessageHandler<MarkerPacket>(ProcessMarker);
 
-        if (api is not ICoreServerAPI serverApi)
-        {
-            return;
-        }
+        _mapManager = api.ModLoader.GetModSystem<WorldMapManager>();
 
-        _mapManager = serverApi.ModLoader.GetModSystem<WorldMapManager>();
         _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
         _configSystem.Updated += type =>
         {
@@ -48,27 +54,66 @@ public class MarkerManager
         };
     }
 
-    private void OnServerRegisterMessageTypes(IServerNetworkChannel channel)
+    private void ProcessMarker(IServerPlayer player, MarkerPacket packet)
     {
-        channel
-            .RegisterMessageType<MarkingPacket>()
-            .SetMessageHandler<MarkingPacket>(ProcessMarking);
-    }
+        _logger.Verbose("Received packet for player {0} (ID {1})", player.PlayerName, player.PlayerUID);
+        var stopwatch = Stopwatch.StartNew();
 
-    private void OnClientRegisterMessageTypes(IClientNetworkChannel channel)
-    {
-        channel
-            .RegisterMessageType<MarkingPacket>()
-            .SetMessageHandler<MarkingPacket>(_ => { });
-    }
-
-    private void ProcessMarking(IServerPlayer player, MarkingPacket packet)
-    {
         if (!_commonConfig!.Marker.Allowed)
         {
+            _logger.Verbose("Marker creation is disallowed by the server");
+
+            stopwatch.Stop();
+            _logger.Verbose("Done processing packet in {0} ms", stopwatch.ElapsedMilliseconds);
+
             return;
         }
 
-        _logger.Verbose($"Processing marking packet for {player.PlayerName} ({player.PlayerUID})");
+        if (_mapManager!.MapLayers.FirstOrDefault(l => l is WaypointMapLayer) is not WaypointMapLayer mapLayer)
+        {
+            _logger.Error("Could not find waypoint map layer");
+
+            stopwatch.Stop();
+            _logger.Verbose("Done processing packet in {0} ms", stopwatch.ElapsedMilliseconds);
+
+            return;
+        }
+
+        foreach (var waypoint in mapLayer.Waypoints.Where(w => w.OwningPlayerUid == player.PlayerUID))
+        {
+            var deltaX = Math.Abs(waypoint.Position.X - packet.Position.X);
+            var deltaZ = Math.Abs(waypoint.Position.Z - packet.Position.Z);
+            var proximity = (int)Math.Max(deltaX, deltaZ);
+            var threshold = _commonConfig.Marker.Threshold;
+
+            if (proximity < threshold && waypoint.Title.StartsWith(Constants.MarkerPrefix))
+            {
+                _logger.Verbose("Skipping marker creation due to the proximity of {0} blocks being below the threshold of {1} blocks", proximity, threshold);
+
+                stopwatch.Stop();
+                _logger.Verbose("Done processing packet in {0} ms", stopwatch.ElapsedMilliseconds);
+
+                return;
+            }
+        }
+
+        var newWaypoint = new Waypoint
+        {
+            Position = new Vec3d(packet.Position.X, packet.Position.Y, packet.Position.Z),
+            Title = packet.Text,
+            Text = string.Empty,
+            Color = Color.Orange.ToArgb(),
+            Icon = "circle",
+            ShowInWorld = false,
+            Pinned = false,
+            OwningPlayerUid = player.PlayerUID,
+            Temporary = false
+        };
+        mapLayer.Waypoints.Add(newWaypoint);
+
+        stopwatch.Stop();
+        _logger.Verbose("Done processing packet in {0} ms", stopwatch.ElapsedMilliseconds);
+
+        ResendWaypointsMethod.Invoke(mapLayer, [player]);
     }
 }

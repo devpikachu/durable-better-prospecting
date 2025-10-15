@@ -5,7 +5,7 @@ using Vintagestory.GameContent;
 namespace DurableBetterProspecting.Core;
 
 [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-public class Reading
+internal class Reading
 {
     [ProtoMember(1)]
     public required int Distance { get; set; }
@@ -14,7 +14,7 @@ public class Reading
     public required int Quantity { get; set; }
 
     [ProtoMember(3)]
-    public required Direction? Direction { get; set; }
+    public required ReadingDirection? Direction { get; set; }
 
     [ProtoMember(4)]
     public required string BlockId { get; init; }
@@ -22,7 +22,7 @@ public class Reading
     [ProtoMember(5)]
     public required string HandbookLink { get; init; }
 
-    public static Reading Create(int distance, int quantity, Direction? direction, Block block)
+    public static Reading Create(int distance, int quantity, ReadingDirection? direction, Block block)
     {
         var blockId = string.Empty;
 
@@ -43,11 +43,6 @@ public class Reading
 
         var handbookLink = $"handbook://{GuiHandbookItemStackPage.PageCodeForStack(new ItemStack(block))}";
 
-        return Create(distance, quantity, direction, blockId, handbookLink);
-    }
-
-    private static Reading Create(int distance, int quantity, Direction? direction, string blockId, string handbookLink)
-    {
         return new Reading
         {
             Distance = distance,

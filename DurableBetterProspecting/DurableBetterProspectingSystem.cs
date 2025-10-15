@@ -3,8 +3,11 @@ using Common.Mod.Core;
 using DryIoc;
 using DurableBetterProspecting.Items;
 using DurableBetterProspecting.Managers;
+using DurableBetterProspecting.Network;
 using JetBrains.Annotations;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Server;
 
 namespace DurableBetterProspecting;
 
@@ -20,17 +23,7 @@ public class DurableBetterProspectingSystem : System<DurableBetterProspectingSys
     public override void StartPre(ICoreAPI api)
     {
         base.StartPre(api);
-        Container.Register<MarkerManager>(Reuse.Singleton);
         Container.Register<ModeManager>(Reuse.Singleton);
-        Container.Register<ReadingManager>(Reuse.Singleton);
-
-        // Make sure that managers are instantiated
-        {
-            // ReSharper disable once UnusedVariable
-            var markerManager = Container.Resolve<MarkerManager>();
-            // ReSharper disable once UnusedVariable
-            var readingManager = Container.Resolve<ReadingManager>();
-        }
     }
 
     public override void Start(ICoreAPI api)
@@ -43,5 +36,45 @@ public class DurableBetterProspectingSystem : System<DurableBetterProspectingSys
     {
         configSystem.Register<DurableBetterProspectingCommonConfig>();
         configSystem.Register<DurableBetterProspectingClientConfig>();
+    }
+
+    protected override void ServerRegisterNetworkMessages(IServerNetworkChannel channel)
+    {
+        base.ServerRegisterNetworkMessages(channel);
+        channel.RegisterMessageType<ReadingPacket>();
+        channel.RegisterMessageType<MarkerPacket>();
+    }
+
+    protected override void ClientRegisterNetworkMessages(IClientNetworkChannel channel)
+    {
+        base.ClientRegisterNetworkMessages(channel);
+        channel.RegisterMessageType<ReadingPacket>();
+        channel.RegisterMessageType<MarkerPacket>();
+    }
+
+    protected override void ServerStartPre(ICoreServerAPI api)
+    {
+        base.ServerStartPre(api);
+        Container.Register<MarkerManager>(Reuse.Singleton);
+
+        // Make sure that managers are instantiated
+        {
+            // ReSharper disable UnusedVariable
+            var markerManager = Container.Resolve<MarkerManager>();
+            // ReSharper restore UnusedVariable
+        }
+    }
+
+    protected override void ClientStartPre(ICoreClientAPI api)
+    {
+        base.ClientStartPre(api);
+        Container.Register<ReadingManager>(Reuse.Singleton);
+
+        // Make sure that managers are instantiated
+        {
+            // ReSharper disable UnusedVariable
+            var readingManager = Container.Resolve<ReadingManager>();
+            // ReSharper restore UnusedVariable
+        }
     }
 }
