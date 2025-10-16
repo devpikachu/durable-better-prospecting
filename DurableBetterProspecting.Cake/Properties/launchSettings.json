@@ -3,7 +3,7 @@
     "Library": {
       "commandName": "Project",
       "executablePath": "dotnet",
-      "commandLineArgs": "--target Build --project \"DurableBetterProspecting\" --skip-substitution true",
+      "commandLineArgs": "--target Build --general-project \"DurableBetterProspecting\" --general-skipSubstitution true",
       "workingDirectory": "$(ProjectDir)"
     }
   }
