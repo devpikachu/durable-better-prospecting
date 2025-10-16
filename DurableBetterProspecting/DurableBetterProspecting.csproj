@@ -77,8 +77,4 @@
     <AdditionalFiles Include="config.json"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="assets\durablebetterprospecting\" />
-  </ItemGroup>
-
 </Project>
