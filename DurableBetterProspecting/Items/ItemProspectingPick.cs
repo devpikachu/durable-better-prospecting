@@ -45,7 +45,8 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
 
     public override int GetToolMode(ItemSlot slot, IPlayer byPlayer, BlockSelection blockSel)
     {
-        return Math.Min(_modeManager.GetSkillItems().Length - 1, slot.Itemstack.Attributes.GetInt("toolMode"));
+        var skillItemsLength = _modeManager.GetSkillItems().Length;
+        return Math.Clamp(slot.Itemstack.Attributes.GetInt("toolMode"), 0, skillItemsLength - 1);
     }
 
     public override SkillItem[] GetToolModes(ItemSlot slot, IClientPlayer forPlayer, BlockSelection blockSel)
@@ -57,6 +58,12 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
     {
         var remain = base.OnBlockBreaking(player, blockSel, itemSlot, remainingResistance, dt, counter);
         var mode = _modeManager.GetMode(GetToolMode(itemSlot, player, blockSel));
+
+        if (mode is null)
+        {
+            return remain;
+        }
+
         return mode.Id is Constants.DensityModeId ? remain : (float)((remain + (double)remainingResistance) / 2.0f);
     }
 
@@ -68,7 +75,7 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
         }
 
         var mode = _modeManager.GetMode(GetToolMode(itemSlot, player.Player, blockSel));
-        var damage = mode.DurabilityCost;
+        var damage = mode!.DurabilityCost;
 
         #region Density mode
 

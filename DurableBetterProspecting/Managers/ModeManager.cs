@@ -32,17 +32,24 @@ internal class ModeManager
     private PickaxeMode QuantityMediumMode { get; set; }
     private PickaxeMode QuantityLongMode { get; set; }
 
+    private bool _assetsLoaded;
     private DurableBetterProspectingCommonConfig _commonConfig;
     private PickaxeMode[] _modes = [];
     private SkillItem[] _skillItems = [];
 
 #pragma warning disable CS8618
-    public ModeManager(ICoreAPI api, ILogger logger, ITranslations translations, IConfigSystem configSystem)
+    public ModeManager(ICoreAPI api, ISystem system, ILogger logger, ITranslations translations, IConfigSystem configSystem)
     {
         _api = api;
         _logger = logger.Named(nameof(ModeManager));
         _translations = translations;
         _configSystem = configSystem;
+
+        system.OnAssetsLoaded += () =>
+        {
+            _assetsLoaded = true;
+            CreateModes();
+        };
 
         _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
         _configSystem.Updated += type =>
@@ -55,21 +62,30 @@ internal class ModeManager
             _commonConfig = _configSystem.GetCommon<DurableBetterProspectingCommonConfig>();
             CreateModes();
         };
-
-        CreateModes();
     }
 #pragma warning restore CS8618
 
     public SkillItem[] GetSkillItems() => _skillItems;
 
-    public PickaxeMode GetMode(int skillIndex)
+    public PickaxeMode? GetMode(int skillIndex)
     {
+        if (_skillItems.Length == 0)
+        {
+            return null;
+        }
+
         var skill = _skillItems[skillIndex];
-        return _modes.First(mode => mode.Id == skill.Code.Path);
+        return _modes.FirstOrDefault(mode => mode.Id == skill.Code.Path);
     }
 
     private void CreateModes()
     {
+        if (!_assetsLoaded)
+        {
+            _logger.Debug("Assets not yet loaded, skipping modes creation");
+            return;
+        }
+
         _logger.Verbose("(Re)Creating prospecting pickaxe modes");
         var stopwatch = Stopwatch.StartNew();
 
