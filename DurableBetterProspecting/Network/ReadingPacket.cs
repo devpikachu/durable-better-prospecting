@@ -17,5 +17,5 @@ internal record ReadingPacket
     public required Vec3i? Position { get; init; }
 
     [ProtoMember(4)]
-    public required Reading[] Readings { get; init; }
+    public required Reading[]? Readings { get; init; }
 }

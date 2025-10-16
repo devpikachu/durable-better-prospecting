@@ -61,7 +61,9 @@ internal class ReadingManager
 
     private void ProcessReading(ReadingPacket packet)
     {
-        _logger.Verbose("Received packet with {0} readings", packet.Readings.Length);
+        var readingsArray = packet.Readings ?? [];
+
+        _logger.Verbose("Received packet with {0} readings", readingsArray.Length);
         var stopwatch = Stopwatch.StartNew();
 
         var messageBuilder = new StringBuilder();
@@ -87,7 +89,7 @@ internal class ReadingManager
 
         // Message: No rocks/ores found
         {
-            if (packet.Readings.Length == 0)
+            if (readingsArray.Length == 0)
             {
                 var sampleEmptyString = _translations.Get("reading--sample-empty", packet.Mode is Constants.RockModeId ? rocksString : oresString);
 
@@ -102,7 +104,7 @@ internal class ReadingManager
         }
 
         // Sort readings
-        var readings = packet.Readings.AsEnumerable();
+        var readings = readingsArray.AsEnumerable();
         if (_clientConfig.Ordering.Enabled)
         {
             var ascending = _clientConfig.Ordering.Direction is OrderingDirection.Ascending;

@@ -31,6 +31,13 @@ public class DurableBetterProspectingSystem : System<DurableBetterProspectingSys
             var legacyConfigManager = Container.Resolve<LegacyConfigManager>();
             legacyConfigManager.Migrate();
         }
+
+        // Make sure that managers are instantiated
+        {
+            // ReSharper disable UnusedVariable
+            var modeManager = Container.Resolve<ModeManager>();
+            // ReSharper restore UnusedVariable
+        }
     }
 
     public override void Start(ICoreAPI api)
