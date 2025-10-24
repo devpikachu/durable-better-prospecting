@@ -1,9 +1,19 @@
-# Durable Better Prospecting
-
-[![GNU GPLv3](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html) ![.NET Version](https://img.shields.io/badge/dotnet-8.0-%236F419A) [![CI Status](https://ci.omni.ms/api/badges/4/status.svg)](https://ci.omni.ms/repos/4) ![Latest Release](https://img.shields.io/gitea/v/release/vintage-story-mods/durable-better-prospecting?gitea_url=https%3A%2F%2Fgit.omni.ms&sort=semver&display_name=release&style=flat)
-
-Improve your prospecting experience, without removing the difficulty completely.
-
+<div align="center">
+    <img alt="Banner" src="images/banner.png" />
+    <br /><br />
+    <a title="GPL-3.0" target="_blank" href="https://www.gnu.org/licenses/gpl-3.0.en.html">
+        <img alt="License Badge" src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg" />
+    </a>
+    <img alt="Vintage Story Version Badge" src="https://img.shields.io/badge/vintage--story-1.21.5-%2391A357" />
+    <img alt=".NET Version Badge" src="https://img.shields.io/badge/dotnet-8.0%20%26%209.0-%236F419A" />
+    <a title="CI Pipeline" target="_blank" href="https://ci.omni.ms/repos/4">
+        <img alt="CI Status Badge" src="https://ci.omni.ms/api/badges/4/status.svg" />
+    </a>
+    <a title="Latest Release" target="_blank" href="https://git.omni.ms/vintage-story-mods/durable-better-prospecting/releases/latest">
+        <img alt="Latest Release Badge" src="https://img.shields.io/gitea/v/release/vintage-story-mods/durable-better-prospecting?gitea_url=https%3A%2F%2Fgit.omni.ms&sort=semver&display_name=release&style=flat" />
+    </a>
+    <h3>Improve your prospecting experience, without removing the difficulty completely.</h3>
+</div>
 
 ## Vintage Story Mods
 
