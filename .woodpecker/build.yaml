@@ -2,13 +2,10 @@ when:
   - event: push
     branch: main
 
-matrix:
-  PROJECT:
-    - DurableBetterProspecting
-
 steps:
   - name: bootstrap
     image: git.omni.ms/omnilium/toolbox:latest
+    pull: true
     environment:
       REMOTE_USERNAME:
         from_secret: copyparty_user
@@ -19,5 +16,6 @@ steps:
 
   - name: build
     image: mcr.microsoft.com/dotnet/sdk:9.0
+    pull: true
     commands:
-      - bash build.sh --target Build --general-project ${PROJECT}
+      - bash build.sh --target Build --general-project DurableBetterProspecting

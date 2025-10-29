@@ -1,13 +1,10 @@
 when:
   - event: tag
 
-matrix:
-  PROJECT:
-    - DurableBetterProspecting
-
 steps:
   - name: bootstrap
     image: git.omni.ms/omnilium/toolbox:latest
+    pull: true
     environment:
       REMOTE_USERNAME:
         from_secret: copyparty_user
@@ -18,11 +15,13 @@ steps:
 
   - name: archive
     image: mcr.microsoft.com/dotnet/sdk:9.0
+    pull: true
     commands:
-      - bash build.sh --target Archive --general-project ${PROJECT} --general-version ${CI_COMMIT_TAG}
+      - bash build.sh --target Archive --general-project DurableBetterProspecting --general-version ${CI_COMMIT_TAG}
 
   - name: release
     image: woodpeckerci/plugin-release:latest
+    pull: true
     settings:
       api-key:
         from_secret: forgejo_release_key

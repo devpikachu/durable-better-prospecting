@@ -1,5 +1,5 @@
 using Common.Mod.Common.Config;
-using Common.Mod.Core;
+using Common.Mod;
 using DryIoc;
 using DurableBetterProspecting.Items;
 using DurableBetterProspecting.Managers;

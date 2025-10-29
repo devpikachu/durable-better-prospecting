@@ -4,32 +4,32 @@ title: '[:sparkles:] '
 labels:
   - Kind/Feature
   - Status/New
+assignees:
+  - andrei
+ref: main
 body:
   - type: markdown
     attributes:
       value: |
         Thank you for taking the time to file a feature request!
         Try to be as detailed as possible as this will help get it reviewed faster.
-  - type: input
-    id: summary
-    attributes:
-      label: Summary
-      description: A brief summary of the feature
-      placeholder: I'd like this to bake cookies.
-    validations:
-      required: false
   - type: textarea
     id: description
     attributes:
       label: Description
       description: Describe in as much detail as you can what the requested feature is
+      placeholder: I'd like to be able to do Y...
     validations:
       required: true
   - type: textarea
     id: logs
     attributes:
       label: Relevant logs
-      description: Paste any logs that are relevant to this feature
+      description: Paste any logs that are relevant to this issue
+      placeholder: |
+        15.10.2025 11:38:06 [Debug] [example] [Client] [ConfigSystem] Received configuration packet
+        15.10.2025 11:38:06 [Debug] [example] [Client] [ConfigSystem] Processing server-to-client synchronization packet
+        ...
       render: shell
     validations:
       required: false
@@ -37,7 +37,13 @@ body:
     id: code
     attributes:
       label: Relevant code
-      description: Paste any code that is relevant to this feature
+      description: Paste any code that is relevant to this issue
+      placeholder: |
+        protected override void RegisterConfigs(IConfigSystem configSystem)
+        {
+            configSystem.Register<ExampleCommonConfig>();
+        }
+        ...
       render: shell
     validations:
       required: false

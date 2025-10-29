@@ -60,7 +60,7 @@
     {
       "className": "DurableBetterProspectingClientConfig",
       "classNamespace": "DurableBetterProspecting",
-      "version": "0.0.0",
+      "version": "12.34.56",
       "type": "Client",
       "description": null,
       "entries": [
