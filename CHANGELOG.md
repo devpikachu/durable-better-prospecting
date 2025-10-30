@@ -1,4 +1,7 @@
 ## 21.2.0
+**:sparkles: Features**
+- Made each mode variant toggleable ([#10](https://git.omni.ms/vintage-story-mods/durable-better-prospecting/issues/10))
+
 **:bug: Bug Fixes**
 - Re-added mod icon ([#12](https://git.omni.ms/vintage-story-mods/durable-better-prospecting/issues/12))
 

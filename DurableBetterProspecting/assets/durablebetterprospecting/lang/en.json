@@ -41,6 +41,9 @@
 
   "config--button--reset": "Reset to default: {0}",
   "config--label--enabled": "Enabled",
+  "config--label--enabled-short": "Enabled (Short Range)",
+  "config--label--enabled-medium": "Enabled (Medium Range)",
+  "config--label--enabled-long": "Enabled (Long Range)",
   "config--label--allowed": "Allowed",
   "config--label--threshold": "Threshold",
   "config--label--durability-cost": "Durability Cost",

@@ -3,6 +3,7 @@
   "outputSubdir": "durablebetterprospecting",
   "substitute": [
     "DurableBetterProspectingSystem.cs",
+    "config.json",
     "modinfo.json"
   ]
 }

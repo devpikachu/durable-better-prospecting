@@ -68,19 +68,23 @@ internal class LegacyConfigManager
                 commonConfig.RockMode.DurabilityCost = legacyConfig.RockModeDurabilityCost;
                 commonConfig.RockMode.SampleSize = legacyConfig.RockModeSize;
 
-                commonConfig.DistanceMode.Enabled = legacyConfig.DistanceModeEnabled;
+                commonConfig.DistanceMode.EnabledShort = legacyConfig.DistanceModeEnabled;
                 commonConfig.DistanceMode.DurabilityCostShort = legacyConfig.DistanceModeSmallDurabilityCost;
                 commonConfig.DistanceMode.SampleSizeShort = legacyConfig.DistanceModeSmallSize;
+                commonConfig.DistanceMode.EnabledMedium = legacyConfig.DistanceModeEnabled;
                 commonConfig.DistanceMode.DurabilityCostMedium = legacyConfig.DistanceModeMediumDurabilityCost;
                 commonConfig.DistanceMode.SampleSizeMedium = legacyConfig.DistanceModeMediumSize;
+                commonConfig.DistanceMode.EnabledLong = legacyConfig.DistanceModeEnabled;
                 commonConfig.DistanceMode.DurabilityCostLong = legacyConfig.DistanceModeLargeDurabilityCost;
                 commonConfig.DistanceMode.SampleSizeLong = legacyConfig.DistanceModeLargeSize;
 
-                commonConfig.QuantityMode.Enabled = legacyConfig.AreaModeEnabled;
+                commonConfig.QuantityMode.EnabledShort = legacyConfig.AreaModeEnabled;
                 commonConfig.QuantityMode.DurabilityCostShort = legacyConfig.AreaModeSmallDurabilityCost;
                 commonConfig.QuantityMode.SampleSizeShort = legacyConfig.AreaModeSmallSize;
+                commonConfig.QuantityMode.EnabledMedium = legacyConfig.AreaModeEnabled;
                 commonConfig.QuantityMode.DurabilityCostMedium = legacyConfig.AreaModeMediumDurabilityCost;
                 commonConfig.QuantityMode.SampleSizeMedium = legacyConfig.AreaModeMediumSize;
+                commonConfig.QuantityMode.EnabledLong = legacyConfig.AreaModeEnabled;
                 commonConfig.QuantityMode.DurabilityCostLong = legacyConfig.AreaModeLargeDurabilityCost;
                 commonConfig.QuantityMode.SampleSizeLong = legacyConfig.AreaModeLargeSize;
 

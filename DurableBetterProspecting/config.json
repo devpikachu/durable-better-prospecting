@@ -241,10 +241,10 @@
       "description": "Distance mode configuration",
       "entries": [
         {
-          "name": "Enabled",
+          "name": "EnabledShort",
           "type": "Bool",
           "defaultValue": true,
-          "label": "config--label--enabled",
+          "label": "config--label--enabled-short",
           "description": null
         },
         {
@@ -262,6 +262,13 @@
           "description": "config--description--sample-size-cube"
         },
         {
+          "name": "EnabledMedium",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "config--label--enabled-medium",
+          "description": null
+        },
+        {
           "name": "DurabilityCostMedium",
           "type": "Int32",
           "defaultValue": 2,
@@ -274,6 +281,13 @@
           "defaultValue": 32,
           "label": "config--label--sample-size-medium",
           "description": "config--description--sample-size-cube"
+        },
+        {
+          "name": "EnabledLong",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "config--label--enabled-long",
+          "description": null
         },
         {
           "name": "DurabilityCostLong",
@@ -297,10 +311,10 @@
       "description": "Quantity mode configuration",
       "entries": [
         {
-          "name": "Enabled",
+          "name": "EnabledShort",
           "type": "Bool",
           "defaultValue": true,
-          "label": "config--label--enabled",
+          "label": "config--label--enabled-short",
           "description": null
         },
         {
@@ -318,6 +332,13 @@
           "description": "config--description--sample-size-cube"
         },
         {
+          "name": "EnabledMedium",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "config--label--enabled-medium",
+          "description": null
+        },
+        {
           "name": "DurabilityCostMedium",
           "type": "Int32",
           "defaultValue": 2,
@@ -330,6 +351,13 @@
           "defaultValue": 32,
           "label": "config--label--sample-size-medium",
           "description": "config--description--sample-size-cube"
+        },
+        {
+          "name": "EnabledLong",
+          "type": "Bool",
+          "defaultValue": true,
+          "label": "config--label--enabled-long",
+          "description": null
         },
         {
           "name": "DurabilityCostLong",

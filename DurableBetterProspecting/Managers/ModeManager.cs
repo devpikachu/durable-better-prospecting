@@ -156,7 +156,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.DistanceMode.SampleSizeShort,
             DurabilityCost = _commonConfig.DistanceMode.DurabilityCostShort,
-            Enabled = _commonConfig.DistanceMode.Enabled
+            Enabled = _commonConfig.DistanceMode.EnabledShort
         };
 
         DistanceMediumMode = new PickaxeMode
@@ -168,7 +168,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.DistanceMode.SampleSizeMedium,
             DurabilityCost = _commonConfig.DistanceMode.DurabilityCostMedium,
-            Enabled = _commonConfig.DistanceMode.Enabled
+            Enabled = _commonConfig.DistanceMode.EnabledMedium
         };
 
         DistanceLongMode = new PickaxeMode
@@ -180,7 +180,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.DistanceMode.SampleSizeLong,
             DurabilityCost = _commonConfig.DistanceMode.DurabilityCostLong,
-            Enabled = _commonConfig.DistanceMode.Enabled
+            Enabled = _commonConfig.DistanceMode.EnabledLong
         };
 
         QuantityShortMode = new PickaxeMode
@@ -192,7 +192,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.QuantityMode.SampleSizeShort,
             DurabilityCost = _commonConfig.QuantityMode.DurabilityCostShort,
-            Enabled = _commonConfig.QuantityMode.Enabled
+            Enabled = _commonConfig.QuantityMode.EnabledShort
         };
 
         QuantityMediumMode = new PickaxeMode
@@ -204,7 +204,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.QuantityMode.SampleSizeMedium,
             DurabilityCost = _commonConfig.QuantityMode.DurabilityCostMedium,
-            Enabled = _commonConfig.QuantityMode.Enabled
+            Enabled = _commonConfig.QuantityMode.EnabledMedium
         };
 
         QuantityLongMode = new PickaxeMode
@@ -216,7 +216,7 @@ internal class ModeManager
             SampleType = SampleType.Ore,
             SampleSize = _commonConfig.QuantityMode.SampleSizeLong,
             DurabilityCost = _commonConfig.QuantityMode.DurabilityCostLong,
-            Enabled = _commonConfig.QuantityMode.Enabled
+            Enabled = _commonConfig.QuantityMode.EnabledLong
         };
 
         _modes =
