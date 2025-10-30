@@ -1,6 +1,7 @@
 ## 21.2.0
 **:sparkles: Features**
 - Made each mode variant toggleable ([#10](https://git.omni.ms/vintage-story-mods/durable-better-prospecting/issues/10))
+- Made the modes use spherical / cylindrical walk blocks functions instead of the vanilla cuboid ones ([#11](https://git.omni.ms/vintage-story-mods/durable-better-prospecting/issues/11))
 
 **:bug: Bug Fixes**
 - Re-added mod icon ([#12](https://git.omni.ms/vintage-story-mods/durable-better-prospecting/issues/12))

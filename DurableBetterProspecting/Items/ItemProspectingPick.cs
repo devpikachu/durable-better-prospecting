@@ -1,4 +1,5 @@
 using Common.Mod.Common.Config;
+using Common.Mod.Extensions;
 using DryIoc;
 using DurableBetterProspecting.Core;
 using DurableBetterProspecting.Managers;
@@ -146,7 +147,6 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
         }
 
         if (_channel is not IServerNetworkChannel serverChannel
-            || world is not ServerMain serverWorld
             || player.Player is not IServerPlayer serverPlayer)
         {
             return;
@@ -154,16 +154,11 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
 
         var sampleShape = mode.SampleShape;
         var sampleType = mode.SampleType;
-        var sampleSize = mode.SampleSize;
+        var sampleRadius = mode.SampleRadius;
 
-        var halfSize = (int)MathF.Round(sampleSize / 2.0f);
-        var bottomPosition = sampleShape is SampleShape.Cube ? position.Y - halfSize : 0;
-        var topPosition = sampleShape is SampleShape.Cube ? position.Y + halfSize : serverWorld.MapSize.Y;
-        var minPosition = new Vec3i(position.X - halfSize, bottomPosition, position.Z - halfSize).ToBlockPos();
-        var maxPosition = new Vec3i(position.X + halfSize, topPosition, position.Z + halfSize).ToBlockPos();
-
+        // Handler
         Dictionary<string, Reading> readings = [];
-        serverWorld.BlockAccessor.WalkBlocks(minPosition, maxPosition, (block, x, y, z) =>
+        void OnBlockHandler(Block block, int x, int y, int z)
         {
             switch (sampleType)
             {
@@ -224,13 +219,29 @@ internal class ItemProspectingPick : Vintagestory.GameContent.ItemProspectingPic
                 default:
                     throw new ArgumentOutOfRangeException(nameof(sampleType), sampleType, null);
             }
-        });
+        }
+
+        switch (sampleShape)
+        {
+            case SampleShape.Sphere:
+                world.WalkBlocksSphere(position, sampleRadius, OnBlockHandler);
+                break;
+
+            case SampleShape.Cylinder:
+                var worldHeight = world.BlockAccessor.MapSizeY;
+                world.WalkBlocksCylinder(position, sampleRadius, 0, worldHeight, OnBlockHandler);
+                break;
+
+            case SampleShape.Vanilla:
+            default:
+                throw new ArgumentOutOfRangeException(nameof(sampleShape), sampleShape, null);
+        }
 
         var markerEligible = mode.Id is Constants.ColumnModeId or Constants.DistanceLongModeId or Constants.QuantityLongModeId;
         var readingPacket = new ReadingPacket
         {
             Mode = mode.Id,
-            Size = mode.SampleSize,
+            Size = mode.SampleRadius,
             Position = markerEligible ? position.ToVec3i() : null,
             Readings = readings.Values.ToArray(),
         };

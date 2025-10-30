@@ -106,7 +106,7 @@ internal class ModeManager
             Icon = Icon.Create("game", "heatmap"),
             SampleShape = SampleShape.Vanilla,
             SampleType = SampleType.Vanilla,
-            SampleSize = int.MaxValue,
+            SampleRadius = int.MaxValue,
             DurabilityCost = _commonConfig.DensityMode.DurabilityCost,
             Enabled = _commonConfig.DensityMode.Enabled
         };
@@ -118,7 +118,7 @@ internal class ModeManager
             Icon = Icon.Create("game", "rocks"),
             SampleShape = SampleShape.Vanilla,
             SampleType = SampleType.Vanilla,
-            SampleSize = int.MaxValue,
+            SampleRadius = int.MaxValue,
             DurabilityCost = _commonConfig.NodeMode.DurabilityCost,
             Enabled = _commonConfig.NodeMode.Enabled && _api.World.Config.GetString(Constants.NodeSearchRadiusConfigKey).ToInt() > 0
         };
@@ -128,9 +128,9 @@ internal class ModeManager
             Id = Constants.RockModeId,
             Name = _translations.Get("mode--rock"),
             Icon = Icon.Create("mode_rock"),
-            SampleShape = SampleShape.Cube,
+            SampleShape = SampleShape.Sphere,
             SampleType = SampleType.Rock,
-            SampleSize = _commonConfig.RockMode.SampleSize,
+            SampleRadius = _commonConfig.RockMode.SampleSize,
             DurabilityCost = _commonConfig.RockMode.DurabilityCost,
             Enabled = _commonConfig.RockMode.Enabled
         };
@@ -140,9 +140,9 @@ internal class ModeManager
             Id = Constants.ColumnModeId,
             Name = _translations.Get("mode--column"),
             Icon = Icon.Create("mode_column"),
-            SampleShape = SampleShape.Cuboid,
+            SampleShape = SampleShape.Cylinder,
             SampleType = SampleType.Ore,
-            SampleSize = _commonConfig.ColumnMode.SampleSize,
+            SampleRadius = _commonConfig.ColumnMode.SampleSize,
             DurabilityCost = _commonConfig.ColumnMode.DurabilityCost,
             Enabled = _commonConfig.ColumnMode.Enabled
         };
@@ -152,9 +152,9 @@ internal class ModeManager
             Id = Constants.DistanceShortModeId,
             Name = _translations.Get("mode--distance-short"),
             Icon = Icon.Create("mode_distance_short"),
-            SampleShape = SampleShape.Cube,
+            SampleShape = SampleShape.Sphere,
             SampleType = SampleType.Ore,
-            SampleSize = _commonConfig.DistanceMode.SampleSizeShort,
+            SampleRadius = _commonConfig.DistanceMode.SampleSizeShort,
             DurabilityCost = _commonConfig.DistanceMode.DurabilityCostShort,
             Enabled = _commonConfig.DistanceMode.EnabledShort
         };
@@ -164,9 +164,9 @@ internal class ModeManager
             Id = Constants.DistanceMediumModeId,
             Name = _translations.Get("mode--distance-medium"),
             Icon = Icon.Create("mode_distance_medium"),
-            SampleShape = SampleShape.Cube,
+            SampleShape = SampleShape.Sphere,
             SampleType = SampleType.Ore,
-            SampleSize = _commonConfig.DistanceMode.SampleSizeMedium,
+            SampleRadius = _commonConfig.DistanceMode.SampleSizeMedium,
             DurabilityCost = _commonConfig.DistanceMode.DurabilityCostMedium,
             Enabled = _commonConfig.DistanceMode.EnabledMedium
         };
@@ -176,9 +176,9 @@ internal class ModeManager
             Id = Constants.DistanceLongModeId,
             Name = _translations.Get("mode--distance-long"),
             Icon = Icon.Create("mode_distance_long"),
-            SampleShape = SampleShape.Cube,
+            SampleShape = SampleShape.Sphere,
             SampleType = SampleType.Ore,
-            SampleSize = _commonConfig.DistanceMode.SampleSizeLong,
+            SampleRadius = _commonConfig.DistanceMode.SampleSizeLong,
             DurabilityCost = _commonConfig.DistanceMode.DurabilityCostLong,
             Enabled = _commonConfig.DistanceMode.EnabledLong
         };
@@ -188,9 +188,9 @@ internal class ModeManager
             Id = Constants.QuantityShortModeId,
             Name = _translations.Get("mode--quantity-short"),
             Icon = Icon.Create("mode_quantity_short"),
-            SampleShape = SampleShape.Cube,
+            SampleShape = SampleShape.Sphere,
             SampleType = SampleType.Ore,
-            SampleSize = _commonConfig.QuantityMode.SampleSizeShort,
+            SampleRadius = _commonConfig.QuantityMode.SampleSizeShort,
             DurabilityCost = _commonConfig.QuantityMode.DurabilityCostShort,
             Enabled = _commonConfig.QuantityMode.EnabledShort
         };
@@ -200,9 +200,9 @@ internal class ModeManager
             Id = Constants.QuantityMediumModeId,
             Name = _translations.Get("mode--quantity-medium"),
             Icon = Icon.Create("mode_quantity_medium"),
-            SampleShape = SampleShape.Cube,
+            SampleShape = SampleShape.Sphere,
             SampleType = SampleType.Ore,
-            SampleSize = _commonConfig.QuantityMode.SampleSizeMedium,
+            SampleRadius = _commonConfig.QuantityMode.SampleSizeMedium,
             DurabilityCost = _commonConfig.QuantityMode.DurabilityCostMedium,
             Enabled = _commonConfig.QuantityMode.EnabledMedium
         };
@@ -212,9 +212,9 @@ internal class ModeManager
             Id = Constants.QuantityLongModeId,
             Name = _translations.Get("mode--quantity-long"),
             Icon = Icon.Create("mode_quantity_long"),
-            SampleShape = SampleShape.Cube,
+            SampleShape = SampleShape.Sphere,
             SampleType = SampleType.Ore,
-            SampleSize = _commonConfig.QuantityMode.SampleSizeLong,
+            SampleRadius = _commonConfig.QuantityMode.SampleSizeLong,
             DurabilityCost = _commonConfig.QuantityMode.DurabilityCostLong,
             Enabled = _commonConfig.QuantityMode.EnabledLong
         };

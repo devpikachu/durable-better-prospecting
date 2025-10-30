@@ -201,9 +201,9 @@
         {
           "name": "SampleSize",
           "type": "Int32",
-          "defaultValue": 32,
-          "label": "config--label--sample-size",
-          "description": "config--description--sample-size-cube"
+          "defaultValue": 16,
+          "label": "config--label--sample-radius",
+          "description": "config--description--sample-radius-sphere"
         }
       ]
     },
@@ -229,9 +229,9 @@
         {
           "name": "SampleSize",
           "type": "Int32",
-          "defaultValue": 32,
-          "label": "config--label--sample-size",
-          "description": "config--description--sample-size-cuboid"
+          "defaultValue": 16,
+          "label": "config--label--sample-radius",
+          "description": "config--description--sample-radius-cylinder"
         }
       ]
     },
@@ -257,9 +257,9 @@
         {
           "name": "SampleSizeShort",
           "type": "Int32",
-          "defaultValue": 16,
-          "label": "config--label--sample-size-short",
-          "description": "config--description--sample-size-cube"
+          "defaultValue": 8,
+          "label": "config--label--sample-radius-short",
+          "description": "config--description--sample-radius-sphere"
         },
         {
           "name": "EnabledMedium",
@@ -278,9 +278,9 @@
         {
           "name": "SampleSizeMedium",
           "type": "Int32",
-          "defaultValue": 32,
-          "label": "config--label--sample-size-medium",
-          "description": "config--description--sample-size-cube"
+          "defaultValue": 16,
+          "label": "config--label--sample-radius-medium",
+          "description": "config--description--sample-radius-sphere"
         },
         {
           "name": "EnabledLong",
@@ -299,9 +299,9 @@
         {
           "name": "SampleSizeLong",
           "type": "Int32",
-          "defaultValue": 64,
-          "label": "config--label--sample-size-long",
-          "description": "config--description--sample-size-cube"
+          "defaultValue": 32,
+          "label": "config--label--sample-radius-long",
+          "description": "config--description--sample-radius-sphere"
         }
       ]
     },
@@ -327,9 +327,9 @@
         {
           "name": "SampleSizeShort",
           "type": "Int32",
-          "defaultValue": 16,
-          "label": "config--label--sample-size-short",
-          "description": "config--description--sample-size-cube"
+          "defaultValue": 8,
+          "label": "config--label--sample-radius-short",
+          "description": "config--description--sample-radius-sphere"
         },
         {
           "name": "EnabledMedium",
@@ -348,9 +348,9 @@
         {
           "name": "SampleSizeMedium",
           "type": "Int32",
-          "defaultValue": 32,
-          "label": "config--label--sample-size-medium",
-          "description": "config--description--sample-size-cube"
+          "defaultValue": 16,
+          "label": "config--label--sample-radius-medium",
+          "description": "config--description--sample-radius-sphere"
         },
         {
           "name": "EnabledLong",
@@ -369,9 +369,9 @@
         {
           "name": "SampleSizeLong",
           "type": "Int32",
-          "defaultValue": 64,
-          "label": "config--label--sample-size-long",
-          "description": "config--description--sample-size-cube"
+          "defaultValue": 32,
+          "label": "config--label--sample-radius-long",
+          "description": "config--description--sample-radius-sphere"
         }
       ]
     },
