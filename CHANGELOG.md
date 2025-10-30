@@ -1,4 +1,7 @@
 ## 21.2.0
+**:bug: Bug Fixes**
+- Re-added mod icon ([#12](https://git.omni.ms/vintage-story-mods/durable-better-prospecting/issues/12))
+
 **:green_heart: CI/CD**
 - Added `pull: true` to all steps
 - Removed redundant matrix definition
